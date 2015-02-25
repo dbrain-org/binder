@@ -1,0 +1,7 @@
+*.iml
+/target
+.svn
+.metadata
+.bin
+.idea
+uploads/*
