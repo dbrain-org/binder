@@ -14,20 +14,15 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.scope;
+package org.dbrain.yaw.txs.artifacts;
 
-
-import javax.inject.Scope;
-import java.lang.annotation.ElementType;
+import javax.inject.Qualifier;
 import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * Defines a service that is bound to a request scope.
- */
-@Target( { ElementType.TYPE, ElementType.METHOD } )
-@Retention( RUNTIME )
-@Scope
-public @interface RequestScoped {}
+* Created by epoitras on 3/2/15.
+*/
+@Qualifier
+@Retention( RetentionPolicy.RUNTIME )
+public @interface MemberD {}

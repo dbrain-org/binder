@@ -14,25 +14,26 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.http.sample;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+package org.dbrain.yaw.http.server.defs;
 
 /**
- * Created by epoitras on 11/09/14.
+ * @author kilantzis
  */
-public class SampleServlet extends HttpServlet {
+public class FormLocationDef {
 
-    public static final String CONTENT = "Hello from sample servlet.";
+    private final String url;
+    private final String errorURL;
 
-    @Override
-    protected void doGet( HttpServletRequest req, HttpServletResponse resp ) throws ServletException, IOException {
-        resp.setStatus( 200 );
-        resp.setHeader( "Content-Type", "text/plain" );
-        resp.getWriter().print( CONTENT );
+    public FormLocationDef( String url, String errorURL ) {
+        this.url = url;
+        this.errorURL = errorURL;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getErrorURL() {
+        return errorURL;
     }
 }

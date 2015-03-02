@@ -14,20 +14,19 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.scope;
+package org.dbrain.yaw.system.txs;
 
-
-import javax.inject.Scope;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.dbrain.yaw.txs.TransactionException;
 
 /**
- * Defines a service that is bound to a request scope.
+ * Created by epoitras on 3/1/15.
  */
-@Target( { ElementType.TYPE, ElementType.METHOD } )
-@Retention( RUNTIME )
-@Scope
-public @interface RequestScoped {}
+public interface TransactionMember {
+
+    public void flush() throws TransactionException;
+
+    public void commit() throws TransactionException;
+
+    public void rollback() throws TransactionException;
+
+}

@@ -1,10 +1,26 @@
+/*
+ * Copyright [2015] [Eric Poitras]
+ *
+ *     Licensed under the Apache License, Version 2.0 (the "License");
+ *     you may not use this file except in compliance with the License.
+ *     You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
+ */
+
 package org.dbrain.yaw.http.server;
 
-import org.dbrain.yaw.http.server.config.ServletAppSecurityDef;
-import org.dbrain.yaw.http.server.config.ServletContextConfig;
-import org.dbrain.yaw.http.server.config.ServletConfig;
-import org.dbrain.yaw.http.server.config.WebSocketConfig;
-import org.dbrain.yaw.http.server.config.ServletFilterConfig;
+import org.dbrain.yaw.http.server.defs.ServletAppSecurityDef;
+import org.dbrain.yaw.http.server.defs.ServletContextDef;
+import org.dbrain.yaw.http.server.defs.ServletDef;
+import org.dbrain.yaw.http.server.defs.ServletFilterDef;
+import org.dbrain.yaw.http.server.defs.WebSocketDef;
 
 import javax.servlet.Filter;
 import java.util.ArrayList;
@@ -21,11 +37,11 @@ public class ServletContextBuilder {
 
     protected String contextPath;
 
-    protected List<ServletConfig> servlets = new ArrayList<>();
+    protected List<ServletDef> servlets = new ArrayList<>();
 
-    protected List<WebSocketConfig> webSockets = new ArrayList<>();
+    protected List<WebSocketDef> webSockets = new ArrayList<>();
 
-    protected List<ServletFilterConfig> filters = new ArrayList<>();
+    protected List<ServletFilterDef> filters = new ArrayList<>();
 
     protected ServletAppSecurityDef security;
 
@@ -35,22 +51,20 @@ public class ServletContextBuilder {
 
     /**
      * Set the serve context path.
-     *
-     * @return
      */
     public ServletContextBuilder contextPath( String contextPath ) {
         this.contextPath = contextPath;
         return this;
     }
 
-    public ServletContextBuilder serve( ServletConfig servletDef ) {
+    public ServletContextBuilder serve( ServletDef servletDef ) {
         if ( servletDef != null ) {
             servlets.add( servletDef );
         }
         return this;
     }
 
-    public ServletContextBuilder serve( WebSocketConfig wsd ) {
+    public ServletContextBuilder serve( WebSocketDef wsd ) {
         if ( wsd != null ) {
             webSockets.add( wsd );
         }
@@ -58,7 +72,7 @@ public class ServletContextBuilder {
     }
 
     public ServletContextBuilder filter( Filter filter, String pathSpec ) {
-        filters.add( new ServletFilterConfig( filter, pathSpec ) );
+        filters.add( new ServletFilterDef( filter, pathSpec ) );
         return this;
     }
 
@@ -66,8 +80,8 @@ public class ServletContextBuilder {
         this.security = security;
     }
 
-    public ServletContextConfig build() {
-        return new ServletContextConfig( contextPath, servlets, filters, webSockets, security );
+    public ServletContextDef build() {
+        return new ServletContextDef( contextPath, servlets, filters, webSockets, security );
     }
 
 }

@@ -14,20 +14,25 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.scope;
-
-
-import javax.inject.Scope;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+package org.dbrain.yaw.txs;
 
 /**
- * Defines a service that is bound to a request scope.
+ * Created with IntelliJ IDEA.
+ * User: epoitras
+ * Date: 16/07/13
+ * Time: 8:22 AM
+ * To change this template use File | Settings | File Templates.
  */
-@Target( { ElementType.TYPE, ElementType.METHOD } )
-@Retention( RUNTIME )
-@Scope
-public @interface RequestScoped {}
+public enum TransactionState {
+
+    NONE,
+
+    RUNNING,
+
+    COMMITTED,
+
+    COMMIT_FAILED,
+
+    ROLLED_BACK
+
+}

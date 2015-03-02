@@ -14,25 +14,17 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.http.sample;
+package org.dbrain.yaw.system.txs.exceptions;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.dbrain.yaw.txs.TransactionException;
 
 /**
- * Created by epoitras on 11/09/14.
+ * Thrown when a transaction failed to commit.
  */
-public class SampleServlet extends HttpServlet {
+public class CommitFailedException extends TransactionException {
 
-    public static final String CONTENT = "Hello from sample servlet.";
-
-    @Override
-    protected void doGet( HttpServletRequest req, HttpServletResponse resp ) throws ServletException, IOException {
-        resp.setStatus( 200 );
-        resp.setHeader( "Content-Type", "text/plain" );
-        resp.getWriter().print( CONTENT );
+    public CommitFailedException( Throwable e ) {
+        super( "Failed to commit.", e );
     }
+
 }

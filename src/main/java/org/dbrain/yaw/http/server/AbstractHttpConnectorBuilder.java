@@ -29,29 +29,24 @@ import java.net.URI;
  * Time: 9:01 PM
  * To change this template use File | Settings | File Templates.
  */
-public class HttpConnectorBuilder extends AbstractHttpConnectorBuilder<HttpConnectorBuilder> {
+public abstract class AbstractHttpConnectorBuilder<BUILDER extends AbstractHttpConnectorBuilder<BUILDER>> {
 
-    public static HttpConnectorDef of( Integer port ) {
-        return new HttpConnectorBuilder().port( port ).build();
+    private Integer port;
+
+    public abstract BUILDER self();
+
+    public Integer getPort() {
+        return port;
     }
 
-    private HttpConnectorBuilder() {
+    public BUILDER port( int port ) {
+        if ( port >= 0 && port < 65536 ) {
+            this.port = port;
+        } else {
+            throw new IllegalArgumentException();
+        }
+        return self();
     }
 
-    @Override
-    public HttpConnectorBuilder self() {
-        return this;
-    }
-
-    public HttpConnectorDef build() {
-        Integer finalPort = getPort();
-
-        // What is the final port ?
-        finalPort = finalPort != null ? finalPort  : 80;
-
-        HttpConnectorDef result = new HttpConnectorDef();
-        result.setPort( finalPort );
-        return result;
-    }
 
 }

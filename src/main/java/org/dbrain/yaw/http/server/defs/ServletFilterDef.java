@@ -14,25 +14,34 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.http.sample;
+package org.dbrain.yaw.http.server.defs;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.servlet.Filter;
 
 /**
- * Created by epoitras on 11/09/14.
+ * Created with IntelliJ IDEA.
+ * User: epoitras
+ * Date: 15/07/13
+ * Time: 10:16 PM
+ * To change this template use File | Settings | File Templates.
  */
-public class SampleServlet extends HttpServlet {
+public class ServletFilterDef {
 
-    public static final String CONTENT = "Hello from sample servlet.";
+    private final Filter instance;
 
-    @Override
-    protected void doGet( HttpServletRequest req, HttpServletResponse resp ) throws ServletException, IOException {
-        resp.setStatus( 200 );
-        resp.setHeader( "Content-Type", "text/plain" );
-        resp.getWriter().print( CONTENT );
+    private final String pathSpec;
+
+    public ServletFilterDef( Filter instance, String pathSpec ) {
+        this.instance = instance;
+        this.pathSpec = pathSpec;
     }
+
+    public String getPathSpec() {
+        return pathSpec;
+    }
+
+    public Filter getInstance() {
+        return instance;
+    }
+
 }

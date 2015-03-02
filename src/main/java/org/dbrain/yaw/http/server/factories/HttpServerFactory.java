@@ -14,20 +14,15 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.scope;
+package org.dbrain.yaw.http.server.factories;
 
-
-import javax.inject.Scope;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.dbrain.yaw.http.server.defs.HttpServerDef;
 
 /**
- * Defines a service that is bound to a request scope.
+ * Created by epoitras on 17/09/14.
  */
-@Target( { ElementType.TYPE, ElementType.METHOD } )
-@Retention( RUNTIME )
-@Scope
-public @interface RequestScoped {}
+public interface HttpServerFactory<T> {
+
+    public T build( HttpServerDef def );
+
+}
