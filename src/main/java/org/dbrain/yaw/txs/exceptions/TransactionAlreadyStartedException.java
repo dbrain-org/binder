@@ -14,17 +14,21 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.system.txs.exceptions;
+package org.dbrain.yaw.txs.exceptions;
 
 import org.dbrain.yaw.txs.TransactionException;
 
 /**
- * Thrown when a transaction failed to commit.
+ * Created with IntelliJ IDEA.
+ * User: epoitras
+ * Date: 16/07/13
+ * Time: 11:25 PM
+ * To change this template use File | Settings | File Templates.
  */
-public class CommitFailedException extends TransactionException {
+public class TransactionAlreadyStartedException extends TransactionException {
 
-    public CommitFailedException( Throwable e ) {
-        super( "Failed to commit.", e );
+    public TransactionAlreadyStartedException() {
+        super( "The transaction is already started." );
     }
 
 }

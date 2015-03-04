@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  * Created by epoitras on 10/09/14.
  */
-public class HttpServerTest {
+public class HttpServer_Test {
 
     @Test
     public void testHttpServer() throws Exception {

@@ -14,23 +14,17 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.txs;
+package org.dbrain.yaw.txs.exceptions;
+
+import org.dbrain.yaw.txs.TransactionException;
 
 /**
- * Created with IntelliJ IDEA.
- * User: epoitras
- * Date: 16/07/13
- * Time: 8:22 AM
- * To change this template use File | Settings | File Templates.
+ * Thrown when a transaction failed to commit.
  */
-public enum TransactionState {
+public class CommitFailedException extends TransactionException {
 
-    ACTIVE,
-
-    COMMIT,
-
-    ROLLBACK,
-
-    PARTIAL_ROLLBACK
+    public CommitFailedException( Throwable e ) {
+        super( "Failed to commit.", e );
+    }
 
 }

@@ -25,12 +25,16 @@ import java.sql.SQLException;
 /**
  * Created by epoitras on 3/1/15.
  */
-public class MemberConnection implements TransactionMember {
+public class ConnectionToMemberAdapter implements TransactionMember {
 
     private final Connection connection;
 
-    public MemberConnection( Connection connection ) {
+    public ConnectionToMemberAdapter( Connection connection ) {
         this.connection = connection;
+    }
+
+    public Connection getConnection() {
+        return connection;
     }
 
     @Override

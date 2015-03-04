@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.system.txs.exceptions;
+package org.dbrain.yaw.txs.exceptions;
 
 import org.dbrain.yaw.txs.TransactionException;
 
@@ -25,9 +25,9 @@ import org.dbrain.yaw.txs.TransactionException;
  * Time: 11:25 PM
  * To change this template use File | Settings | File Templates.
  */
-public class NoActiveTransactionException extends TransactionException {
+public class NoTransactionException extends TransactionException {
 
-    public NoActiveTransactionException() {
+    public NoTransactionException() {
         super( "No running transaction." );
     }
 

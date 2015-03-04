@@ -23,6 +23,7 @@ import com.google.inject.Provider;
 import com.google.inject.Scope;
 import org.dbrain.yaw.scope.TransactionScoped;
 import org.dbrain.yaw.system.txs.TransactionManager;
+import org.dbrain.yaw.txs.TransactionControl;
 
 /**
  * Created by epoitras on 2/27/15.
@@ -31,18 +32,15 @@ public class TransactionModule implements Module {
 
     private TransactionManager manager = new TransactionManager();
 
-    public TransactionManager getManager() {
-        return manager;
-    }
-
     @Override
     public void configure( Binder binder ) {
         binder.bind( TransactionManager.class ).toInstance( manager );
+        binder.bind( TransactionControl.class ).toInstance( manager );
 
         binder.bindScope( TransactionScoped.class, new Scope() {
             @Override
             public <T> Provider<T> scope( final Key<T> key, final Provider<T> unscoped ) {
-                return () -> manager.getTransaction().get( key, unscoped );
+                return () -> manager.get( key, unscoped );
             }
         } );
 

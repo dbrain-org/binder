@@ -17,20 +17,20 @@
 package org.dbrain.yaw.txs;
 
 /**
- * Created with IntelliJ IDEA.
- * User: epoitras
- * Date: 16/07/13
- * Time: 8:22 AM
- * To change this template use File | Settings | File Templates.
+ * Created by epoitras on 3/3/15.
  */
-public enum TransactionState {
+public interface TransactionControl {
 
-    ACTIVE,
+    /**
+     * @return The current transaction.
+     */
+    Transaction current();
 
-    COMMIT,
-
-    ROLLBACK,
-
-    PARTIAL_ROLLBACK
+    /**
+     * @return A newly created "ACTIVE" transaction.
+     *
+     * @throws org.dbrain.yaw.txs.exceptions.TransactionAlreadyStartedException if there is already a transaction.
+     */
+    Transaction start() throws TransactionException;
 
 }

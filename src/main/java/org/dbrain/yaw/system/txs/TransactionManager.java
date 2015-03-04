@@ -16,70 +16,47 @@
 
 package org.dbrain.yaw.system.txs;
 
-import org.dbrain.yaw.system.txs.exceptions.NoActiveTransactionException;
+import com.google.inject.Key;
+import com.google.inject.Provider;
 import org.dbrain.yaw.txs.Transaction;
-import org.dbrain.yaw.txs.TransactionException;
-import org.dbrain.yaw.txs.TransactionState;
+import org.dbrain.yaw.txs.TransactionControl;
+import org.dbrain.yaw.txs.exceptions.NoTransactionException;
+import org.dbrain.yaw.txs.exceptions.TransactionAlreadyStartedException;
 
 /**
- * Created by epoitras on 2/27/15.
+ * Implementation of the transaction control interface as well as provide a registry for the transaction
+ * scope.
  */
-public class TransactionManager implements Transaction {
+public class TransactionManager implements TransactionControl {
 
     private ThreadLocal<TransactionRegistry> transaction = new ThreadLocal<>();
 
-    public TransactionRegistry getTransaction() {
+    /**
+     * Get or provision an instance of the service identified by the instance of Key.
+     */
+    public <T> T get( Key<T> key, Provider<T> unscopedProvider ) {
+        TransactionRegistry tx = transaction.get();
+        if ( tx == null ) {
+            throw new NoTransactionException();
+        }
+        return tx.get( key, unscopedProvider );
+    }
+
+    @Override
+    public Transaction current() {
+        return transaction.get();
+    }
+
+    @Override
+    public Transaction start() {
         TransactionRegistry tx = transaction.get();
         if ( tx == null ) {
             tx = new TransactionRegistry();
             transaction.set( tx );
+        } else {
+            throw new TransactionAlreadyStartedException();
         }
         return tx;
-    }
-
-
-    @Override
-    public TransactionState getStatus() {
-        TransactionRegistry tx = transaction.get();
-        if ( tx != null ) {
-            return tx.getStatus();
-        } else {
-            return TransactionState.NONE;
-        }
-    }
-
-    @Override
-    public void commit() throws TransactionException {
-        TransactionRegistry tx = transaction.get();
-        if ( tx != null ) {
-            tx.commit();
-        } else {
-            throw new NoActiveTransactionException();
-        }
-    }
-
-    @Override
-    public void rollback() throws TransactionException {
-        TransactionRegistry tx = transaction.get();
-        if ( tx != null ) {
-            tx.rollback();
-        } else {
-            throw new NoActiveTransactionException();
-        }
-    }
-
-    /**
-     * Discard any transaction status. If a transaction is running, it will be rolled back.
-     */
-    public void discard() throws TransactionException {
-        TransactionRegistry tx = transaction.get();
-        if ( tx != null ) {
-            if ( tx.getStatus() == TransactionState.RUNNING ) {
-                tx.rollback();
-            }
-            transaction.set( null );
-        }
-
     }
 
 

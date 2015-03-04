@@ -18,14 +18,16 @@ package org.dbrain.yaw.system.txs;
 
 import com.google.inject.Key;
 import jersey.repackaged.com.google.common.base.Preconditions;
+import org.dbrain.yaw.scope.DisposeException;
 import org.dbrain.yaw.system.scope.ScopeRegistry;
-import org.dbrain.yaw.system.txs.exceptions.CommitFailedException;
-import org.dbrain.yaw.system.txs.exceptions.NoActiveTransactionException;
 import org.dbrain.yaw.txs.Transaction;
 import org.dbrain.yaw.txs.TransactionException;
 import org.dbrain.yaw.txs.TransactionState;
+import org.dbrain.yaw.txs.exceptions.CommitFailedException;
+import org.dbrain.yaw.txs.exceptions.NoTransactionException;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -33,8 +35,8 @@ import java.util.List;
  */
 public class TransactionRegistry extends ScopeRegistry implements Transaction {
 
-    private TransactionState        state   = TransactionState.RUNNING;
-    private List<TransactionMember> members = null;
+    private TransactionState              state   = TransactionState.ACTIVE;
+    private LinkedList<TransactionMember> members = null;
 
     @Override
     public synchronized TransactionState getStatus() {
@@ -46,76 +48,85 @@ public class TransactionRegistry extends ScopeRegistry implements Transaction {
         super.registerObject( key, value );
         if ( value instanceof TransactionMember ) {
             if ( members == null ) {
-                members = new ArrayList<>();
+                members = new LinkedList<>();
             }
-            members.add( (TransactionMember) value );
+            members.addFirst( (TransactionMember) value );
         }
     }
 
-    /**
-     * Flush members.
-     */
-    private void flushMembers( List<TransactionMember> members ) throws TransactionException {
-        Preconditions.checkNotNull( members );
-        for ( int i = members.size() - 1; i >= 0; i-- ) {
-            members.get( i ).flush();
-        }
+    private List<TransactionMember> listMemberForCommit() {
+        return members != null ? new ArrayList<>( members ) : new ArrayList<>();
     }
 
     @Override
     public synchronized void commit() throws TransactionException {
-        if ( state != TransactionState.RUNNING ) {
-            throw new NoActiveTransactionException();
+        if ( state != TransactionState.ACTIVE ) {
+            throw new NoTransactionException();
         }
         Throwable error = null;
+        int commitIdx = 0;
         if ( members != null ) {
-            int i = members.size() - 1;
+            List<TransactionMember> memberToCommit = listMemberForCommit();
+            int totalToCommit = memberToCommit.size();
             try {
-                flushMembers( members );
-
-                while ( i >= 0 ) {
-                    members.get( i ).commit();
-                    i--;
+                for ( TransactionMember member : memberToCommit ) {
+                    member.flush();
                 }
-            } catch ( Throwable e ) {
-                error = e;
+
+                    while ( commitIdx < totalToCommit ) {
+                        memberToCommit.get( commitIdx ).commit();
+                        commitIdx++;
+                    }
+            } catch ( Throwable t ) {
+                error = t;
             }
 
-            if ( error != null ) {
-                rollback( members, i );
+            if ( commitIdx < totalToCommit ) {
+                rollback( memberToCommit, commitIdx );
             }
 
         }
-        state = error == null ? TransactionState.COMMITTED : TransactionState.COMMIT_FAILED;
         if ( error != null ) {
+            state = commitIdx > 0 ? TransactionState.PARTIAL_ROLLBACK : TransactionState.ROLLBACK;
             throw new CommitFailedException( error );
+        } else {
+            state = TransactionState.COMMIT;
         }
     }
 
     private void rollback( List<TransactionMember> members, int idx ) throws TransactionException {
         Preconditions.checkNotNull( members );
-        Preconditions.checkArgument( idx < members.size() );
-        while ( idx >= 0 ) {
+        int total = members.size();
+        Preconditions.checkArgument( idx <= total );
+        while ( idx < total ) {
             try {
                 members.get( idx ).rollback();
-                idx--;
+                idx++;
             } catch ( Throwable t ) {
-
+                // TODO Fix this.
             }
         }
     }
 
-
     @Override
     public synchronized void rollback() throws TransactionException {
-        if ( state != TransactionState.RUNNING ) {
-            throw new NoActiveTransactionException();
+        if ( state != TransactionState.ACTIVE ) {
+            throw new NoTransactionException();
         }
         if ( members != null ) {
-            rollback( members, members.size() - 1 );
+            rollback( members, 0);
         }
-        state = TransactionState.ROLLED_BACK;
+        state = TransactionState.ROLLBACK;
     }
 
-
+    @Override
+    public synchronized void close() throws DisposeException {
+        try {
+            if ( state == TransactionState.ACTIVE ) {
+                rollback();
+            }
+        } finally {
+            super.close();
+        }
+    }
 }

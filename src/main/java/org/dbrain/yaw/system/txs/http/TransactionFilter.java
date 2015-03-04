@@ -17,6 +17,7 @@
 package org.dbrain.yaw.system.txs.http;
 
 import org.dbrain.yaw.system.txs.TransactionManager;
+import org.dbrain.yaw.txs.Transaction;
 import org.dbrain.yaw.txs.TransactionState;
 
 import javax.inject.Provider;
@@ -35,11 +36,11 @@ import java.io.IOException;
  * Time: 8:18 AM
  * To change this template use File | Settings | File Templates.
  */
-public class TransactionManagerFilter implements Filter {
+public class TransactionFilter implements Filter {
 
     private final Provider<TransactionManager> transactionManager;
 
-    public TransactionManagerFilter( Provider<TransactionManager> transactionManager ) {
+    public TransactionFilter( Provider<TransactionManager> transactionManager ) {
         this.transactionManager = transactionManager;
     }
 
@@ -53,21 +54,14 @@ public class TransactionManagerFilter implements Filter {
                           FilterChain filterChain ) throws IOException, ServletException {
 
         TransactionManager c = transactionManager.get();
-        try {
+        try ( Transaction tx = c.start() ) {
 
             // Filter.
             filterChain.doFilter( servletRequest, servletResponse );
 
-            // Commit
-            if ( c.getStatus() == TransactionState.RUNNING ) {
-                c.commit();
-            }
-
-        } finally {
-
-            // If we'rs still running at this point, we need to rollback.
-            if ( c.getStatus() == TransactionState.RUNNING ) {
-                c.rollback();
+            // When there is no exception, we COMMIT.
+            if ( tx.getStatus() == TransactionState.ACTIVE ) {
+                tx.commit();
             }
 
         }

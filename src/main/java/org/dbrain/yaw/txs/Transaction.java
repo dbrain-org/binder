@@ -23,12 +23,14 @@ package org.dbrain.yaw.txs;
  * Time: 12:02 AM
  * To change this template use File | Settings | File Templates.
  */
-public interface Transaction {
+public interface Transaction extends AutoCloseable {
 
     public TransactionState getStatus();
 
     public void commit() throws TransactionException;
 
     public void rollback() throws TransactionException;
+
+    public void close() throws TransactionException;
 
 }
