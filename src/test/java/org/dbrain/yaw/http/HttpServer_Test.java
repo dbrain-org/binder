@@ -35,7 +35,7 @@ public class HttpServer_Test {
         servletContext.serve( ServletDef.of( "/*", new SampleServlet() ) );
 
         Server server = new HttpServerBuilder() //
-                .listen( 8080 ) //
+                .listen( 40001 ) //
                 .serve( servletContext.build() ) //
                 .build( new JettyServerFactory() );
 

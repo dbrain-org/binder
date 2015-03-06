@@ -120,15 +120,16 @@ public class JettyUtils {
 
         // Initialize javax.websocket layer
         if ( config.getWebSockets().size() > 0 ) {
-            ServerContainer wscontainer = WebSocketServerContainerInitializer.configureContext( servletContextHandler );
+            try {
+                ServerContainer wscontainer = WebSocketServerContainerInitializer.configureContext(
+                        servletContextHandler );
 
-            for ( WebSocketDef wsd : config.getWebSockets() ) {
-                try {
+                for ( WebSocketDef wsd : config.getWebSockets() ) {
                     configureWebSocket( wscontainer, wsd );
-                } catch ( Exception e ) {
-                    throw new RuntimeException( e );
                 }
 
+            } catch ( Exception e ) {
+                throw new RuntimeException( e );
             }
         }
 

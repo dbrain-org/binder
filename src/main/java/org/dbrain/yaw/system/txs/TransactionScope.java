@@ -16,7 +16,6 @@
 
 package org.dbrain.yaw.system.txs;
 
-import com.google.inject.Key;
 import jersey.repackaged.com.google.common.base.Preconditions;
 import org.dbrain.yaw.scope.DisposeException;
 import org.dbrain.yaw.system.scope.ScopeRegistry;
@@ -25,6 +24,7 @@ import org.dbrain.yaw.txs.TransactionException;
 import org.dbrain.yaw.txs.TransactionState;
 import org.dbrain.yaw.txs.exceptions.CommitFailedException;
 import org.dbrain.yaw.txs.exceptions.NoTransactionException;
+import org.glassfish.hk2.api.IterableProvider;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -33,10 +33,17 @@ import java.util.List;
 /**
  * A registry that keeps track of transactional objects.
  */
-public class TransactionRegistry extends ScopeRegistry implements Transaction {
+public class TransactionScope extends ScopeRegistry implements Transaction {
 
+    private final IterableProvider<TransactionMember.Wrapper> factories;
+    private final Runnable                                    afterClose;
     private TransactionState              state   = TransactionState.ACTIVE;
-    private LinkedList<TransactionMember> members = null;
+    private LinkedList<TransactionMember> members = new LinkedList<>();
+
+    public TransactionScope( IterableProvider<TransactionMember.Wrapper> factories, Runnable afterClose ) {
+        this.factories = factories;
+        this.afterClose = afterClose;
+    }
 
     @Override
     public synchronized TransactionState getStatus() {
@@ -44,13 +51,16 @@ public class TransactionRegistry extends ScopeRegistry implements Transaction {
     }
 
     @Override
-    protected synchronized <T> void registerObject( Key<T> key, T value ) {
+    protected synchronized <T> void registerObject( Object key, T value ) {
         super.registerObject( key, value );
         if ( value instanceof TransactionMember ) {
-            if ( members == null ) {
-                members = new LinkedList<>();
-            }
             members.addFirst( (TransactionMember) value );
+        } else if ( value != null ) {
+            for ( TransactionMember.Wrapper factory : factories ) {
+                if ( factory.forClass().isAssignableFrom( value.getClass() ) ) {
+                    members.addFirst( factory.wrap( value ) );
+                }
+            }
         }
     }
 
@@ -73,10 +83,10 @@ public class TransactionRegistry extends ScopeRegistry implements Transaction {
                     member.flush();
                 }
 
-                    while ( commitIdx < totalToCommit ) {
-                        memberToCommit.get( commitIdx ).commit();
-                        commitIdx++;
-                    }
+                while ( commitIdx < totalToCommit ) {
+                    memberToCommit.get( commitIdx ).commit();
+                    commitIdx++;
+                }
             } catch ( Throwable t ) {
                 error = t;
             }
@@ -114,7 +124,7 @@ public class TransactionRegistry extends ScopeRegistry implements Transaction {
             throw new NoTransactionException();
         }
         if ( members != null ) {
-            rollback( members, 0);
+            rollback( members, 0 );
         }
         state = TransactionState.ROLLBACK;
     }
@@ -127,6 +137,9 @@ public class TransactionRegistry extends ScopeRegistry implements Transaction {
             }
         } finally {
             super.close();
+            if ( afterClose != null ) {
+                afterClose.run();
+            }
         }
     }
 }

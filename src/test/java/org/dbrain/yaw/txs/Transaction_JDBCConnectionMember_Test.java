@@ -16,12 +16,11 @@
 
 package org.dbrain.yaw.txs;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import org.dbrain.yaw.system.modules.JdbcConnectionModule;
-import org.dbrain.yaw.system.modules.TransactionModule;
-import org.dbrain.yaw.txs.artifacts.MemberA;
+import org.dbrain.yaw.App;
+import org.dbrain.yaw.system.modules.JdbcConnectionBinder;
+import org.dbrain.yaw.system.txs.TransactionManager;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Test;
 
 import javax.inject.Provider;
@@ -29,41 +28,58 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
+import static org.junit.Assert.assertNotEquals;
 /**
  * Test generic transaction scenarios.
  */
 public class Transaction_JDBCConnectionMember_Test {
 
-    @Test
-    public void testSingleMemberCommit() throws Exception {
 
-        Provider<Connection> unscoped = () -> {
+    @Test
+    public void testSingleMember() throws Exception {
+
+        Provider<Connection> provider1 = () -> {
             try {
-                return DriverManager.getConnection( "jdbc:h2:mem:test", "", "" );
-            } catch( Exception e ) {
+                return DriverManager.getConnection( "jdbc:h2:mem:prov1", "", "" );
+            } catch ( Exception e ) {
                 throw new IllegalStateException( e );
             }
         };
 
-        Injector injector = Guice.createInjector( new TransactionModule(), new JdbcConnectionModule( MemberA.class, unscoped ) );
-        TransactionControl txctl = injector.getInstance( TransactionControl.class );
+        Provider<Connection> provider2 = () -> {
+            try {
+                return DriverManager.getConnection( "jdbc:h2:mem:prov2", "", "" );
+            } catch ( Exception e ) {
+                throw new IllegalStateException( e );
+            }
+        };
 
-        try ( Transaction tx = txctl.start() ) {
 
-            // start transaction by requiring a transactional scoped member.
-            Connection connection = injector.getInstance( Key.get( Connection.class, MemberA.class ) );
-            assertNotNull( connection );
-            assertEquals( connection, injector.getInstance( Key.get( Connection.class, MemberA.class ) ) );
-            assertEquals( tx.getStatus(), TransactionState.ACTIVE );
+        App app = new App();
 
-            // Commit transaction.
+        TransactionControl txCtrl = app.getInstance( TransactionControl.class );
+        TransactionManager manager = app.getInstance( TransactionManager.class );
+
+        assertEquals( txCtrl, manager );
+
+        ServiceLocatorUtilities.bind( app.getInstance( ServiceLocator.class ),
+                                      new JdbcConnectionBinder( "prov1", provider1 ) );
+
+        ServiceLocatorUtilities.bind( app.getInstance( ServiceLocator.class ),
+                                      new JdbcConnectionBinder( "prov2", provider2 ) );
+
+        try ( Transaction tx = txCtrl.start() ) {
+            assertEquals( TransactionState.ACTIVE, tx.getStatus() );
+
+            Connection connection1 = app.getInstance( Connection.class, "prov1" );
+            Connection connection2 = app.getInstance( Connection.class, "prov2" );
+
+            assertNotEquals( connection1, connection2 );
             tx.commit();
-            assertEquals( tx.getStatus(), TransactionState.COMMIT );
 
         }
 
+        app.close();
     }
 
 }

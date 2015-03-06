@@ -16,7 +16,6 @@
 
 package org.dbrain.yaw.system.scope;
 
-import com.google.inject.Key;
 import com.google.inject.Provider;
 import org.dbrain.yaw.scope.DisposeException;
 
@@ -32,12 +31,12 @@ import java.util.Map;
  */
 public class ScopeRegistry implements AutoCloseable {
 
-    private Map<Key<?>, Object> managedObjects;
+    private Map<Object, Object> managedObjects;
 
     /**
      * Called when a new object is registered.
      */
-    protected <T> void registerObject( Key<T> key, T value ) {
+    protected <T> void registerObject( Object key, T value ) {
         if ( managedObjects == null ) {
             managedObjects = new HashMap<>();
         }
@@ -47,13 +46,24 @@ public class ScopeRegistry implements AutoCloseable {
     /**
      * Retrieve an object from the scope registry.
      */
-    public synchronized <T> T get( Key<T> key, Provider<T> unscopedProvider ) {
+    public synchronized <T> T get( Object key, Provider<T> unscopedProvider ) {
         if ( managedObjects != null && managedObjects.containsKey( key ) ) {
             return (T) managedObjects.get( key );
         } else {
             T value = unscopedProvider.get();
             registerObject( key, value );
             return value;
+        }
+    }
+
+    /**
+     * Validate that an object is defined within a scope.
+     */
+    public synchronized boolean contains( Object key ) {
+        if ( managedObjects != null && managedObjects.containsKey( key ) ) {
+            return managedObjects.containsKey( key );
+        } else {
+            return false;
         }
     }
 

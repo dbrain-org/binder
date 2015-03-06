@@ -30,7 +30,7 @@ import org.dbrain.yaw.txs.TransactionControl;
  */
 public class TransactionModule implements Module {
 
-    private TransactionManager manager = new TransactionManager();
+    private TransactionManager manager = null;//new TransactionManager();
 
     @Override
     public void configure( Binder binder ) {

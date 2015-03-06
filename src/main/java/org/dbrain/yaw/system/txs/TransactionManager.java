@@ -16,12 +16,14 @@
 
 package org.dbrain.yaw.system.txs;
 
-import com.google.inject.Key;
 import com.google.inject.Provider;
 import org.dbrain.yaw.txs.Transaction;
 import org.dbrain.yaw.txs.TransactionControl;
 import org.dbrain.yaw.txs.exceptions.NoTransactionException;
 import org.dbrain.yaw.txs.exceptions.TransactionAlreadyStartedException;
+import org.glassfish.hk2.api.IterableProvider;
+
+import javax.inject.Inject;
 
 /**
  * Implementation of the transaction control interface as well as provide a registry for the transaction
@@ -29,18 +31,34 @@ import org.dbrain.yaw.txs.exceptions.TransactionAlreadyStartedException;
  */
 public class TransactionManager implements TransactionControl {
 
-    private ThreadLocal<TransactionRegistry> transaction = new ThreadLocal<>();
+    private final IterableProvider<TransactionMember.Wrapper> memberFactories;
+    private final ThreadLocal<TransactionScope> transaction = new ThreadLocal<>();
+
+
+    @Inject
+    public TransactionManager( IterableProvider<TransactionMember.Wrapper> memberFactory ) {
+        this.memberFactories = memberFactory;
+    }
 
     /**
      * Get or provision an instance of the service identified by the instance of Key.
      */
-    public <T> T get( Key<T> key, Provider<T> unscopedProvider ) {
-        TransactionRegistry tx = transaction.get();
+    public <T> T get( Object key, Provider<T> unscopedProvider ) {
+        TransactionScope tx = transaction.get();
         if ( tx == null ) {
             throw new NoTransactionException();
         }
         return tx.get( key, unscopedProvider );
     }
+
+    public boolean contains( Object key ) {
+        TransactionScope tx = transaction.get();
+        if ( tx == null ) {
+            return false;
+        }
+        return tx.contains( key );
+    }
+
 
     @Override
     public Transaction current() {
@@ -49,9 +67,9 @@ public class TransactionManager implements TransactionControl {
 
     @Override
     public Transaction start() {
-        TransactionRegistry tx = transaction.get();
+        TransactionScope tx = transaction.get();
         if ( tx == null ) {
-            tx = new TransactionRegistry();
+            tx = new TransactionScope( memberFactories, () -> transaction.set( null ) );
             transaction.set( tx );
         } else {
             throw new TransactionAlreadyStartedException();

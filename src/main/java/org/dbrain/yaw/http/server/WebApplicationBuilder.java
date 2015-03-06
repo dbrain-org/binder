@@ -46,7 +46,10 @@ public class WebApplicationBuilder {
                 rc.register( o );
             }
         }
-        return new ServletContainer( rc );
+        ServletContainer servletContainer = new ServletContainer( rc );
+
+        servletContainer.getApplicationHandler().getServiceLocator();
+        return servletContainer;
     }
 
 }

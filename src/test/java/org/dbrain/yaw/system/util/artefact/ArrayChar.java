@@ -14,21 +14,14 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.txs.exceptions;
+package org.dbrain.yaw.system.util.artefact;
 
-import org.dbrain.yaw.txs.TransactionException;
+import java.lang.annotation.Retention;
 
-/**
- * Created with IntelliJ IDEA.
- * User: epoitras
- * Date: 16/07/13
- * Time: 11:25 PM
- * To change this template use File | Settings | File Templates.
- */
-public class NoTransactionException extends TransactionException {
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-    public NoTransactionException() {
-        super( "No active transaction." );
-    }
+@Retention(RUNTIME)
+public @interface ArrayChar {
 
+    char[] value();
 }

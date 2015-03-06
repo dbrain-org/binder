@@ -29,4 +29,13 @@ public interface TransactionMember {
 
     public void rollback() throws TransactionException;
 
+    /**
+     * Created by epoitras on 3/5/15.
+     */
+    interface Wrapper<T> {
+
+        Class<T> forClass();
+
+        TransactionMember wrap( T instance );
+    }
 }

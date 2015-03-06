@@ -14,21 +14,28 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.txs.exceptions;
-
-import org.dbrain.yaw.txs.TransactionException;
+package org.dbrain.yaw.guice;
 
 /**
- * Created with IntelliJ IDEA.
- * User: epoitras
- * Date: 16/07/13
- * Time: 11:25 PM
- * To change this template use File | Settings | File Templates.
+ * Created by epoitras on 3/4/15.
  */
-public class NoTransactionException extends TransactionException {
+public interface KeyQualifier {
 
-    public NoTransactionException() {
-        super( "No active transaction." );
+
+    public static class NameQualifier implements KeyQualifier {
+
+        private final String name;
+
+        public NameQualifier( String name ) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
     }
+
+
 
 }

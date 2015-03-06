@@ -14,21 +14,31 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.txs.exceptions;
+package org.dbrain.yaw;
 
-import org.dbrain.yaw.txs.TransactionException;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Created with IntelliJ IDEA.
- * User: epoitras
- * Date: 16/07/13
- * Time: 11:25 PM
- * To change this template use File | Settings | File Templates.
+ * Created by epoitras on 3/4/15.
  */
-public class NoTransactionException extends TransactionException {
+public class App_Test {
 
-    public NoTransactionException() {
-        super( "No active transaction." );
+    @Test
+    public void testBasicCreation() throws Exception {
+
+        App app = new App();
+
+        ServiceLocator locator = app.getInstance( ServiceLocator.class );
+        Assert.assertNotNull( locator );
+
+    }
+
+    @Test(expected = NullPointerException.class )
+    public void testInstanceNotFound() throws Exception {
+        App app = new App(  );
+        app.getInstance( App_Test.class );
     }
 
 }

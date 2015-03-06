@@ -14,21 +14,17 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.txs.exceptions;
-
-import org.dbrain.yaw.txs.TransactionException;
+package org.dbrain.yaw.directory;
 
 /**
- * Created with IntelliJ IDEA.
- * User: epoitras
- * Date: 16/07/13
- * Time: 11:25 PM
- * To change this template use File | Settings | File Templates.
+ * Service Locator interface.
  */
-public class NoTransactionException extends TransactionException {
+public interface ServiceLocator {
 
-    public NoTransactionException() {
-        super( "No active transaction." );
-    }
+    /**
+     * @return The instance of the service class.
+     * @throws java.lang.NullPointerException If the service is not available.
+     */
+    <T> T getInstance( Class<T> serviceClass );
 
 }

@@ -20,7 +20,7 @@ import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import org.dbrain.yaw.scope.TransactionScoped;
-import org.dbrain.yaw.system.txs.jdbc.ConnectionToMemberAdapter;
+import org.dbrain.yaw.system.txs.jdbc.JdbcConnectionWrapper;
 
 import javax.inject.Provider;
 import java.lang.annotation.Annotation;
@@ -43,17 +43,17 @@ public class JdbcConnectionModule implements Module {
     @Override
     public void configure( Binder binder ) {
         Key<Connection> connectionKey = Key.get( Connection.class, qualifier );
-        Key<ConnectionToMemberAdapter> connectionAdapterKey = Key.get( ConnectionToMemberAdapter.class, qualifier );
-        Provider<ConnectionToMemberAdapter> connectionAdapterProvider = binder.getProvider( connectionAdapterKey );
+        Key<JdbcConnectionWrapper.ConnectionToMemberAdapter> connectionAdapterKey = Key.get( JdbcConnectionWrapper.ConnectionToMemberAdapter.class, qualifier );
+        Provider<JdbcConnectionWrapper.ConnectionToMemberAdapter> connectionAdapterProvider = binder.getProvider( connectionAdapterKey );
 
 
         binder.bind( connectionAdapterKey ) //
-                .toProvider( () -> new ConnectionToMemberAdapter( unscopedConnectionProvider.get() ) ) //
+                .toProvider( () -> new JdbcConnectionWrapper.ConnectionToMemberAdapter( unscopedConnectionProvider.get() ) ) //
                 .in( TransactionScoped.class );
 
-        binder.bind( connectionKey ) //
-                .toProvider( () -> connectionAdapterProvider.get().getConnection() ) //
-                .in( TransactionScoped.class );
+//        binder.bind( connectionKey ) //
+//                .toProvider( () -> connectionAdapterProvider.get().getConnection() ) //
+//                .in( TransactionScoped.class );
 
     }
 }

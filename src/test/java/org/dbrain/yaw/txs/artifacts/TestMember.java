@@ -16,20 +16,31 @@
 
 package org.dbrain.yaw.txs.artifacts;
 
+import org.dbrain.yaw.scope.TransactionScoped;
 import org.dbrain.yaw.system.txs.TransactionMember;
 import org.dbrain.yaw.txs.TransactionException;
+import org.glassfish.hk2.api.PerThread;
 
+import javax.inject.Inject;
 import java.io.PrintWriter;
 
 /**
  * Created by epoitras on 3/2/15.
  */
+@TransactionScoped
 public class TestMember implements TransactionMember {
 
     private final PrintWriter printWriter;
     private final String name;
     private boolean failOnFlush = false;
     private boolean failOnCommit = false;
+
+    @Inject
+    public TestMember() {
+        this( new PrintWriter( System.out ), "TestMember" );
+    }
+
+
 
 
     public TestMember( PrintWriter printWriter, String name ) {
