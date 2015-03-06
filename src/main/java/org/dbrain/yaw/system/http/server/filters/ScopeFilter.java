@@ -16,8 +16,8 @@
 
 package org.dbrain.yaw.system.http.server.filters;
 
-import org.dbrain.yaw.system.modules.ScopeModule;
 import org.dbrain.yaw.system.http.server.HttpContext;
+import org.dbrain.yaw.system.modules.ScopeModule;
 import org.dbrain.yaw.system.scope.ScopeRegistry;
 import org.dbrain.yaw.system.scope.ScopeRegistryProvider;
 

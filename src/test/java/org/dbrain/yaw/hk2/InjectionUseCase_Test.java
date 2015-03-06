@@ -16,46 +16,82 @@
 
 package org.dbrain.yaw.hk2;
 
-import com.fasterxml.jackson.databind.module.SimpleSerializers;
+import org.dbrain.yaw.App;
+import org.dbrain.yaw.system.util.AnnotationBuilder;
+import org.dbrain.yaw.txs.artifacts.MemberA;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.DynamicConfigurationService;
-import org.glassfish.hk2.api.ServiceHandle;
 import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.hk2.api.ServiceLocatorFactory;
 import org.glassfish.hk2.utilities.BuilderHelper;
-import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Assert;
 import org.junit.Test;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.List;
 
 /**
  * Created by epoitras on 3/4/15.
  */
 public class InjectionUseCase_Test {
 
+    public static class TestInjection {
+
+        @Inject
+        public SimpleService service1;
+
+        @Inject
+        public SimpleService service1_1;
+
+        @Inject
+        public SimpleService service1_2;
+
+
+        @Inject
+        @Named( "toto" )
+        public SimpleService service2;
+
+    }
 
 
     @Test
     public void testBasicUseCase() throws Exception {
 
-        ServiceLocator sl = ServiceLocatorFactory.getInstance().create( "default" );
+        try ( App app = new App() ) {
+            ServiceLocator sl = app.getInstance( ServiceLocator.class );
 
-        ServiceLocatorUtilities.addClasses( sl, SimpleService.class );
-//        DynamicConfigurationService dcs = sl.getService( DynamicConfigurationService.class );
-//        DynamicConfiguration dc = dcs.createDynamicConfiguration();
-//        dc.bind( BuilderHelper.activeLink( SimpleService.class ).in( Singleton.class ).build() );
-//        dc.commit();
+            DynamicConfiguration dc = sl.getService( DynamicConfigurationService.class ).createDynamicConfiguration();
 
-        for ( int i = 0; i < 10000; i++ ) {
-            SimpleService test = sl.getService( SimpleService.class );
-        }
-        List<ServiceHandle<SimpleService>> handles = sl.getAllServiceHandles( SimpleService.class );
+            dc.bind( BuilderHelper.activeLink( SimpleService.class )  //
+                             .named( "toto" )                     //
+                             .to( SimpleService.class )            //
+                             .build() );
 
-        for ( ServiceHandle<SimpleService> handle : handles ) {
-            SimpleService service = handle.getService();
+
+            dc.bind( BuilderHelper.activeLink( SimpleService.class ) //
+                             .to( SimpleService.class )          //
+                             .in( Singleton.class ) //
+                             .build() );
+
+            dc.bind( BuilderHelper.activeLink( SimpleService.class )   //
+                             .named( "toto" )                      //
+                             .qualifiedBy( AnnotationBuilder.of( MemberA.class ) ) //
+                             .to( SimpleService.class )                             //
+                             .build() );
+            dc.commit();
+
+
+            Assert.assertEquals( 1, sl.getAllServices( SimpleService.class, AnnotationBuilder.of( MemberA.class ) ).size() );
+            Assert.assertEquals( 2,
+                                 sl.getAllServices( SimpleService.class,
+                                                    AnnotationBuilder.of( Named.class, "toto" ) ).size() );
+            Assert.assertEquals( 3, sl.getAllServices( SimpleService.class ).size() );
+
+            TestInjection ti = sl.createAndInitialize( TestInjection.class );
+            Assert.assertNotNull( ti.service1 );
+            Assert.assertNotNull( ti.service2 );
+
+
         }
     }
 

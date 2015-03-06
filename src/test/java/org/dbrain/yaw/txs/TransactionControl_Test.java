@@ -17,11 +17,9 @@
 package org.dbrain.yaw.txs;
 
 import org.dbrain.yaw.App;
-import org.dbrain.yaw.system.modules.TransactionBinder;
 import org.dbrain.yaw.system.txs.TransactionManager;
 import org.dbrain.yaw.txs.artifacts.TestMember;
 import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.hk2.internal.PerThreadContext;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Assert;
 import org.junit.Test;

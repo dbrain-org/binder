@@ -14,17 +14,9 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.directory;
+package org.dbrain.yaw.system.config;
 
 /**
- * Service Locator interface.
+ * Created by epoitras on 3/6/15.
  */
-public interface ServiceLocator {
-
-    /**
-     * @return The instance of the service class.
-     * @throws java.lang.NullPointerException If the service is not available.
-     */
-    <T> T getInstance( Class<T> serviceClass );
-
-}
+public interface Configurator {}

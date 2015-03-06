@@ -16,21 +16,19 @@
 
 package org.dbrain.yaw;
 
-import org.dbrain.yaw.directory.ServiceLocator;
+import org.dbrain.yaw.system.config.Configurator;
 import org.dbrain.yaw.system.modules.TransactionBinder;
-import org.dbrain.yaw.system.txs.TransactionManager;
-import org.glassfish.hk2.api.ServiceHandle;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 
-import java.util.List;
+import java.lang.annotation.Annotation;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Created by epoitras on 3/4/15.
  */
-public class App implements ServiceLocator, AutoCloseable {
+public class App implements AutoCloseable {
 
     private static final ServiceLocatorFactory serviceLocatorFactory = ServiceLocatorFactory.getInstance();
 
@@ -44,6 +42,7 @@ public class App implements ServiceLocator, AutoCloseable {
     public App( String name ) {
         this.name = name;
         this.delegate = serviceLocatorFactory.create( name );
+        ServiceLocatorUtilities.addOneConstant( delegate, this, name );
         ServiceLocatorUtilities.bind( delegate, new TransactionBinder() );
     }
 
@@ -54,15 +53,30 @@ public class App implements ServiceLocator, AutoCloseable {
         return name;
     }
 
+    /**
+     * Start the configuration of a new component.
+     */
+    public <T extends Configurator> T configure( Class<T> configuratorClass ) {
+         return delegate.create( configuratorClass );
+    }
+
+
     public <T> T getInstance( Class<T> serviceClass ) {
-        List<ServiceHandle<T>> result = delegate.getAllServiceHandles( serviceClass );
+        T result = delegate.getService( serviceClass );
         Objects.requireNonNull( result,
                                 "Service of class " + serviceClass.getName() + " is not found in application " + getName() + "." );
-        return result.get(0).getService();
+        return result;
     }
 
     public <T> T getInstance( Class<T> serviceClass, String name ) {
         T result = delegate.getService( serviceClass, name );
+        Objects.requireNonNull( result,
+                                "Service of class " + serviceClass.getName() + " is not found in application " + getName() + "." );
+        return result;
+    }
+
+    public <T> T getInstance( Class<T> serviceClass, Annotation qualifiers ) {
+        T result = delegate.getService( serviceClass, qualifiers );
         Objects.requireNonNull( result,
                                 "Service of class " + serviceClass.getName() + " is not found in application " + getName() + "." );
         return result;

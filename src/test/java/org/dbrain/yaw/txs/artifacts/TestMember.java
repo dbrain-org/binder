@@ -19,7 +19,6 @@ package org.dbrain.yaw.txs.artifacts;
 import org.dbrain.yaw.scope.TransactionScoped;
 import org.dbrain.yaw.system.txs.TransactionMember;
 import org.dbrain.yaw.txs.TransactionException;
-import org.glassfish.hk2.api.PerThread;
 
 import javax.inject.Inject;
 import java.io.PrintWriter;

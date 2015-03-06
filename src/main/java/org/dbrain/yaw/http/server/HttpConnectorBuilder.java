@@ -16,11 +16,7 @@
 
 package org.dbrain.yaw.http.server;
 
-import org.dbrain.yaw.http.server.defs.ConnectorDef;
 import org.dbrain.yaw.http.server.defs.HttpConnectorDef;
-import org.dbrain.yaw.http.server.defs.HttpsConnectorDef;
-
-import java.net.URI;
 
 /**
  * Created with IntelliJ IDEA.
