@@ -19,6 +19,7 @@ package org.dbrain.yaw.jdbc;
 import org.dbrain.yaw.scope.TransactionScoped;
 import org.dbrain.yaw.system.config.BaseQualifiedConfigurator;
 import org.dbrain.yaw.system.config.Factories;
+import org.glassfish.hk2.api.Factory;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -80,9 +81,24 @@ public class JdbcDatasource extends BaseQualifiedConfigurator<JdbcDatasource> {
             ScopedBindingBuilder<DataSource> ds = bind( dataSource )
                     .to( DataSource.class );
 
-            ServiceBindingBuilder<Connection> connection = bindFactory( Factories.of( connectionProvider ) );
+            ServiceBindingBuilder<Connection> connection = bindFactory( new Factory<Connection>() {
+
+                @TransactionScoped
+                @Override
+                public Connection provide() {
+                    return connectionProvider.get();
+                }
+
+                @Override
+                public void dispose( Connection instance ) {
+                    try {
+                        instance.close();
+                    } catch ( Exception e ) {
+                        throw new IllegalStateException( e );
+                    }
+                }
+            } );
             connection.to( Connection.class );
-            connection.in( TransactionScoped.class );
             for ( Annotation q : getQualifiers() ) {
                 ds.qualifiedBy( q );
                 connection.qualifiedBy( q );

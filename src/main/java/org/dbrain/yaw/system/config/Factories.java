@@ -38,6 +38,14 @@ public class Factories {
 
            @Override
            public void dispose( T instance ) {
+               if ( instance instanceof AutoCloseable ) {
+                   try {
+                       ( (AutoCloseable) instance ).close();
+                   } catch ( Exception e ) {
+                       throw new IllegalStateException( e );
+                   }
+
+               }
 
            }
        };

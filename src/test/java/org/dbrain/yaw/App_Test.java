@@ -17,6 +17,7 @@
 package org.dbrain.yaw;
 
 import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,18 +27,19 @@ import org.junit.Test;
 public class App_Test {
 
     @Test
-    public void testBasicCreation() throws Exception {
+    public void testBasi6cCreation() throws Exception {
 
         App app = new App();
 
         ServiceLocator locator = app.getInstance( ServiceLocator.class );
         Assert.assertNotNull( locator );
+        ServiceLocatorUtilities.dumpAllDescriptors( locator );
 
     }
 
     @Test(expected = NullPointerException.class )
     public void testInstanceNotFound() throws Exception {
-        App app = new App(  );
+        App app = new App();
         app.getInstance( App_Test.class );
     }
 

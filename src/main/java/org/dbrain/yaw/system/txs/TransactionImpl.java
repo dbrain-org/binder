@@ -17,14 +17,14 @@
 package org.dbrain.yaw.system.txs;
 
 import jersey.repackaged.com.google.common.base.Preconditions;
-import org.dbrain.yaw.scope.DisposeException;
-import org.dbrain.yaw.system.scope.ScopeRegistry;
+import org.dbrain.yaw.system.lifecycle.ContextMap;
 import org.dbrain.yaw.txs.Transaction;
 import org.dbrain.yaw.txs.TransactionException;
 import org.dbrain.yaw.txs.TransactionState;
 import org.dbrain.yaw.txs.exceptions.CommitFailedException;
 import org.dbrain.yaw.txs.exceptions.NoTransactionException;
-import org.glassfish.hk2.api.IterableProvider;
+import org.glassfish.hk2.api.ActiveDescriptor;
+import org.glassfish.hk2.api.ServiceLocator;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -33,14 +33,15 @@ import java.util.List;
 /**
  * A registry that keeps track of transactional objects.
  */
-public class TransactionScope extends ScopeRegistry implements Transaction {
+public class TransactionImpl extends ContextMap implements Transaction {
 
-    private final IterableProvider<TransactionMember.Wrapper> factories;
-    private final Runnable                                    afterClose;
+    private final Iterable<TransactionMember.Wrapper> factories;
+    private final Runnable                            afterClose;
     private TransactionState              state   = TransactionState.ACTIVE;
     private LinkedList<TransactionMember> members = new LinkedList<>();
 
-    public TransactionScope( IterableProvider<TransactionMember.Wrapper> factories, Runnable afterClose ) {
+    public TransactionImpl( ServiceLocator sl, Iterable<TransactionMember.Wrapper> factories, Runnable afterClose ) {
+        super( sl );
         this.factories = factories;
         this.afterClose = afterClose;
     }
@@ -51,8 +52,8 @@ public class TransactionScope extends ScopeRegistry implements Transaction {
     }
 
     @Override
-    protected synchronized <T> void registerObject( Object key, T value ) {
-        super.registerObject( key, value );
+    protected synchronized void addEntry( ActiveDescriptor key, Object value ) {
+        super.addEntry( key, value );
         if ( value instanceof TransactionMember ) {
             members.addFirst( (TransactionMember) value );
         } else if ( value != null ) {
@@ -130,7 +131,7 @@ public class TransactionScope extends ScopeRegistry implements Transaction {
     }
 
     @Override
-    public synchronized void close() throws DisposeException {
+    public synchronized void close() {
         try {
             if ( state == TransactionState.ACTIVE ) {
                 rollback();
@@ -142,4 +143,5 @@ public class TransactionScope extends ScopeRegistry implements Transaction {
             }
         }
     }
+
 }

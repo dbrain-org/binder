@@ -19,10 +19,15 @@ package org.dbrain.yaw.jdbc;
 import org.dbrain.yaw.scope.TransactionScoped;
 import org.dbrain.yaw.system.config.BaseQualifiedConfigurator;
 import org.dbrain.yaw.system.config.Factories;
+import org.dbrain.yaw.system.lifecycle.YawClassAnalyzer;
+import org.glassfish.hk2.api.Factory;
 import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.api.TypeLiteral;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.hk2.utilities.binding.ScopedBindingBuilder;
 import org.glassfish.hk2.utilities.binding.ServiceBindingBuilder;
+import org.jvnet.hk2.annotations.Contract;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -71,15 +76,33 @@ public class JdbcDriverDatasource extends BaseQualifiedConfigurator<JdbcDriverDa
 
     }
 
+    private class ConnectionFactory implements Factory<Connection> {
+
+        @TransactionScoped
+        @Override
+        public Connection provide() {
+            return connectionProvider.get();
+        }
+
+        @Override
+        public void dispose( Connection instance ) {
+            try {
+                instance.close();
+            } catch ( Exception e ) {
+                throw new IllegalStateException( e );
+            }
+        }
+    }
 
     private class Binder extends AbstractBinder {
 
 
         @Override
         public void configure() {
-            ServiceBindingBuilder<Connection> b = bindFactory( Factories.of( connectionProvider ) );
+            ServiceBindingBuilder<Connection> b = bindFactory( new ConnectionFactory() );
             b.to( Connection.class );
             b.in( TransactionScoped.class );
+            b.analyzeWith( YawClassAnalyzer.YAW_ANALYZER_NAME );
             for ( Annotation q : getQualifiers() ) {
                 b.qualifiedBy( q );
             }

@@ -19,6 +19,8 @@ package org.dbrain.yaw.txs;
 import org.dbrain.yaw.App;
 import org.dbrain.yaw.jdbc.JdbcDatasource;
 import org.dbrain.yaw.jdbc.JdbcDriverDatasource;
+import org.glassfish.hk2.api.ServiceHandle;
+import org.glassfish.hk2.api.ServiceLocator;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.Test;
 
@@ -70,13 +72,17 @@ public class Transaction_JDBCConnectionMember_Test {
         try ( Transaction tx = txCtrl.start() ) {
             assertEquals( TransactionState.ACTIVE, tx.getStatus() );
 
-            Connection connection1 = app.getInstance( Connection.class, "prov1" );
-            Connection connection2 = app.getInstance( Connection.class, "prov2" );
-            Connection connection3 = app.getInstance( Connection.class, "prov3" );
+            Connection connection1_1 = app.getInstance( Connection.class, "prov1" );
+            Connection connection1_2 = app.getInstance( Connection.class, "prov1" );
+            Connection connection2_1 = app.getInstance( Connection.class, "prov2" );
+            Connection connection3_1 = app.getInstance( Connection.class, "prov3" );
 
-            assertNotEquals( connection1, connection2 );
-            assertNotEquals( connection1, connection3 );
-            assertNotEquals( connection2, connection3 );
+            ServiceHandle sh = app.getInstance( ServiceLocator.class ).getServiceHandle( Connection.class, "prov1" );
+
+            assertEquals( connection1_1, connection1_2 );
+            assertNotEquals( connection1_1, connection2_1 );
+            assertNotEquals( connection1_1, connection3_1 );
+            assertNotEquals( connection2_1, connection3_1 );
             tx.commit();
 
         }

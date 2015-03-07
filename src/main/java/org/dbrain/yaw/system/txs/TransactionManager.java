@@ -16,49 +16,37 @@
 
 package org.dbrain.yaw.system.txs;
 
-import com.google.inject.Provider;
+import org.dbrain.yaw.scope.TransactionScoped;
 import org.dbrain.yaw.txs.Transaction;
 import org.dbrain.yaw.txs.TransactionControl;
+import org.dbrain.yaw.txs.TransactionState;
 import org.dbrain.yaw.txs.exceptions.NoTransactionException;
 import org.dbrain.yaw.txs.exceptions.TransactionAlreadyStartedException;
+import org.glassfish.hk2.api.ActiveDescriptor;
+import org.glassfish.hk2.api.Context;
 import org.glassfish.hk2.api.IterableProvider;
+import org.glassfish.hk2.api.ServiceHandle;
+import org.glassfish.hk2.api.ServiceLocator;
 
 import javax.inject.Inject;
+import java.lang.annotation.Annotation;
 
 /**
  * Implementation of the transaction control interface as well as provide a registry for the transaction
  * scope.
  */
-public class TransactionManager implements TransactionControl {
+public class TransactionManager implements TransactionControl, Context<TransactionScoped> {
 
-    private final IterableProvider<TransactionMember.Wrapper> memberFactories;
-    private final ThreadLocal<TransactionScope> transaction = new ThreadLocal<>();
+    private final ServiceLocator sl;
+    private final Iterable<TransactionMember.Wrapper> memberFactories;
+    private final ThreadLocal<TransactionImpl> transaction = new ThreadLocal<>();
 
 
     @Inject
-    public TransactionManager( IterableProvider<TransactionMember.Wrapper> memberFactory ) {
+    public TransactionManager( ServiceLocator sl, IterableProvider<TransactionMember.Wrapper> memberFactory ) {
+        this.sl = sl;
         this.memberFactories = memberFactory;
     }
-
-    /**
-     * Get or provision an instance of the service identified by the instance of Key.
-     */
-    public <T> T get( Object key, Provider<T> unscopedProvider ) {
-        TransactionScope tx = transaction.get();
-        if ( tx == null ) {
-            throw new NoTransactionException();
-        }
-        return tx.get( key, unscopedProvider );
-    }
-
-    public boolean contains( Object key ) {
-        TransactionScope tx = transaction.get();
-        if ( tx == null ) {
-            return false;
-        }
-        return tx.contains( key );
-    }
-
 
     @Override
     public Transaction current() {
@@ -67,9 +55,9 @@ public class TransactionManager implements TransactionControl {
 
     @Override
     public Transaction start() {
-        TransactionScope tx = transaction.get();
+        TransactionImpl tx = transaction.get();
         if ( tx == null ) {
-            tx = new TransactionScope( memberFactories, () -> transaction.set( null ) );
+            tx = new TransactionImpl( sl, memberFactories, () -> transaction.set( null ) );
             transaction.set( tx );
         } else {
             throw new TransactionAlreadyStartedException();
@@ -77,5 +65,55 @@ public class TransactionManager implements TransactionControl {
         return tx;
     }
 
+    @Override
+    public Class<? extends Annotation> getScope() {
+        return TransactionScoped.class;
+    }
+
+    /**
+     * Get or provision an instance of the service identified by the instance of Key.
+     */
+    @Override
+    public <T> T findOrCreate( ActiveDescriptor<T> key, ServiceHandle<?> root ) {
+        TransactionImpl tx = transaction.get();
+        if ( tx == null ) {
+            throw new NoTransactionException();
+        }
+        return tx.findOrCreate( key, root );
+    }
+
+
+    @Override
+    public boolean containsKey( ActiveDescriptor key ) {
+        TransactionImpl tx = transaction.get();
+        if ( tx == null ) {
+            throw new NoTransactionException();
+        }
+        return tx.containsKey( key );
+    }
+
+    @Override
+    public void destroyOne( ActiveDescriptor<?> key ) {
+        TransactionImpl tx = transaction.get();
+        if ( tx == null ) {
+            throw new NoTransactionException();
+        }
+        tx.destroyOne( key );
+    }
+
+    @Override
+    public boolean supportsNullCreation() {
+        return false;
+    }
+
+    @Override
+    public boolean isActive() {
+        TransactionImpl tx = transaction.get();
+        return tx != null && tx.getStatus() == TransactionState.ACTIVE;
+    }
+
+    @Override
+    public void shutdown() {
+    }
 
 }
