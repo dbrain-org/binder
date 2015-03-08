@@ -57,7 +57,7 @@ public class TransactionManager implements TransactionControl, Context<Transacti
     public Transaction start() {
         TransactionImpl tx = transaction.get();
         if ( tx == null ) {
-            tx = new TransactionImpl( sl, memberFactories, () -> transaction.set( null ) );
+            tx = new TransactionImpl( memberFactories, () -> transaction.set( null ) );
             transaction.set( tx );
         } else {
             throw new TransactionAlreadyStartedException();

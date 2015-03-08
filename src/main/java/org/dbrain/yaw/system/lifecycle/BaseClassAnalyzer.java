@@ -30,15 +30,15 @@ import java.util.Set;
 /**
  * Created by epoitras on 3/6/15.
  */
-@Singleton @Named( YawClassAnalyzer.YAW_ANALYZER_NAME )
-public class YawClassAnalyzer implements ClassAnalyzer {
+@Singleton @Named( BaseClassAnalyzer.YAW_ANALYZER_NAME )
+public class BaseClassAnalyzer implements ClassAnalyzer {
 
     public static final String YAW_ANALYZER_NAME = "YAW_ANALYZER";
 
     private ClassAnalyzer defaultAnalyzer;
 
     @Inject
-    public YawClassAnalyzer( @Named( DEFAULT_IMPLEMENTATION_NAME ) ClassAnalyzer defaultAnalyzer ) {
+    public BaseClassAnalyzer( @Named( DEFAULT_IMPLEMENTATION_NAME ) ClassAnalyzer defaultAnalyzer ) {
         this.defaultAnalyzer = defaultAnalyzer;
     }
 

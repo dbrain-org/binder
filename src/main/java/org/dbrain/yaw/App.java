@@ -17,7 +17,7 @@
 package org.dbrain.yaw;
 
 import org.dbrain.yaw.system.config.Configurator;
-import org.dbrain.yaw.system.lifecycle.YawClassAnalyzer;
+import org.dbrain.yaw.system.lifecycle.BaseClassAnalyzer;
 import org.dbrain.yaw.system.txs.TransactionBinder;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -43,8 +43,8 @@ public class App implements AutoCloseable {
     public App( String name ) {
         this.name = name;
         this.delegate = serviceLocatorFactory.create( name );
-        ServiceLocatorUtilities.addClasses( delegate, YawClassAnalyzer.class );
-        delegate.setDefaultClassAnalyzerName( YawClassAnalyzer.YAW_ANALYZER_NAME );
+        ServiceLocatorUtilities.addClasses( delegate, BaseClassAnalyzer.class );
+        delegate.setDefaultClassAnalyzerName( BaseClassAnalyzer.YAW_ANALYZER_NAME );
         ServiceLocatorUtilities.enablePerThreadScope( delegate );
         ServiceLocatorUtilities.addOneConstant( delegate, this, name );
         ServiceLocatorUtilities.bind( delegate, new TransactionBinder() );

@@ -17,14 +17,13 @@
 package org.dbrain.yaw.system.txs;
 
 import jersey.repackaged.com.google.common.base.Preconditions;
-import org.dbrain.yaw.system.lifecycle.ContextMap;
+import org.dbrain.yaw.system.lifecycle.BaseContextMap;
 import org.dbrain.yaw.txs.Transaction;
 import org.dbrain.yaw.txs.TransactionException;
 import org.dbrain.yaw.txs.TransactionState;
 import org.dbrain.yaw.txs.exceptions.CommitFailedException;
 import org.dbrain.yaw.txs.exceptions.NoTransactionException;
 import org.glassfish.hk2.api.ActiveDescriptor;
-import org.glassfish.hk2.api.ServiceLocator;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -33,15 +32,15 @@ import java.util.List;
 /**
  * A registry that keeps track of transactional objects.
  */
-public class TransactionImpl extends ContextMap implements Transaction {
+public class TransactionImpl extends BaseContextMap implements Transaction {
 
     private final Iterable<TransactionMember.Wrapper> factories;
     private final Runnable                            afterClose;
     private TransactionState              state   = TransactionState.ACTIVE;
     private LinkedList<TransactionMember> members = new LinkedList<>();
 
-    public TransactionImpl( ServiceLocator sl, Iterable<TransactionMember.Wrapper> factories, Runnable afterClose ) {
-        super( sl );
+    public TransactionImpl( Iterable<TransactionMember.Wrapper> factories, Runnable afterClose ) {
+        super();
         this.factories = factories;
         this.afterClose = afterClose;
     }
@@ -112,9 +111,10 @@ public class TransactionImpl extends ContextMap implements Transaction {
         while ( idx < total ) {
             try {
                 members.get( idx ).rollback();
-                idx++;
             } catch ( Throwable t ) {
                 // TODO Fix this.
+            } finally {
+                idx++;
             }
         }
     }

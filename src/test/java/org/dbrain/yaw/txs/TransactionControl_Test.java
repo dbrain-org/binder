@@ -17,12 +17,12 @@
 package org.dbrain.yaw.txs;
 
 import org.dbrain.yaw.App;
-import org.dbrain.yaw.system.txs.TransactionManager;
-import org.dbrain.yaw.txs.artifacts.TestMember;
-import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
+import org.dbrain.yaw.txs.impl.TestMember;
+import org.dbrain.yaw.txs.features.TestMemberFeature;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.PrintWriter;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,17 +31,21 @@ import static org.junit.Assert.assertEquals;
  */
 public class TransactionControl_Test {
 
+    public App buildApp() {
+        App app = new App();
+
+        app.configure( TestMemberFeature.class ).named( "Test" ).printWriter( new PrintWriter( System.out ) ).commit();
+
+        return app;
+    }
+
 
     @Test
     public void testAcquire() throws Exception {
-        App app = new App();
+
+        App app = buildApp();
 
         TransactionControl txCtrl = app.getInstance( TransactionControl.class );
-        TransactionManager manager = app.getInstance( TransactionManager.class );
-
-        assertEquals( txCtrl, manager );
-
-        ServiceLocatorUtilities.addClasses( app.getInstance( ServiceLocator.class ), TestMember.class );
 
         TestMember tm1;
         TestMember tm2;

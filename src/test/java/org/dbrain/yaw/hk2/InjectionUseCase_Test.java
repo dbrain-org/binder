@@ -17,8 +17,8 @@
 package org.dbrain.yaw.hk2;
 
 import org.dbrain.yaw.App;
+import org.dbrain.yaw.hk2.impl.SomeQualifier;
 import org.dbrain.yaw.system.util.AnnotationBuilder;
-import org.dbrain.yaw.txs.artifacts.MemberA;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.DynamicConfigurationService;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -75,13 +75,13 @@ public class InjectionUseCase_Test {
 
             dc.bind( BuilderHelper.activeLink( SimpleService.class )   //
                              .named( "toto" )                      //
-                             .qualifiedBy( AnnotationBuilder.of( MemberA.class ) ) //
+                             .qualifiedBy( AnnotationBuilder.of( SomeQualifier.class ) ) //
                              .to( SimpleService.class )                             //
                              .build() );
             dc.commit();
 
 
-            Assert.assertEquals( 1, sl.getAllServices( SimpleService.class, AnnotationBuilder.of( MemberA.class ) ).size() );
+            Assert.assertEquals( 1, sl.getAllServices( SimpleService.class, AnnotationBuilder.of( SomeQualifier.class ) ).size() );
             Assert.assertEquals( 2,
                                  sl.getAllServices( SimpleService.class,
                                                     AnnotationBuilder.of( Named.class, "toto" ) ).size() );

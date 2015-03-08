@@ -14,13 +14,12 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.txs.artifacts;
+package org.dbrain.yaw.txs.impl;
 
 import org.dbrain.yaw.scope.TransactionScoped;
 import org.dbrain.yaw.system.txs.TransactionMember;
 import org.dbrain.yaw.txs.TransactionException;
 
-import javax.inject.Inject;
 import java.io.PrintWriter;
 
 /**
@@ -31,30 +30,14 @@ public class TestMember implements TransactionMember {
 
     private final PrintWriter printWriter;
     private final String name;
-    private boolean failOnFlush = false;
-    private boolean failOnCommit = false;
+    private final boolean failOnFlush;
+    private final boolean failOnCommit;
 
-    @Inject
-    public TestMember() {
-        this( new PrintWriter( System.out ), "TestMember" );
-    }
-
-
-
-
-    public TestMember( PrintWriter printWriter, String name ) {
+    public TestMember( PrintWriter printWriter, String name, boolean failOnFlush, boolean failOnCommit ) {
         this.printWriter = printWriter;
         this.name = name;
-    }
-
-    public TestMember failOnFlush() {
-        this.failOnFlush = true;
-        return this;
-    }
-
-    public TestMember failOnCommit() {
-        this.failOnCommit = true;
-        return this;
+        this.failOnFlush = failOnFlush;
+        this.failOnCommit = failOnCommit;
     }
 
     @Override

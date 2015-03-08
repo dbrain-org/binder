@@ -19,7 +19,6 @@ package org.dbrain.yaw.system.lifecycle;
 import org.dbrain.yaw.scope.DisposeException;
 import org.glassfish.hk2.api.ActiveDescriptor;
 import org.glassfish.hk2.api.ServiceHandle;
-import org.glassfish.hk2.api.ServiceLocator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,13 +30,11 @@ import java.util.Map;
  *
  * All AutoCloseable instance registered to the scope will be close at the same time as this scope.
  */
-public abstract class ContextMap implements AutoCloseable {
+public abstract class BaseContextMap implements AutoCloseable {
 
-    private final ServiceLocator serviceLocator;
     private final Map<ActiveDescriptor, Object> managedObjects = new HashMap<>();
 
-    public ContextMap( ServiceLocator serviceLocator ) {
-        this.serviceLocator = serviceLocator;
+    public BaseContextMap() {
     }
 
     /**

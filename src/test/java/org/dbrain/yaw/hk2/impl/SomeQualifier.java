@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.txs.artifacts;
+package org.dbrain.yaw.hk2.impl;
 
 import javax.inject.Qualifier;
 import java.lang.annotation.Retention;
@@ -25,4 +25,4 @@ import java.lang.annotation.RetentionPolicy;
 */
 @Qualifier
 @Retention( RetentionPolicy.RUNTIME )
-public @interface MemberD {}
+public @interface SomeQualifier {}
