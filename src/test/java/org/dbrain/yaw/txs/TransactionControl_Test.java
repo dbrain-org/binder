@@ -16,7 +16,7 @@
 
 package org.dbrain.yaw.txs;
 
-import org.dbrain.yaw.App;
+import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.txs.impl.TestMember;
 import org.dbrain.yaw.txs.features.TestMemberFeature;
 import org.junit.Assert;
@@ -34,7 +34,7 @@ public class TransactionControl_Test {
     public App buildApp() {
         App app = new App();
 
-        app.configure( TestMemberFeature.class ).named( "Test" ).printWriter( new PrintWriter( System.out ) ).commit();
+        app.addFeature( TestMemberFeature.class ).named( "Test" ).printWriter( new PrintWriter( System.out ) ).commit();
 
         return app;
     }

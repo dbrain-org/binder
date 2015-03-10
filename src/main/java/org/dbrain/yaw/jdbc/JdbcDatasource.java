@@ -17,7 +17,7 @@
 package org.dbrain.yaw.jdbc;
 
 import org.dbrain.yaw.scope.TransactionScoped;
-import org.dbrain.yaw.system.config.BaseQualifiedConfigurator;
+import org.dbrain.yaw.system.app.BaseQualifiedFeature;
 import org.glassfish.hk2.api.Factory;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -35,7 +35,7 @@ import java.sql.Connection;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class JdbcDatasource extends BaseQualifiedConfigurator<JdbcDatasource> {
+public class JdbcDatasource extends BaseQualifiedFeature<JdbcDatasource> {
 
     private final ServiceLocator app;
 

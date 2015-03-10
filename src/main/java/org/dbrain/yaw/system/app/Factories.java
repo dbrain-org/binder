@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.system.config;
+package org.dbrain.yaw.system.app;
 
 import org.glassfish.hk2.api.Factory;
 

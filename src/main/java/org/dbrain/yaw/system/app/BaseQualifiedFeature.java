@@ -14,8 +14,9 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.system.config;
+package org.dbrain.yaw.system.app;
 
+import org.dbrain.yaw.app.Feature;
 import org.dbrain.yaw.system.util.AnnotationBuilder;
 
 import javax.inject.Named;
@@ -26,7 +27,7 @@ import java.util.List;
 /**
  * Created by epoitras on 3/6/15.
  */
-public abstract class BaseQualifiedConfigurator<T extends BaseQualifiedConfigurator> implements Configurator {
+public abstract class BaseQualifiedFeature<T extends BaseQualifiedFeature> implements Feature {
 
     private List<Annotation> qualifiers = new ArrayList<>();
 

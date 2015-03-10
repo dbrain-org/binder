@@ -14,9 +14,9 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw;
+package org.dbrain.yaw.app;
 
-import org.dbrain.yaw.system.config.Configurator;
+import org.dbrain.yaw.directory.ServiceDirectory;
 import org.dbrain.yaw.system.lifecycle.BaseClassAnalyzer;
 import org.dbrain.yaw.system.txs.TransactionBinder;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
@@ -29,7 +29,7 @@ import java.util.UUID;
 /**
  * Created by epoitras on 3/4/15.
  */
-public class App implements AutoCloseable {
+public class App implements AutoCloseable, ServiceDirectory {
 
     private static final ServiceLocatorFactory serviceLocatorFactory = ServiceLocatorFactory.getInstance();
 
@@ -59,10 +59,17 @@ public class App implements AutoCloseable {
     }
 
     /**
-     * Start the configuration of a new component.
+     * Start the configuration of a new feature.
      */
-    public <T extends Configurator> T configure( Class<T> configuratorClass ) {
-         return delegate.create( configuratorClass );
+    public <T extends Feature> T addFeature( Class<T> featureClass ) {
+         return delegate.create( featureClass );
+    }
+
+    /**
+     * @return Start a new session of configuration.
+     */
+    public ConfigurationSession configure() {
+        return delegate.create( ConfigurationSession.class );
     }
 
 

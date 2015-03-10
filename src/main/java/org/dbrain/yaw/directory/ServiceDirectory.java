@@ -14,9 +14,15 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.system.config;
+package org.dbrain.yaw.directory;
 
 /**
- * Created by epoitras on 3/6/15.
+ * Created by epoitras on 3/8/15.
  */
-public interface Configurator {}
+public interface ServiceDirectory {
+
+    <T> T getInstance( Class<T> serviceClass );
+
+    <T> T getInstance( Class<T> serviceClass, String name );
+
+}

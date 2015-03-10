@@ -16,7 +16,7 @@
 
 package org.dbrain.yaw.txs;
 
-import org.dbrain.yaw.App;
+import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.jdbc.JdbcDatasource;
 import org.dbrain.yaw.jdbc.JdbcDriverDatasource;
 import org.glassfish.hk2.api.ServiceHandle;
@@ -41,7 +41,7 @@ public class Transaction_JDBCConnectionMember_Test {
 
         App app = new App();
 
-        app.configure( JdbcDriverDatasource.class ) //
+        app.addFeature( JdbcDriverDatasource.class ) //
                 .named( "prov1" ) //
                 .withProvider( () -> {
                     try {
@@ -51,7 +51,7 @@ public class Transaction_JDBCConnectionMember_Test {
                     }
                 } ).commit();
 
-        app.configure( JdbcDriverDatasource.class ) //
+        app.addFeature( JdbcDriverDatasource.class ) //
                 .named( "prov2" ) //
                 .withProvider( () -> {
                     try {
@@ -61,7 +61,7 @@ public class Transaction_JDBCConnectionMember_Test {
                     }
                 } ).commit();
 
-        app.configure( JdbcDatasource.class ) //
+        app.addFeature( JdbcDatasource.class ) //
                   .named( "prov3" )//
                   .dataSource( JdbcConnectionPool.create( "jdbc:h2:mem:prov3", "sa", "sa") ) //
                   .commit();

@@ -16,6 +16,7 @@
 
 package org.dbrain.yaw;
 
+import org.dbrain.yaw.app.App;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Assert;

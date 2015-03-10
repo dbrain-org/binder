@@ -17,7 +17,7 @@
 package org.dbrain.yaw.txs.features;
 
 import org.dbrain.yaw.scope.TransactionScoped;
-import org.dbrain.yaw.system.config.BaseQualifiedConfigurator;
+import org.dbrain.yaw.system.app.BaseQualifiedFeature;
 import org.dbrain.yaw.system.txs.TransactionMember;
 import org.dbrain.yaw.txs.impl.TestMember;
 import org.glassfish.hk2.api.Factory;
@@ -34,7 +34,7 @@ import java.lang.annotation.Annotation;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class TestMemberFeature extends BaseQualifiedConfigurator<TestMemberFeature> {
+public class TestMemberFeature extends BaseQualifiedFeature<TestMemberFeature> {
 
     private final ServiceLocator app;
 

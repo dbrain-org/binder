@@ -16,7 +16,7 @@
 
 package org.dbrain.yaw.txs;
 
-import org.dbrain.yaw.App;
+import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.txs.impl.TestMember;
 import org.dbrain.yaw.txs.exceptions.CommitFailedException;
 import org.dbrain.yaw.txs.features.TestMemberFeature;
@@ -38,10 +38,10 @@ public class Transaction_Test {
         App app = new App();
 
         PrintWriter pw = new PrintWriter( writer );
-        app.configure( TestMemberFeature.class ).named( "MemberA" ).printWriter( pw ).commit();
-        app.configure( TestMemberFeature.class ).named( "MemberB" ).printWriter( pw ).commit();
-        app.configure( TestMemberFeature.class ).named( "MemberC" ).printWriter( pw ).failOnFlush().commit();
-        app.configure( TestMemberFeature.class ).named( "MemberD" ).printWriter( pw ).failOnCommit().commit();
+        app.addFeature( TestMemberFeature.class ).named( "MemberA" ).printWriter( pw ).commit();
+        app.addFeature( TestMemberFeature.class ).named( "MemberB" ).printWriter( pw ).commit();
+        app.addFeature( TestMemberFeature.class ).named( "MemberC" ).printWriter( pw ).failOnFlush().commit();
+        app.addFeature( TestMemberFeature.class ).named( "MemberD" ).printWriter( pw ).failOnCommit().commit();
 
         return app;
     }

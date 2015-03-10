@@ -16,7 +16,7 @@
 
 package org.dbrain.yaw.hk2;
 
-import org.dbrain.yaw.App;
+import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.hk2.impl.SomeQualifier;
 import org.dbrain.yaw.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.DynamicConfiguration;
