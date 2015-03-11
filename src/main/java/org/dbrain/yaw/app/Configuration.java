@@ -16,19 +16,16 @@
 
 package org.dbrain.yaw.app;
 
-import org.dbrain.yaw.directory.ServiceDirectory;
-
-import java.util.function.Consumer;
-
 /**
  * Created by epoitras on 3/10/15.
  */
-public interface App extends AutoCloseable, ServiceDirectory {
+public interface Configuration {
 
-    String getName();
+    <T> ServiceConfigurator<T> addService( Class<T> implementationClass );
 
-    void configure( Consumer<Configuration> session );
+    <T> ServiceConfigurator<T> addService( T implementation );
 
-    Configuration startConfiguration();
+    <T extends Feature> T addFeature( Class<T> feature );
 
+    void commit();
 }

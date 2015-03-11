@@ -17,6 +17,8 @@
 package org.dbrain.yaw.txs;
 
 import org.dbrain.yaw.app.App;
+import org.dbrain.yaw.app.Configuration;
+import org.dbrain.yaw.system.app.AppImpl;
 import org.dbrain.yaw.txs.impl.TestMember;
 import org.dbrain.yaw.txs.exceptions.CommitFailedException;
 import org.dbrain.yaw.txs.features.TestMemberFeature;
@@ -35,13 +37,15 @@ import static org.junit.Assert.assertNotNull;
 public class Transaction_Test {
 
     private App buildApp( Writer writer ) {
-        App app = new App();
+        App app = new AppImpl();
 
         PrintWriter pw = new PrintWriter( writer );
-        app.addFeature( TestMemberFeature.class ).named( "MemberA" ).printWriter( pw ).commit();
-        app.addFeature( TestMemberFeature.class ).named( "MemberB" ).printWriter( pw ).commit();
-        app.addFeature( TestMemberFeature.class ).named( "MemberC" ).printWriter( pw ).failOnFlush().commit();
-        app.addFeature( TestMemberFeature.class ).named( "MemberD" ).printWriter( pw ).failOnCommit().commit();
+        app.configure( ( Configuration config ) -> {
+            config.addFeature( TestMemberFeature.class ).named( "MemberA" ).printWriter( pw ).commit();
+            config.addFeature( TestMemberFeature.class ).named( "MemberB" ).printWriter( pw ).commit();
+            config.addFeature( TestMemberFeature.class ).named( "MemberC" ).printWriter( pw ).failOnFlush().commit();
+            config.addFeature( TestMemberFeature.class ).named( "MemberD" ).printWriter( pw ).failOnCommit().commit();
+        } );
 
         return app;
     }

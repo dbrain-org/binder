@@ -17,8 +17,12 @@
 package org.dbrain.yaw.txs;
 
 import org.dbrain.yaw.app.App;
-import org.dbrain.yaw.txs.impl.TestMember;
+import org.dbrain.yaw.app.Configuration;
+import org.dbrain.yaw.system.app.AppImpl;
 import org.dbrain.yaw.txs.features.TestMemberFeature;
+import org.dbrain.yaw.txs.impl.TestMember;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,9 +36,15 @@ import static org.junit.Assert.assertEquals;
 public class TransactionControl_Test {
 
     public App buildApp() {
-        App app = new App();
+        App app = new AppImpl();
 
-        app.addFeature( TestMemberFeature.class ).named( "Test" ).printWriter( new PrintWriter( System.out ) ).commit();
+        app.configure( ( Configuration config ) -> {
+            config.addFeature( TestMemberFeature.class ) //
+                    .named( "Test" ) //
+                    .printWriter( new PrintWriter( System.out ) ) //
+                    .commit();
+        } );
+
 
         return app;
     }
@@ -44,6 +54,7 @@ public class TransactionControl_Test {
     public void testAcquire() throws Exception {
 
         App app = buildApp();
+        ServiceLocatorUtilities.dumpAllDescriptors( app.getInstance( ServiceLocator.class ) );
 
         TransactionControl txCtrl = app.getInstance( TransactionControl.class );
 

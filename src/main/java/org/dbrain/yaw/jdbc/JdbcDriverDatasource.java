@@ -16,18 +16,12 @@
 
 package org.dbrain.yaw.jdbc;
 
+import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.scope.TransactionScoped;
 import org.dbrain.yaw.system.app.BaseQualifiedFeature;
-import org.dbrain.yaw.system.lifecycle.BaseClassAnalyzer;
-import org.glassfish.hk2.api.Factory;
-import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.hk2.utilities.binding.ServiceBindingBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.lang.annotation.Annotation;
 import java.sql.Connection;
 
 
@@ -36,13 +30,13 @@ import java.sql.Connection;
  */
 public class JdbcDriverDatasource extends BaseQualifiedFeature<JdbcDriverDatasource> {
 
-    private final ServiceLocator serviceLocator;
+    private final Configuration config;
 
     private Provider<Connection> connectionProvider;
 
     @Inject
-    public JdbcDriverDatasource( ServiceLocator serviceLocator ) {
-        this.serviceLocator = serviceLocator;
+    public JdbcDriverDatasource( Configuration config ) {
+        this.config = config;
     }
 
     @Override
@@ -56,52 +50,14 @@ public class JdbcDriverDatasource extends BaseQualifiedFeature<JdbcDriverDatasou
     }
 
     public void commit() {
-        //        DynamicConfiguration dc = ServiceLocatorUtilities.createDynamicConfiguration( serviceLocator );
-        //
-        //        AbstractActiveDescriptor<Factory<Connection>> key = BuilderHelper.createConstantDescriptor( Factories.of( connectionProvider ) );
-        //        key.addContractType( Connection.class );
-        //        key.setScopeAnnotation( TransactionScoped.class );
-        //        for( Annotation a: getQualifiers()) {
-        //            key.addQualifierAnnotation( a );
-        //        }
-        //        dc.bind( key );
-        //
-        //        dc.commit();
 
-        ServiceLocatorUtilities.bind( serviceLocator, new Binder() );
+        config.addService( Connection.class ) //
+                .providedBy( connectionProvider::get ) //
+                .qualifiedBy( getQualifiers() ) //
+                .servicing( Connection.class ) //
+                .in( TransactionScoped.class ) //
+                .complete();
 
     }
 
-    private class ConnectionFactory implements Factory<Connection> {
-
-        @TransactionScoped
-        @Override
-        public Connection provide() {
-            return connectionProvider.get();
-        }
-
-        @Override
-        public void dispose( Connection instance ) {
-            try {
-                instance.close();
-            } catch ( Exception e ) {
-                throw new IllegalStateException( e );
-            }
-        }
-    }
-
-    private class Binder extends AbstractBinder {
-
-
-        @Override
-        public void configure() {
-            ServiceBindingBuilder<Connection> b = bindFactory( new ConnectionFactory() );
-            b.to( Connection.class );
-            b.in( TransactionScoped.class );
-            b.analyzeWith( BaseClassAnalyzer.YAW_ANALYZER_NAME );
-            for ( Annotation q : getQualifiers() ) {
-                b.qualifiedBy( q );
-            }
-        }
-    }
 }

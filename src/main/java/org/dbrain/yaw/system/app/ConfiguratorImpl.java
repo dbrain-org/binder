@@ -14,8 +14,12 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.app;
+package org.dbrain.yaw.system.app;
 
+import org.dbrain.yaw.app.App;
+import org.dbrain.yaw.app.ServiceConfigurator;
+import org.dbrain.yaw.app.ServiceDisposer;
+import org.dbrain.yaw.app.ServiceProvider;
 import org.dbrain.yaw.system.lifecycle.BaseClassAnalyzer;
 import org.dbrain.yaw.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.ClassAnalyzer;
@@ -23,7 +27,6 @@ import org.glassfish.hk2.api.Descriptor;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.Factory;
 import org.glassfish.hk2.api.FactoryDescriptors;
-import org.glassfish.hk2.api.HK2Loader;
 import org.glassfish.hk2.api.MultiException;
 import org.glassfish.hk2.api.PerLookup;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -33,19 +36,17 @@ import org.glassfish.hk2.utilities.BuilderHelper;
 import org.glassfish.hk2.utilities.reflection.ParameterizedTypeImpl;
 
 import javax.inject.Named;
-import javax.inject.Provider;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * Service configuration description.
  */
-public class Configurator<T> {
+public class ConfiguratorImpl<T> implements ServiceConfigurator<T> {
 
     private final App app;
 
@@ -53,9 +54,9 @@ public class Configurator<T> {
 
     private final Class<T> serviceProviderClass;
 
-    private Provider<T> provider;
+    private ServiceProvider<T> provider;
 
-    private Consumer<T> disposer;
+    private ServiceDisposer<T> disposer;
 
     private final Set<Type> services = new HashSet<>();
 
@@ -63,7 +64,7 @@ public class Configurator<T> {
 
     private Class<? extends Annotation> scope;
 
-    public Configurator( App app, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
+    public ConfiguratorImpl( App app, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
         Objects.requireNonNull( app );
         Objects.requireNonNull( dc );
         Objects.requireNonNull( serviceProviderClass );
@@ -72,96 +73,117 @@ public class Configurator<T> {
         this.serviceProviderClass = serviceProviderClass;
     }
 
-    public Configurator<T> providedBy( final T instance ) {
+    @Override
+    public ServiceConfigurator<T> providedBy( final T instance ) {
         return providedBy( () -> instance );
     }
 
-    public Configurator<T> providedBy( Provider<T> provider ) {
+    @Override
+    public ServiceConfigurator<T> providedBy( ServiceProvider<T> provider ) {
         this.provider = provider;
         return this;
     }
 
-    public Configurator<T> disposedBy( Consumer<T> disposer ) {
+    @Override
+    public ServiceConfigurator<T> disposedBy( ServiceDisposer<T> disposer ) {
         this.disposer = disposer;
         return this;
     }
 
-    public Configurator<T> servicing( Type type ) {
+    @Override
+    public ServiceConfigurator<T> servicing( Type type ) {
         services.add( type );
         return this;
     }
 
-    public Configurator<T> qualifiedBy( Annotation quality ) {
+    @Override
+    public ServiceConfigurator<T> qualifiedBy( Annotation quality ) {
         qualifiers.add( quality );
         return this;
     }
 
-    public Configurator<T> named( String name ) {
+    @Override
+    public ServiceConfigurator<T> qualifiedBy( Iterable<Annotation> qualities ) {
+        for ( Annotation quality : qualities ) {
+            qualifiedBy( quality );
+        }
+        return this;
+    }
+
+    @Override
+    public ServiceConfigurator<T> named( String name ) {
         return qualifiedBy( AnnotationBuilder.from( Named.class ).value( name ).build() );
     }
 
-    public Configurator<T> in( Class<? extends Annotation> scope ) {
+    @Override
+    public ServiceConfigurator<T> in( Class<? extends Annotation> scope ) {
         this.scope = scope;
         return this;
     }
 
 
-    public void done() {
+    @Override
+    public void complete() {
+        try {
+            // Retrieve an instance of the service locator.
+            ServiceLocator sl = app.getInstance( ServiceLocator.class );
 
-        // Retrieve an instance of the service locator.
-        ServiceLocator sl = app.getInstance( ServiceLocator.class );
-
-        Factory factory = null;
-        if ( provider != null || disposer != null ) {
-            Provider<T> finalProvider = provider;
-            Consumer<T> finalDisposer = disposer;
-            if ( finalProvider == null ) {
-                finalProvider = new StandardProvider<>( app, serviceProviderClass );
+            Factory factory = null;
+            if ( provider != null || disposer != null ) {
+                ServiceProvider<T> finalProvider = provider;
+                ServiceDisposer<T> finalDisposer = disposer;
+                if ( finalProvider == null ) {
+                    finalProvider = new StandardProvider<>( app, serviceProviderClass );
+                }
+                if ( finalDisposer == null ) {
+                    finalDisposer = new StandardDisposer<>( app, serviceProviderClass );
+                }
+                factory = new StandardFactory<>( finalProvider, finalDisposer );
             }
-            if ( finalDisposer == null ) {
-                finalDisposer = new StandardDisposer<>( app, serviceProviderClass );
-            }
-            factory = new StandardFactory<>( finalProvider, finalDisposer );
-        }
 
-        AbstractActiveDescriptor factoryDescriptor;
-        ActiveDescriptorBuilder serviceDescriptor;
-        if ( factory != null ) {
-            factoryDescriptor = BuilderHelper.createConstantDescriptor( factory );
-            factoryDescriptor.addContractType( Factory.class );
-            serviceDescriptor = BuilderHelper.activeLink( factory.getClass() );
-        } else {
-            factoryDescriptor = null;
-            serviceDescriptor = BuilderHelper.activeLink( serviceProviderClass );
-        }
-
-        for ( Type service : services ) {
-            serviceDescriptor.to( service );
-            if ( factoryDescriptor != null ) {
-                factoryDescriptor.addContractType( new ParameterizedTypeImpl( Factory.class, service ) );
+            AbstractActiveDescriptor factoryDescriptor;
+            ActiveDescriptorBuilder serviceDescriptor;
+            if ( factory != null ) {
+                factoryDescriptor = BuilderHelper.createConstantDescriptor( factory );
+                factoryDescriptor.addContractType( Factory.class );
+                serviceDescriptor = BuilderHelper.activeLink( factory.getClass() );
+            } else {
+                factoryDescriptor = null;
+                serviceDescriptor = BuilderHelper.activeLink( serviceProviderClass );
             }
-        }
-        for ( Annotation a : qualifiers ) {
-            serviceDescriptor.qualifiedBy( a );
-            if ( factoryDescriptor != null ) {
-                factoryDescriptor.addQualifierAnnotation( a );
-            }
-        }
-        if ( scope != null ) {
-            serviceDescriptor.in( scope );
-        } else {
-            serviceDescriptor.in( PerLookup.class );
-        }
 
-        if ( factoryDescriptor == null ) {
-            dc.bind( sl.reifyDescriptor( serviceDescriptor.build() ) );
-        } else {
-            dc.bind( new FactoryDescriptorsImpl( factoryDescriptor, serviceDescriptor.buildProvideMethod() ) );
+            for ( Type service : services ) {
+                serviceDescriptor.to( service );
+                if ( factoryDescriptor != null ) {
+                    factoryDescriptor.addContractType( new ParameterizedTypeImpl( Factory.class, service ) );
+                }
+            }
+            for ( Annotation a : qualifiers ) {
+                serviceDescriptor.qualifiedBy( a );
+                if ( factoryDescriptor != null ) {
+                    factoryDescriptor.addQualifierAnnotation( a );
+                }
+            }
+            if ( scope != null ) {
+                serviceDescriptor.in( scope );
+            } else {
+                serviceDescriptor.in( PerLookup.class );
+            }
+
+            if ( factoryDescriptor == null ) {
+                dc.bind( sl.reifyDescriptor( serviceDescriptor.build() ) );
+            } else {
+                dc.bind( new FactoryDescriptorsImpl( factoryDescriptor, serviceDescriptor.buildProvideMethod() ) );
+            }
+        } catch ( RuntimeException e ) {
+            throw e;
+        } catch ( Exception e ) {
+            throw new MultiException( e );
         }
 
     }
 
-    private static class StandardProvider<T> implements Provider<T> {
+    private static class StandardProvider<T> implements ServiceProvider<T> {
 
         private final ServiceLocator serviceLocator;
         private final Class<T>       implClass;
@@ -177,7 +199,7 @@ public class Configurator<T> {
         }
     }
 
-    private static class StandardDisposer<T> implements Consumer<T> {
+    private static class StandardDisposer<T> implements ServiceDisposer<T> {
 
         private final App      app;
         private final Class<T> implClass;
@@ -188,12 +210,16 @@ public class Configurator<T> {
         }
 
         @Override
-        public void accept( T t ) {
+        public void dispose( T t ) {
             if ( t != null ) {
                 ClassAnalyzer analyzer = app.getInstance( ClassAnalyzer.class, BaseClassAnalyzer.YAW_ANALYZER_NAME );
                 Method disposeMethod = analyzer.getPreDestroyMethod( implClass );
                 try {
-                    disposeMethod.invoke( t );
+                    if ( disposeMethod != null ) {
+                        disposeMethod.invoke( t );
+                    }
+                } catch ( RuntimeException e ) {
+                    throw e;
                 } catch ( Exception e ) {
                     throw new MultiException( e );
                 }
@@ -204,23 +230,35 @@ public class Configurator<T> {
 
     private static class StandardFactory<T> implements Factory<T> {
 
-        private Provider<T> provider;
+        private ServiceProvider<T> provider;
 
-        private Consumer<T> disposer;
+        private ServiceDisposer<T> disposer;
 
-        public StandardFactory( Provider<T> provider, Consumer<T> disposer ) {
+        public StandardFactory( ServiceProvider<T> provider, ServiceDisposer<T> disposer ) {
             this.provider = provider;
             this.disposer = disposer;
         }
 
         @Override
         public T provide() {
-            return provider.get();
+            try {
+                return provider.get();
+            } catch ( RuntimeException e ) {
+                throw e;
+            } catch ( Exception e ) {
+                throw new MultiException( e );
+            }
         }
 
         @Override
         public void dispose( T instance ) {
-            disposer.accept( instance );
+            try {
+                disposer.dispose( instance );
+            } catch ( RuntimeException e ) {
+                throw e;
+            } catch ( Exception e ) {
+                throw new MultiException( e );
+            }
         }
     }
 

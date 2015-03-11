@@ -16,19 +16,13 @@
 
 package org.dbrain.yaw.jdbc;
 
+import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.scope.TransactionScoped;
 import org.dbrain.yaw.system.app.BaseQualifiedFeature;
-import org.glassfish.hk2.api.Factory;
-import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.hk2.utilities.binding.ScopedBindingBuilder;
-import org.glassfish.hk2.utilities.binding.ServiceBindingBuilder;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.inject.Singleton;
 import javax.sql.DataSource;
-import java.lang.annotation.Annotation;
 import java.sql.Connection;
 
 
@@ -37,13 +31,13 @@ import java.sql.Connection;
  */
 public class JdbcDatasource extends BaseQualifiedFeature<JdbcDatasource> {
 
-    private final ServiceLocator app;
+    private final Configuration session;
 
     private DataSource dataSource;
 
     @Inject
-    public JdbcDatasource( ServiceLocator app ) {
-        this.app = app;
+    public JdbcDatasource( Configuration session ) {
+        this.session = session;
     }
 
     @Override
@@ -56,52 +50,22 @@ public class JdbcDatasource extends BaseQualifiedFeature<JdbcDatasource> {
         return this;
     }
 
-    public void commit() {
+    public void complete() {
 
-        ServiceLocatorUtilities.bind( app, new Binder() );
+        session.addService( DataSource.class ) //
+                .providedBy( () -> dataSource ) //
+                .servicing( DataSource.class ) //
+                .qualifiedBy( getQualifiers() ) //
+                .in( Singleton.class )//
+                .complete();
+
+        session.addService( Connection.class ) //
+                .providedBy( () -> dataSource.getConnection() )//
+                .servicing( Connection.class ) //
+                .qualifiedBy( getQualifiers() ) //
+                .in( TransactionScoped.class ) //
+                .complete();
 
     }
 
-
-    private class Binder extends AbstractBinder {
-
-
-        @Override
-        public void configure() {
-
-            Provider<Connection> connectionProvider = () -> {
-                try {
-                    return dataSource.getConnection();
-                } catch ( Exception e ) {
-                    throw new IllegalStateException(  e );
-                }
-            };
-
-            ScopedBindingBuilder<DataSource> ds = bind( dataSource )
-                    .to( DataSource.class );
-
-            ServiceBindingBuilder<Connection> connection = bindFactory( new Factory<Connection>() {
-
-                @Override
-                public Connection provide() {
-                    return connectionProvider.get();
-                }
-
-                @Override
-                public void dispose( Connection instance ) {
-                    try {
-                        instance.close();
-                    } catch ( Exception e ) {
-                        throw new IllegalStateException( e );
-                    }
-                }
-            } );
-            connection.in( TransactionScoped.class );
-            connection.to( Connection.class );
-            for ( Annotation q : getQualifiers() ) {
-                ds.qualifiedBy( q );
-                connection.qualifiedBy( q );
-            }
-        }
-    }
 }

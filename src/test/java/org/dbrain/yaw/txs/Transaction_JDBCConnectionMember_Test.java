@@ -17,10 +17,13 @@
 package org.dbrain.yaw.txs;
 
 import org.dbrain.yaw.app.App;
+import org.dbrain.yaw.app.Configuration;
+import org.dbrain.yaw.system.app.AppImpl;
 import org.dbrain.yaw.jdbc.JdbcDatasource;
 import org.dbrain.yaw.jdbc.JdbcDriverDatasource;
 import org.glassfish.hk2.api.ServiceHandle;
 import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.Test;
 
@@ -39,33 +42,35 @@ public class Transaction_JDBCConnectionMember_Test {
     @Test
     public void testSingleMember() throws Exception {
 
-        App app = new App();
+        App app = new AppImpl();
+        app.configure( ( Configuration config ) -> {
 
-        app.addFeature( JdbcDriverDatasource.class ) //
-                .named( "prov1" ) //
-                .withProvider( () -> {
-                    try {
-                        return DriverManager.getConnection( "jdbc:h2:mem:prov1", "", "" );
-                    } catch ( Exception e ) {
-                        throw new IllegalStateException( e );
-                    }
-                } ).commit();
+            config.addFeature( JdbcDriverDatasource.class ) //
+                    .named( "prov1" ) //
+                    .withProvider( () -> {
+                        try {
+                            return DriverManager.getConnection( "jdbc:h2:mem:prov1", "", "" );
+                        } catch ( Exception e ) {
+                            throw new IllegalStateException( e );
+                        }
+                    } ).commit();
 
-        app.addFeature( JdbcDriverDatasource.class ) //
-                .named( "prov2" ) //
-                .withProvider( () -> {
-                    try {
-                        return DriverManager.getConnection( "jdbc:h2:mem:prov2", "", "" );
-                    } catch ( Exception e ) {
-                        throw new IllegalStateException( e );
-                    }
-                } ).commit();
+            config.addFeature( JdbcDriverDatasource.class ) //
+                    .named( "prov2" ) //
+                    .withProvider( () -> {
+                        try {
+                            return DriverManager.getConnection( "jdbc:h2:mem:prov2", "", "" );
+                        } catch ( Exception e ) {
+                            throw new IllegalStateException( e );
+                        }
+                    } ).commit();
 
-        app.addFeature( JdbcDatasource.class ) //
-                  .named( "prov3" )//
-                  .dataSource( JdbcConnectionPool.create( "jdbc:h2:mem:prov3", "sa", "sa") ) //
-                  .commit();
+            config.addFeature( JdbcDatasource.class ) //
+                    .named( "prov3" )//
+                    .dataSource( JdbcConnectionPool.create( "jdbc:h2:mem:prov3", "sa", "sa" ) ) //
+                    .complete();
 
+        } );
 
         TransactionControl txCtrl = app.getInstance( TransactionControl.class );
 

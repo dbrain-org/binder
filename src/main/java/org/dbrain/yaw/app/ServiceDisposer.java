@@ -16,19 +16,16 @@
 
 package org.dbrain.yaw.app;
 
-import org.dbrain.yaw.directory.ServiceDirectory;
-
-import java.util.function.Consumer;
-
 /**
- * Created by epoitras on 3/10/15.
+ * A disposer that can fail miserably by throwing an exception.
  */
-public interface App extends AutoCloseable, ServiceDirectory {
+@FunctionalInterface
+public interface ServiceDisposer<T> {
 
-    String getName();
-
-    void configure( Consumer<Configuration> session );
-
-    Configuration startConfiguration();
+    /**
+     * @return An instance of the service, or null.
+     * @throws Exception If the dispose failed.
+     */
+    void dispose( T instance ) throws Exception;
 
 }

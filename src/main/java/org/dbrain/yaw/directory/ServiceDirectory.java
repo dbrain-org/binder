@@ -16,6 +16,8 @@
 
 package org.dbrain.yaw.directory;
 
+import java.lang.annotation.Annotation;
+
 /**
  * Created by epoitras on 3/8/15.
  */
@@ -24,5 +26,7 @@ public interface ServiceDirectory {
     <T> T getInstance( Class<T> serviceClass );
 
     <T> T getInstance( Class<T> serviceClass, String name );
+
+    <T> T getInstance( Class<T> serviceClass, Annotation qualifiers );
 
 }

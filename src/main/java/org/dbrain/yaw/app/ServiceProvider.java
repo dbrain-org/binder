@@ -16,19 +16,16 @@
 
 package org.dbrain.yaw.app;
 
-import org.dbrain.yaw.directory.ServiceDirectory;
-
-import java.util.function.Consumer;
-
 /**
- * Created by epoitras on 3/10/15.
+ * A provider that can fail miserably by throwing an exception.
  */
-public interface App extends AutoCloseable, ServiceDirectory {
+@FunctionalInterface
+public interface ServiceProvider<T> {
 
-    String getName();
-
-    void configure( Consumer<Configuration> session );
-
-    Configuration startConfiguration();
+    /**
+     * @return An instance of the service.
+     * @throws Exception If the creation failed.
+     */
+    T get() throws Exception;
 
 }

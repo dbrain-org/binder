@@ -16,19 +16,29 @@
 
 package org.dbrain.yaw.app;
 
-import org.dbrain.yaw.directory.ServiceDirectory;
-
-import java.util.function.Consumer;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
 /**
  * Created by epoitras on 3/10/15.
  */
-public interface App extends AutoCloseable, ServiceDirectory {
+public interface ServiceConfigurator<T> {
 
-    String getName();
+    ServiceConfigurator<T> providedBy( T instance );
 
-    void configure( Consumer<Configuration> session );
+    ServiceConfigurator<T> providedBy( ServiceProvider<T> provider );
 
-    Configuration startConfiguration();
+    ServiceConfigurator<T> disposedBy( ServiceDisposer<T> disposer );
 
+    ServiceConfigurator<T> servicing( Type type );
+
+    ServiceConfigurator<T> qualifiedBy( Annotation quality );
+
+    ServiceConfigurator<T> qualifiedBy( Iterable<Annotation> quality );
+
+    ServiceConfigurator<T> named( String name );
+
+    ServiceConfigurator<T> in( Class<? extends Annotation> scope );
+
+    void complete();
 }

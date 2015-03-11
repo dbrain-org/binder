@@ -16,19 +16,14 @@
 
 package org.dbrain.yaw.txs.features;
 
+import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.scope.TransactionScoped;
 import org.dbrain.yaw.system.app.BaseQualifiedFeature;
 import org.dbrain.yaw.system.txs.TransactionMember;
 import org.dbrain.yaw.txs.impl.TestMember;
-import org.glassfish.hk2.api.Factory;
-import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.hk2.utilities.binding.ScopedBindingBuilder;
 
 import javax.inject.Inject;
 import java.io.PrintWriter;
-import java.lang.annotation.Annotation;
 
 
 /**
@@ -36,17 +31,17 @@ import java.lang.annotation.Annotation;
  */
 public class TestMemberFeature extends BaseQualifiedFeature<TestMemberFeature> {
 
-    private final ServiceLocator app;
+    private final Configuration config;
 
     private PrintWriter pw;
-    private String name;
-    private boolean failOnFlush = false;
+    private String      name;
+    private boolean failOnFlush  = false;
     private boolean failOncommit = false;
 
 
     @Inject
-    public TestMemberFeature( ServiceLocator app ) {
-        this.app = app;
+    public TestMemberFeature( Configuration config ) {
+        this.config = config;
     }
 
     @Override
@@ -76,35 +71,15 @@ public class TestMemberFeature extends BaseQualifiedFeature<TestMemberFeature> {
 
     public void commit() {
 
-        ServiceLocatorUtilities.bind( app, new Binder() );
+        config.addService( TestMember.class ) //
+                .qualifiedBy( getQualifiers() ) //
+                .providedBy( () -> new TestMember( pw, name, failOnFlush, failOncommit ) ) //
+                .servicing( TestMember.class ) //
+                .servicing( TransactionMember.class ) //
+                .in( TransactionScoped.class ) //
+                .complete();
+
 
     }
 
-    public class TestMemberFactory implements Factory<TestMember> {
-
-        @Override
-        public TestMember provide() {
-            return new TestMember( pw, name, failOnFlush, failOncommit );
-        }
-
-        @Override
-        public void dispose( TestMember instance ) {
-        }
-    }
-
-
-    private class Binder extends AbstractBinder {
-
-        @Override
-        public void configure() {
-            ScopedBindingBuilder sbb = bindFactory( new TestMemberFactory() ) //
-                    .to( TestMember.class ) //
-                    .to( TransactionMember.class ) //
-                    .in( TransactionScoped.class );
-
-            for ( Annotation a: getQualifiers() ) {
-                sbb.qualifiedBy( a );
-            }
-        }
-    }
 }

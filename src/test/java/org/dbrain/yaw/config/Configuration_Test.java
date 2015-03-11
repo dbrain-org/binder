@@ -17,7 +17,9 @@
 package org.dbrain.yaw.config;
 
 import org.dbrain.yaw.app.App;
-import org.dbrain.yaw.app.ConfigurationSession;
+import org.dbrain.yaw.system.app.AppImpl;
+import org.dbrain.yaw.app.Configuration;
+import org.dbrain.yaw.system.app.ConfigurationImpl;
 import org.junit.Test;
 
 import javax.inject.Singleton;
@@ -28,15 +30,15 @@ import java.util.Stack;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class ConfigurationSession_Test {
+public class Configuration_Test {
 
     static class TestService1 {}
 
     @Test
     public void testPerLookup() throws Exception {
-        try ( App app = new App() ) {
-            ConfigurationSession session = new ConfigurationSession( app );
-            session.configure( TestService1.class ).servicing( TestService1.class ).done();
+        try ( App app = new AppImpl() ) {
+            Configuration session = new ConfigurationImpl( app );
+            session.addService( TestService1.class ).servicing( TestService1.class ).complete();
             session.commit();
 
             TestService1 ts1_1 = app.getInstance( TestService1.class );
@@ -48,12 +50,12 @@ public class ConfigurationSession_Test {
 
     @Test
     public void testSingletonScoped() throws Exception {
-        try ( App app = new App() ) {
-            ConfigurationSession session = new ConfigurationSession( app );
-            session.configure( TestService1.class ) //
+        try ( App app = new AppImpl() ) {
+            Configuration session = new ConfigurationImpl( app );
+            session.addService( TestService1.class ) //
                     .servicing( TestService1.class ) //
                     .in( Singleton.class ) //
-                    .done();
+                    .complete();
             session.commit();
 
             TestService1 ts1_1 = app.getInstance( TestService1.class );
@@ -66,12 +68,12 @@ public class ConfigurationSession_Test {
     @Test
     public void testServeInstance() throws Exception {
         TestService1 instance = new TestService1();
-        try ( App app = new App() ) {
-            ConfigurationSession session = new ConfigurationSession( app );
-            session.configure( TestService1.class ) //
+        try ( App app = new AppImpl() ) {
+            Configuration session = new ConfigurationImpl( app );
+            session.addService( TestService1.class ) //
                     .providedBy( instance ) //
                     .servicing( TestService1.class ) //
-                    .done();
+                    .complete();
             session.commit();
 
             TestService1 ts1_1 = app.getInstance( TestService1.class );
@@ -91,15 +93,15 @@ public class ConfigurationSession_Test {
         Set<TestService1> disposed = new HashSet<>();
 
         Set<TestService1> comparable = new HashSet<>( sources );
-        try ( App app = new App() ) {
-            ConfigurationSession session = new ConfigurationSession( app );
-            session.configure( TestService1.class ) //
+        try ( App app = new AppImpl() ) {
+            Configuration session = new ConfigurationImpl( app );
+            session.addService( TestService1.class ) //
                     .providedBy( () -> sources.pop() ) //
                     .disposedBy( ( e ) -> disposed.add( e ) ) //
                     .servicing( TestService1.class ) //
                     .named( "test" ) //
                     .in( Singleton.class ) //
-                    .done();
+                    .complete();
             session.commit();
 
             Set<TestService1> provided = new HashSet<>();
@@ -117,14 +119,14 @@ public class ConfigurationSession_Test {
 
         Set<TestService1> provided = new HashSet<>();
         Set<TestService1> disposed = new HashSet<>();
-        try ( App app = new App() ) {
-            ConfigurationSession session = new ConfigurationSession( app );
-            session.configure( TestService1.class ) //
+        try ( App app = new AppImpl() ) {
+            Configuration session = new ConfigurationImpl( app );
+            session.addService( TestService1.class ) //
                     .disposedBy( ( e ) -> disposed.add( e ) ) //
                     .servicing( TestService1.class ) //
                     .named( "test" ) //
                     .in( Singleton.class ) //
-                    .done();
+                    .complete();
             session.commit();
 
             provided.add( app.getInstance( TestService1.class ) );
@@ -134,5 +136,8 @@ public class ConfigurationSession_Test {
         assertEquals( provided, disposed );
 
     }
+
+
+
 
 }

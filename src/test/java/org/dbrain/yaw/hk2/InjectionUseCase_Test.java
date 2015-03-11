@@ -17,6 +17,7 @@
 package org.dbrain.yaw.hk2;
 
 import org.dbrain.yaw.app.App;
+import org.dbrain.yaw.system.app.AppImpl;
 import org.dbrain.yaw.hk2.impl.SomeQualifier;
 import org.dbrain.yaw.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.DynamicConfiguration;
@@ -57,7 +58,7 @@ public class InjectionUseCase_Test {
     @Test
     public void testBasicUseCase() throws Exception {
 
-        try ( App app = new App() ) {
+        try ( App app = new AppImpl() ) {
             ServiceLocator sl = app.getInstance( ServiceLocator.class );
 
             DynamicConfiguration dc = sl.getService( DynamicConfigurationService.class ).createDynamicConfiguration();
