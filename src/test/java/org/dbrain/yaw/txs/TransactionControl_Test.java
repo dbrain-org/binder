@@ -42,7 +42,7 @@ public class TransactionControl_Test {
             config.addFeature( TestMemberFeature.class ) //
                     .named( "Test" ) //
                     .printWriter( new PrintWriter( System.out ) ) //
-                    .commit();
+                    .complete();
         } );
 
 

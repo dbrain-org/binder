@@ -18,7 +18,7 @@ package org.dbrain.yaw.txs.features;
 
 import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.scope.TransactionScoped;
-import org.dbrain.yaw.system.app.BaseQualifiedFeature;
+import org.dbrain.yaw.system.app.QualifiedFeature;
 import org.dbrain.yaw.system.txs.TransactionMember;
 import org.dbrain.yaw.txs.impl.TestMember;
 
@@ -29,7 +29,7 @@ import java.io.PrintWriter;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class TestMemberFeature extends BaseQualifiedFeature<TestMemberFeature> {
+public class TestMemberFeature extends QualifiedFeature<TestMemberFeature> {
 
     private final Configuration config;
 
@@ -69,7 +69,8 @@ public class TestMemberFeature extends BaseQualifiedFeature<TestMemberFeature> {
         return self();
     }
 
-    public void commit() {
+    @Override
+    public void complete() {
 
         config.addService( TestMember.class ) //
                 .qualifiedBy( getQualifiers() ) //

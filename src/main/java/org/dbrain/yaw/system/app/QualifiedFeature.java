@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Created by epoitras on 3/6/15.
  */
-public abstract class BaseQualifiedFeature<T extends BaseQualifiedFeature> implements Feature {
+public abstract class QualifiedFeature<T extends QualifiedFeature> implements Feature {
 
     private List<Annotation> qualifiers = new ArrayList<>();
 

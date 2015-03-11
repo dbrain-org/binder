@@ -41,10 +41,10 @@ public class Transaction_Test {
 
         PrintWriter pw = new PrintWriter( writer );
         app.configure( ( Configuration config ) -> {
-            config.addFeature( TestMemberFeature.class ).named( "MemberA" ).printWriter( pw ).commit();
-            config.addFeature( TestMemberFeature.class ).named( "MemberB" ).printWriter( pw ).commit();
-            config.addFeature( TestMemberFeature.class ).named( "MemberC" ).printWriter( pw ).failOnFlush().commit();
-            config.addFeature( TestMemberFeature.class ).named( "MemberD" ).printWriter( pw ).failOnCommit().commit();
+            config.addFeature( TestMemberFeature.class ).named( "MemberA" ).printWriter( pw ).complete();
+            config.addFeature( TestMemberFeature.class ).named( "MemberB" ).printWriter( pw ).complete();
+            config.addFeature( TestMemberFeature.class ).named( "MemberC" ).printWriter( pw ).failOnFlush().complete();
+            config.addFeature( TestMemberFeature.class ).named( "MemberD" ).printWriter( pw ).failOnCommit().complete();
         } );
 
         return app;

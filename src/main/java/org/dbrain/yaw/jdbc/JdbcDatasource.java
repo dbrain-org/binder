@@ -18,7 +18,7 @@ package org.dbrain.yaw.jdbc;
 
 import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.scope.TransactionScoped;
-import org.dbrain.yaw.system.app.BaseQualifiedFeature;
+import org.dbrain.yaw.system.app.QualifiedFeature;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,7 +29,7 @@ import java.sql.Connection;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class JdbcDatasource extends BaseQualifiedFeature<JdbcDatasource> {
+public class JdbcDatasource extends QualifiedFeature<JdbcDatasource> {
 
     private final Configuration session;
 
@@ -50,6 +50,7 @@ public class JdbcDatasource extends BaseQualifiedFeature<JdbcDatasource> {
         return this;
     }
 
+    @Override
     public void complete() {
 
         session.addService( DataSource.class ) //

@@ -16,7 +16,15 @@
 
 package org.dbrain.yaw.app;
 
+
 /**
- * Created by epoitras on 3/6/15.
+ * A feature is a set of services that works together.
  */
-public interface Feature {}
+public interface Feature {
+
+    /**
+     * Complete the setup of the feature and validate all the previous parameters entered.
+     */
+    void complete();
+
+}

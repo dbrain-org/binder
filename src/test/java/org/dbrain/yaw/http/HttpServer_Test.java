@@ -17,7 +17,7 @@
 package org.dbrain.yaw.http;
 
 import org.dbrain.yaw.http.sample.SampleServlet;
-import org.dbrain.yaw.http.server.HttpServerBuilder;
+import org.dbrain.yaw.http.server.HttpServer;
 import org.dbrain.yaw.http.server.ServletContextBuilder;
 import org.dbrain.yaw.http.server.defs.ServletDef;
 import org.dbrain.yaw.system.jetty.JettyServerFactory;
@@ -34,7 +34,7 @@ public class HttpServer_Test {
         ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
         servletContext.serve( ServletDef.of( "/*", new SampleServlet() ) );
 
-        Server server = new HttpServerBuilder() //
+        Server server = new HttpServer() //
                 .listen( 40001 ) //
                 .serve( servletContext.build() ) //
                 .build( new JettyServerFactory() );

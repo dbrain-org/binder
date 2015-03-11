@@ -18,7 +18,7 @@ package org.dbrain.yaw.jdbc;
 
 import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.scope.TransactionScoped;
-import org.dbrain.yaw.system.app.BaseQualifiedFeature;
+import org.dbrain.yaw.system.app.QualifiedFeature;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -28,7 +28,7 @@ import java.sql.Connection;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class JdbcDriverDatasource extends BaseQualifiedFeature<JdbcDriverDatasource> {
+public class JdbcDriverDatasource extends QualifiedFeature<JdbcDriverDatasource> {
 
     private final Configuration config;
 
@@ -49,7 +49,8 @@ public class JdbcDriverDatasource extends BaseQualifiedFeature<JdbcDriverDatasou
         return this;
     }
 
-    public void commit() {
+    @Override
+    public void complete() {
 
         config.addService( Connection.class ) //
                 .providedBy( connectionProvider::get ) //

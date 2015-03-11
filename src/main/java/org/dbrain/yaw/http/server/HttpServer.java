@@ -16,31 +16,45 @@
 
 package org.dbrain.yaw.http.server;
 
+import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.http.server.defs.ConnectorDef;
 import org.dbrain.yaw.http.server.defs.HttpConnectorDef;
 import org.dbrain.yaw.http.server.defs.HttpServerDef;
 import org.dbrain.yaw.http.server.defs.ServletContextDef;
 import org.dbrain.yaw.http.server.factories.HttpServerFactory;
+import org.dbrain.yaw.system.app.QualifiedFeature;
+import org.dbrain.yaw.system.jetty.JettyServerFactory;
+import org.eclipse.jetty.server.Server;
 
-public class HttpServerBuilder {
+import javax.inject.Inject;
 
+public class HttpServer extends QualifiedFeature<HttpServer> {
+
+    private final Configuration config;
     private HttpServerDef building = new HttpServerDef();
 
-    public HttpServerBuilder() {
+    @Inject
+    public HttpServer( Configuration config ) {
+        this.config = config;
     }
 
-    public HttpServerBuilder listen( Integer port ) {
+    @Override
+    protected HttpServer self() {
+        return this;
+    }
+
+    public HttpServer listen( Integer port ) {
         return listen( HttpConnectorBuilder.of( port ) );
     }
 
-    public HttpServerBuilder listen( ConnectorDef config ) {
+    public HttpServer listen( ConnectorDef config ) {
         if ( config != null ) {
             building.getEndPoints().add( config );
         }
         return this;
     }
 
-    public HttpServerBuilder serve( ServletContextDef servletContext ) {
+    public HttpServer serve( ServletContextDef servletContext ) {
         if ( servletContext != null ) {
             building.getServletContexts().add( servletContext );
         }
@@ -54,9 +68,19 @@ public class HttpServerBuilder {
         return building;
     }
 
-    public <T> T build( HttpServerFactory<T> factory ) {
-        return factory.build( buildConfig() );
+    @Override
+    public void complete() {
+
+        HttpServerFactory<Server> factory = new JettyServerFactory();
+
+        config.addService( Server.class )
+                .providedBy( factory.build( buildConfig() ) )
+                .qualifiedBy( getQualifiers() )
+                .servicing( Server.class )
+                .complete();
+
     }
+
 
 
 }

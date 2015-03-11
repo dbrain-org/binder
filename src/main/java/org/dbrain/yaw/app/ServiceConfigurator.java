@@ -20,7 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
- * Created by epoitras on 3/10/15.
+ * Configure a single service description.
  */
 public interface ServiceConfigurator<T> {
 
@@ -41,4 +41,5 @@ public interface ServiceConfigurator<T> {
     ServiceConfigurator<T> in( Class<? extends Annotation> scope );
 
     void complete();
+
 }
