@@ -19,6 +19,7 @@ package org.dbrain.yaw.system.app;
 import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.system.lifecycle.BaseClassAnalyzer;
+import org.dbrain.yaw.system.scope.StandardScopeFeature;
 import org.dbrain.yaw.system.txs.TransactionBinder;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -47,14 +48,20 @@ public class AppImpl implements App {
         this.delegate = serviceLocatorFactory.create( name );
         ServiceLocatorUtilities.addClasses( delegate, BaseClassAnalyzer.class );
         delegate.setDefaultClassAnalyzerName( BaseClassAnalyzer.YAW_ANALYZER_NAME );
-        ServiceLocatorUtilities.enablePerThreadScope( delegate );
         ServiceLocatorUtilities.addOneConstant( delegate, this, name );
-        ServiceLocatorUtilities.bind( delegate, new TransactionBinder() );
+
         Configuration session = new ConfigurationImpl( this );
-        session.addService( ConfigurationImpl.class ) //
+        session.defineService( ConfigurationImpl.class ) //
                 .providedBy( () -> ConfigurationImpl.CURRENT_SESSION.get() ) //
                 .servicing( Configuration.class ) //
                 .complete();
+        session.commit();
+
+        ServiceLocatorUtilities.enablePerThreadScope( delegate );
+        ServiceLocatorUtilities.bind( delegate, new TransactionBinder() );
+
+        session = startConfiguration();
+        session.addFeature( StandardScopeFeature.class ).complete();
         session.commit();
     }
 

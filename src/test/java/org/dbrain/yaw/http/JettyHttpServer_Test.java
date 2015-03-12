@@ -16,32 +16,43 @@
 
 package org.dbrain.yaw.http;
 
+import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.http.sample.SampleServlet;
-import org.dbrain.yaw.http.server.HttpServer;
 import org.dbrain.yaw.http.server.ServletContextBuilder;
 import org.dbrain.yaw.http.server.defs.ServletDef;
-import org.dbrain.yaw.system.jetty.JettyServerFactory;
+import org.dbrain.yaw.system.app.AppImpl;
 import org.eclipse.jetty.server.Server;
 import org.junit.Test;
 
-/**
- * Created by epoitras on 10/09/14.
- */
-public class HttpServer_Test {
+import static org.junit.Assert.assertNotNull;
+
+public class JettyHttpServer_Test {
 
     @Test
     public void testHttpServer() throws Exception {
-        ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
-        servletContext.serve( ServletDef.of( "/*", new SampleServlet() ) );
 
-        Server server = new HttpServer() //
-                .listen( 40001 ) //
-                .serve( servletContext.build() ) //
-                .build( new JettyServerFactory() );
+        App app = new AppImpl();
 
+        app.configure( ( c ) -> {
+
+            ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
+            servletContext.serve( ServletDef.of( "/*", new SampleServlet() ) );
+
+            c.addFeature( JettyHttpServer.class ) //
+                    .listen( 40001 )              //
+                    .serve( servletContext.build() ) //
+                    .complete();
+
+        } );
+
+
+        Server server = app.getInstance( Server.class );
+
+        assertNotNull( server );
         server.start();
 
-        //        Object content = new URL( "http://localhost:8080/" ).openConnection();
-        //        Assert.assertEquals( SampleServlet.CONTENT, content.toString() );
+
     }
+
+
 }

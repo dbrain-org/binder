@@ -14,73 +14,55 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.http.server;
+package org.dbrain.yaw.http;
 
 import org.dbrain.yaw.app.Configuration;
+import org.dbrain.yaw.http.server.HttpConnectorBuilder;
 import org.dbrain.yaw.http.server.defs.ConnectorDef;
 import org.dbrain.yaw.http.server.defs.HttpConnectorDef;
 import org.dbrain.yaw.http.server.defs.HttpServerDef;
 import org.dbrain.yaw.http.server.defs.ServletContextDef;
-import org.dbrain.yaw.http.server.factories.HttpServerFactory;
 import org.dbrain.yaw.system.app.QualifiedFeature;
-import org.dbrain.yaw.system.jetty.JettyServerFactory;
-import org.eclipse.jetty.server.Server;
 
 import javax.inject.Inject;
 
-public class HttpServer extends QualifiedFeature<HttpServer> {
+public abstract class AbstractHttpServer<T extends AbstractHttpServer> extends QualifiedFeature<T> {
 
     private final Configuration config;
     private HttpServerDef building = new HttpServerDef();
 
     @Inject
-    public HttpServer( Configuration config ) {
+    public AbstractHttpServer( Configuration config ) {
         this.config = config;
     }
 
-    @Override
-    protected HttpServer self() {
-        return this;
+    protected Configuration getConfig() {
+        return config;
     }
 
-    public HttpServer listen( Integer port ) {
+    public T listen( Integer port ) {
         return listen( HttpConnectorBuilder.of( port ) );
     }
 
-    public HttpServer listen( ConnectorDef config ) {
+    public T listen( ConnectorDef config ) {
         if ( config != null ) {
             building.getEndPoints().add( config );
         }
-        return this;
+        return self();
     }
 
-    public HttpServer serve( ServletContextDef servletContext ) {
+    public T serve( ServletContextDef servletContext ) {
         if ( servletContext != null ) {
             building.getServletContexts().add( servletContext );
         }
-        return this;
+        return self();
     }
 
-    public HttpServerDef buildConfig() {
+    protected HttpServerDef getHttpServerConfig() {
         if ( building.getEndPoints().size() == 0 ) {
             building.getEndPoints().add( new HttpConnectorDef() );
         }
         return building;
     }
-
-    @Override
-    public void complete() {
-
-        HttpServerFactory<Server> factory = new JettyServerFactory();
-
-        config.addService( Server.class )
-                .providedBy( factory.build( buildConfig() ) )
-                .qualifiedBy( getQualifiers() )
-                .servicing( Server.class )
-                .complete();
-
-    }
-
-
 
 }

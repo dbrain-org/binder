@@ -14,22 +14,38 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.system.jetty;
+package org.dbrain.yaw.http;
 
+import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.http.server.defs.ConnectorDef;
 import org.dbrain.yaw.http.server.defs.HttpServerDef;
-import org.dbrain.yaw.http.server.factories.HttpServerFactory;
+import org.dbrain.yaw.system.jetty.JettyConnectors;
+import org.dbrain.yaw.system.jetty.JettyUtils;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 
-/**
- * Created by epoitras on 17/09/14.
- */
-public class JettyServerFactory implements HttpServerFactory<Server> {
+import javax.inject.Inject;
 
+/**
+ * Register a Jetty Http Server.
+ *
+ * Provider services:
+ *   Server   : The jetty server.
+ *
+ */
+public class JettyHttpServer extends AbstractHttpServer<JettyHttpServer> {
+
+    @Inject
+    public JettyHttpServer( Configuration config ) {
+        super( config );
+    }
 
     @Override
-    public Server build( HttpServerDef def ) {
+    protected JettyHttpServer self() {
+        return this;
+    }
+
+    protected Server build( HttpServerDef def ) {
 
         // Build the server first.
         Server server = new Server();
@@ -46,6 +62,17 @@ public class JettyServerFactory implements HttpServerFactory<Server> {
         }
 
         return server;
+    }
+
+
+    @Override
+    public void complete() {
+        getConfig().defineService( Server.class )
+                   .providedBy( build( getHttpServerConfig() ) )
+                   .qualifiedBy( getQualifiers() )
+                   .servicing( Server.class )
+                   .complete();
+
     }
 
 }

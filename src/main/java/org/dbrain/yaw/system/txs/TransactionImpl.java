@@ -17,7 +17,7 @@
 package org.dbrain.yaw.system.txs;
 
 import jersey.repackaged.com.google.common.base.Preconditions;
-import org.dbrain.yaw.system.lifecycle.BaseContextMap;
+import org.dbrain.yaw.system.lifecycle.ContextRegistry;
 import org.dbrain.yaw.txs.Transaction;
 import org.dbrain.yaw.txs.TransactionException;
 import org.dbrain.yaw.txs.TransactionState;
@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * A registry that keeps track of transactional objects.
  */
-public class TransactionImpl extends BaseContextMap implements Transaction {
+public class TransactionImpl extends ContextRegistry implements Transaction {
 
     private final Iterable<TransactionMember.Wrapper> factories;
     private final Runnable                            afterClose;

@@ -52,7 +52,7 @@ public class JdbcDriverDatasource extends QualifiedFeature<JdbcDriverDatasource>
     @Override
     public void complete() {
 
-        config.addService( Connection.class ) //
+        config.defineService( Connection.class ) //
                 .providedBy( connectionProvider::get ) //
                 .qualifiedBy( getQualifiers() ) //
                 .servicing( Connection.class ) //

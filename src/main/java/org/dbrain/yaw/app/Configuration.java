@@ -21,9 +21,9 @@ package org.dbrain.yaw.app;
  */
 public interface Configuration {
 
-    <T> ServiceConfigurator<T> addService( Class<T> implementationClass );
+    <T> ServiceConfigurator<T> defineService( Class<T> implementationClass );
 
-    <T> ServiceConfigurator<T> addService( T implementation );
+    <T> ServiceConfigurator<T> defineService( T implementation );
 
     <T extends Feature> T addFeature( Class<T> feature );
 

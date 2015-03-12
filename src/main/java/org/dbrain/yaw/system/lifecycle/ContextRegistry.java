@@ -30,11 +30,11 @@ import java.util.Map;
  *
  * All AutoCloseable instance registered to the scope will be close at the same time as this scope.
  */
-public abstract class BaseContextMap implements AutoCloseable {
+public class ContextRegistry implements AutoCloseable {
 
     private final Map<ActiveDescriptor, Object> managedObjects = new HashMap<>();
 
-    public BaseContextMap() {
+    public ContextRegistry() {
     }
 
     /**
