@@ -14,18 +14,15 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.app;
+package org.dbrain.yaw.hk2.artifacts;
+
+import javax.inject.Qualifier;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * Created by epoitras on 3/10/15.
- */
-public interface Configuration {
-
-    <T> ServiceConfigurator<T> bind( Class<T> implementationClass );
-
-    <T> ServiceConfigurator<T> defineService( T implementation );
-
-    <T extends Feature> T addFeature( Class<T> feature );
-
-    void commit();
-}
+* Created by epoitras on 3/2/15.
+*/
+@Qualifier
+@Retention( RetentionPolicy.RUNTIME )
+public @interface SomeQualifier {}

@@ -17,8 +17,9 @@
 package org.dbrain.yaw.hk2;
 
 import org.dbrain.yaw.app.App;
+import org.dbrain.yaw.hk2.artifacts.InjectedBean;
 import org.dbrain.yaw.system.app.AppImpl;
-import org.dbrain.yaw.hk2.impl.SomeQualifier;
+import org.dbrain.yaw.hk2.artifacts.SomeQualifier;
 import org.dbrain.yaw.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.DynamicConfigurationService;
@@ -35,24 +36,6 @@ import javax.inject.Singleton;
  * Created by epoitras on 3/4/15.
  */
 public class InjectionUseCase_Test {
-
-    public static class TestInjection {
-
-        @Inject
-        public SimpleService service1;
-
-        @Inject
-        public SimpleService service1_1;
-
-        @Inject
-        public SimpleService service1_2;
-
-
-        @Inject
-        @Named( "toto" )
-        public SimpleService service2;
-
-    }
 
 
     @Test
@@ -88,7 +71,7 @@ public class InjectionUseCase_Test {
                                                     AnnotationBuilder.of( Named.class, "toto" ) ).size() );
             Assert.assertEquals( 3, sl.getAllServices( SimpleService.class ).size() );
 
-            TestInjection ti = sl.createAndInitialize( TestInjection.class );
+            InjectedBean ti = sl.createAndInitialize( InjectedBean.class );
             Assert.assertNotNull( ti.service1 );
             Assert.assertNotNull( ti.service2 );
 

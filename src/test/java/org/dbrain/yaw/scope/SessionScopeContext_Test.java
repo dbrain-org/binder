@@ -18,6 +18,7 @@ package org.dbrain.yaw.scope;
 
 import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.system.app.AppImpl;
+import org.dbrain.yaw.system.lifecycle.ContextRegistry;
 import org.dbrain.yaw.system.scope.SessionScopeContext;
 import org.junit.Test;
 
@@ -31,8 +32,8 @@ public class SessionScopeContext_Test {
 
     private App buildApp() {
         App app = new AppImpl();
-        app.configure( ( c ) -> c.defineService( TestService.class )
-                                 .servicing( TestService.class )
+        app.configure( ( c ) -> c.bind( TestService.class )
+                                 .to( TestService.class )
                                  .in( SessionScoped.class )
                                  .complete() );
         return app;
@@ -41,22 +42,31 @@ public class SessionScopeContext_Test {
     @Test
     public void testSimpleRequestScopedService() throws Exception {
 
-        try ( App app = buildApp() ) {
+
+        try ( App app = buildApp(); ContextRegistry session1 = new ContextRegistry(); ContextRegistry session2 = new ContextRegistry() ) {
 
             SessionScopeContext rsc = app.getInstance( SessionScopeContext.class );
-            rsc.enter();
+            rsc.enter( () -> session1);
             TestService s1 = app.getInstance( TestService.class );
             TestService s2 = app.getInstance( TestService.class );
             rsc.leave();
 
-            rsc.enter();
+            rsc.enter( () -> session2 );
             TestService s3 = app.getInstance( TestService.class );
             TestService s4 = app.getInstance( TestService.class );
             rsc.leave();
 
+            rsc.enter( () -> session1);
+            TestService s5 = app.getInstance( TestService.class );
+            TestService s6 = app.getInstance( TestService.class );
+            rsc.leave();
+
+
             assertEquals( s1, s2 );
             assertEquals( s3, s4 );
+            assertEquals( s5, s6 );
             assertNotEquals( s1, s3 );
+            assertEquals( s1, s5 );
         }
     }
 
@@ -77,14 +87,6 @@ public class SessionScopeContext_Test {
                         "--------------------------------------------------------------------------------------------------------------" );
                 throw e;
             }
-        }
-    }
-
-    @Test
-    public void testLeaveContextOpenOnShutdown() throws Exception {
-        try ( App app = buildApp() ) {
-            SessionScopeContext rsc = app.getInstance( SessionScopeContext.class );
-            rsc.enter();
         }
     }
 

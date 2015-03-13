@@ -34,11 +34,12 @@ public class RequestScopeContext extends DelegateContext<RequestScoped> {
     }
 
     public void enter() {
-        registryProvider.enter( new ContextRegistry() );
+        ContextRegistry requestScopeRegistry = new ContextRegistry();
+        registryProvider.enter( () -> requestScopeRegistry );
     }
 
     public void leave() {
-        registryProvider.leave().close();
+        registryProvider.leave().get().close();
     }
 
     @Override

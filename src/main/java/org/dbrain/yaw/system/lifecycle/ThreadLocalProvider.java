@@ -28,11 +28,11 @@ import java.util.Stack;
  */
 public class ThreadLocalProvider<T> implements Provider<T> {
 
-    private ThreadLocal<Stack<T>> contextStack = new ThreadLocal<>();
+    private ThreadLocal<Stack<Provider<T>>> contextStack = new ThreadLocal<>();
 
-    public void enter( T context ) {
+    public void enter( Provider<T> context ) {
         Objects.requireNonNull( context );
-        Stack<T> stack = contextStack.get();
+        Stack<Provider<T>> stack = contextStack.get();
         if ( stack == null ) {
             stack = new Stack<>();
             contextStack.set( stack );
@@ -40,9 +40,9 @@ public class ThreadLocalProvider<T> implements Provider<T> {
         stack.push( context );
     }
 
-    public T leave() {
-        T result;
-        Stack<T> stack = contextStack.get();
+    public Provider<T> leave() {
+        Provider<T> result;
+        Stack<Provider<T>> stack = contextStack.get();
         if ( stack != null ) {
             result = stack.pop();
             if ( stack.size() == 0 ) {
@@ -56,12 +56,12 @@ public class ThreadLocalProvider<T> implements Provider<T> {
 
     @Override
     public T get() {
-        Stack<T> stack = contextStack.get();
-        return stack != null ? stack.peek() : null;
+        Stack<Provider<T>> stack = contextStack.get();
+        return stack != null ? stack.peek().get() : null;
     }
 
     public int size() {
-        Stack<T> stack = contextStack.get();
+        Stack<Provider<T>> stack = contextStack.get();
         return stack != null ? stack.size() : 0;
     }
 }

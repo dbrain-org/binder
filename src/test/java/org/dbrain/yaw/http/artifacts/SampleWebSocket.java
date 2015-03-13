@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.http.sample;
+package org.dbrain.yaw.http.artifacts;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;

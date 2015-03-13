@@ -33,7 +33,7 @@ import java.util.Set;
 @Singleton @Named( BaseClassAnalyzer.YAW_ANALYZER_NAME )
 public class BaseClassAnalyzer implements ClassAnalyzer {
 
-    public static final String YAW_ANALYZER_NAME = "YAW_ANALYZER";
+    public static final String YAW_ANALYZER_NAME = "YAW-ANALYZER";
 
     private ClassAnalyzer defaultAnalyzer;
 

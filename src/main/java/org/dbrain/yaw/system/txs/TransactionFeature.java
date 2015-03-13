@@ -16,30 +16,43 @@
 
 package org.dbrain.yaw.system.txs;
 
+import org.dbrain.yaw.app.Configuration;
+import org.dbrain.yaw.app.Feature;
 import org.dbrain.yaw.scope.TransactionScoped;
 import org.dbrain.yaw.system.txs.jdbc.JdbcConnectionWrapper;
 import org.dbrain.yaw.txs.TransactionControl;
 import org.glassfish.hk2.api.Context;
 import org.glassfish.hk2.api.TypeLiteral;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
  * Created by epoitras on 3/5/15.
  */
-public class TransactionBinder extends AbstractBinder{
+public class TransactionFeature implements Feature{
+
+    private Configuration config;
+
+    @Inject
+    public TransactionFeature( Configuration config ) {
+        this.config = config;
+    }
 
     @Override
-    protected void configure() {
-        bind( TransactionManager.class )
-                .to( TransactionControl.class )
-                .to( new TypeLiteral<Context<TransactionScoped>>() {} )
-                .in( Singleton.class );
+    public void complete() {
 
-        bindAsContract( JdbcConnectionWrapper.class )
+        config.bind( TransactionManager.class )
+                .to( TransactionControl.class )
+                .to( new TypeLiteral<Context<TransactionScoped>>() {}.getType() )
+                .in( Singleton.class )
+                .complete();
+
+        config.bind( JdbcConnectionWrapper.class )
                 .to( TransactionMember.Wrapper.class )
-                .in( Singleton.class );
+                .in( Singleton.class )
+                .complete();
+
     }
 
 }

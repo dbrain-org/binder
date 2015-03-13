@@ -53,16 +53,16 @@ public class JdbcDatasource extends QualifiedFeature<JdbcDatasource> {
     @Override
     public void complete() {
 
-        session.defineService( DataSource.class ) //
+        session.bind( DataSource.class ) //
+                .to( DataSource.class ) //
                 .providedBy( () -> dataSource ) //
-                .servicing( DataSource.class ) //
                 .qualifiedBy( getQualifiers() ) //
                 .in( Singleton.class )//
                 .complete();
 
-        session.defineService( Connection.class ) //
+        session.bind( Connection.class ) //
+                .to( Connection.class ) //
                 .providedBy( () -> dataSource.getConnection() )//
-                .servicing( Connection.class ) //
                 .qualifiedBy( getQualifiers() ) //
                 .in( TransactionScoped.class ) //
                 .complete();

@@ -43,13 +43,13 @@ public class ConfigurationImpl implements Configuration {
     }
 
     @Override
-    public <T> ServiceConfigurator<T> defineService( Class<T> implementationClass ) {
+    public <T> ServiceConfigurator<T> bind( Class<T> implementationClass ) {
         return new ConfiguratorImpl<>( app, dc, implementationClass );
     }
 
     @Override
     public <T> ServiceConfigurator<T> defineService( T implementation ) {
-        return defineService( (Class<T>) implementation.getClass() ).providedBy( implementation );
+        return bind( (Class<T>) implementation.getClass() ).providedBy( implementation );
     }
 
     @Override

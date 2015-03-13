@@ -31,8 +31,8 @@ public class RequestScopeContext_Test {
 
     private App buildApp() {
         App app = new AppImpl();
-        app.configure( ( c ) -> c.defineService( TestService.class )
-                                 .servicing( TestService.class )
+        app.configure( ( c ) -> c.bind( TestService.class )
+                                 .to( TestService.class )
                                  .in( RequestScoped.class )
                                  .complete() );
         return app;

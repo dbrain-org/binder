@@ -38,7 +38,7 @@ public class Configuration_Test {
     public void testPerLookup() throws Exception {
         try ( App app = new AppImpl() ) {
             Configuration session = new ConfigurationImpl( app );
-            session.defineService( TestService1.class ).servicing( TestService1.class ).complete();
+            session.bind( TestService1.class ).to( TestService1.class ).complete();
             session.commit();
 
             TestService1 ts1_1 = app.getInstance( TestService1.class );
@@ -52,8 +52,8 @@ public class Configuration_Test {
     public void testSingletonScoped() throws Exception {
         try ( App app = new AppImpl() ) {
             Configuration session = new ConfigurationImpl( app );
-            session.defineService( TestService1.class ) //
-                    .servicing( TestService1.class ) //
+            session.bind( TestService1.class ) //
+                    .to( TestService1.class ) //
                     .in( Singleton.class ) //
                     .complete();
             session.commit();
@@ -70,9 +70,9 @@ public class Configuration_Test {
         TestService1 instance = new TestService1();
         try ( App app = new AppImpl() ) {
             Configuration session = new ConfigurationImpl( app );
-            session.defineService( TestService1.class ) //
+            session.bind( TestService1.class ) //
                     .providedBy( instance ) //
-                    .servicing( TestService1.class ) //
+                    .to( TestService1.class ) //
                     .complete();
             session.commit();
 
@@ -95,10 +95,10 @@ public class Configuration_Test {
         Set<TestService1> comparable = new HashSet<>( sources );
         try ( App app = new AppImpl() ) {
             Configuration session = new ConfigurationImpl( app );
-            session.defineService( TestService1.class ) //
+            session.bind( TestService1.class ) //
                     .providedBy( () -> sources.pop() ) //
                     .disposedBy( ( e ) -> disposed.add( e ) ) //
-                    .servicing( TestService1.class ) //
+                    .to( TestService1.class ) //
                     .named( "test" ) //
                     .in( Singleton.class ) //
                     .complete();
@@ -121,9 +121,9 @@ public class Configuration_Test {
         Set<TestService1> disposed = new HashSet<>();
         try ( App app = new AppImpl() ) {
             Configuration session = new ConfigurationImpl( app );
-            session.defineService( TestService1.class ) //
+            session.bind( TestService1.class ) //
                     .disposedBy( ( e ) -> disposed.add( e ) ) //
-                    .servicing( TestService1.class ) //
+                    .to( TestService1.class ) //
                     .named( "test" ) //
                     .in( Singleton.class ) //
                     .complete();

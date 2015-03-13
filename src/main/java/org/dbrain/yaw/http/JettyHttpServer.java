@@ -16,6 +16,7 @@
 
 package org.dbrain.yaw.http;
 
+import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.http.server.defs.ConnectorDef;
 import org.dbrain.yaw.http.server.defs.HttpServerDef;
@@ -25,6 +26,7 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Register a Jetty Http Server.
@@ -35,9 +37,12 @@ import javax.inject.Inject;
  */
 public class JettyHttpServer extends AbstractHttpServer<JettyHttpServer> {
 
+    private final App app;
+
     @Inject
-    public JettyHttpServer( Configuration config ) {
+    public JettyHttpServer( App app, Configuration config  ) {
         super( config );
+        this.app = app;
     }
 
     @Override
@@ -56,7 +61,7 @@ public class JettyHttpServer extends AbstractHttpServer<JettyHttpServer> {
         }
 
         // Configure the servlet contexts
-        Handler handler = JettyUtils.configureServletContextsHandler( server, def.getServletContexts() );
+        Handler handler = JettyUtils.configureServletContextsHandler( app, server, def.getServletContexts() );
         if ( handler != null ) {
             server.setHandler( handler );
         }
@@ -67,10 +72,12 @@ public class JettyHttpServer extends AbstractHttpServer<JettyHttpServer> {
 
     @Override
     public void complete() {
-        getConfig().defineService( Server.class )
+        getConfig().bind( Server.class )
                    .providedBy( build( getHttpServerConfig() ) )
+                   .disposedBy( (server) -> server.stop() )
                    .qualifiedBy( getQualifiers() )
-                   .servicing( Server.class )
+                   .to( Server.class )
+                   .in( Singleton.class )
                    .complete();
 
     }

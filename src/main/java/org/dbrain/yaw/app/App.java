@@ -17,12 +17,14 @@
 package org.dbrain.yaw.app;
 
 import org.dbrain.yaw.directory.ServiceDirectory;
+import org.jvnet.hk2.annotations.Contract;
 
 import java.util.function.Consumer;
 
 /**
  * Created by epoitras on 3/10/15.
  */
+@Contract
 public interface App extends AutoCloseable, ServiceDirectory {
 
     String getName();

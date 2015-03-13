@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Created by epoitras on 3/11/15.
+ * This feature defines both the Request and Session scopes.
  */
 public class StandardScopeFeature implements Feature {
 
@@ -42,16 +42,16 @@ public class StandardScopeFeature implements Feature {
     public void complete() {
 
         // Define the request scope
-        config.defineService( RequestScopeContext.class ) //
-                .servicing( new TypeLiteral<Context<RequestScoped>>() {}.getType() ) //
-                .servicing( RequestScopeContext.class ) //
+        config.bind( RequestScopeContext.class ) //
+                .to( new TypeLiteral<Context<RequestScoped>>() {}.getType() ) //
+                .to( RequestScopeContext.class ) //
                 .in( Singleton.class ) //
                 .complete();
 
         // Define the session scope
-        config.defineService( SessionScopeContext.class ) //
-                .servicing( new TypeLiteral<Context<SessionScoped>>() {}.getType() ) //
-                .servicing( SessionScopeContext.class ) //
+        config.bind( SessionScopeContext.class ) //
+                .to( new TypeLiteral<Context<SessionScoped>>() {}.getType() ) //
+                .to( SessionScopeContext.class ) //
                 .in( Singleton.class ) //
                 .complete();
 

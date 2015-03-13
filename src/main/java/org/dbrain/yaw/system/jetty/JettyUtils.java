@@ -16,6 +16,7 @@
 
 package org.dbrain.yaw.system.jetty;
 
+import org.dbrain.yaw.directory.ServiceDirectory;
 import org.dbrain.yaw.http.server.defs.CredentialsDef;
 import org.dbrain.yaw.http.server.defs.FormLocationDef;
 import org.dbrain.yaw.http.server.defs.ServletAppSecurityDef;
@@ -23,6 +24,7 @@ import org.dbrain.yaw.http.server.defs.ServletContextDef;
 import org.dbrain.yaw.http.server.defs.ServletDef;
 import org.dbrain.yaw.http.server.defs.ServletFilterDef;
 import org.dbrain.yaw.http.server.defs.WebSocketDef;
+import org.dbrain.yaw.system.app.SystemConfiguration;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -37,6 +39,7 @@ import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
 
 import javax.servlet.DispatcherType;
+import javax.servlet.http.HttpSessionListener;
 import javax.websocket.server.ServerContainer;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -112,7 +115,7 @@ public class JettyUtils {
     }
 
 
-    public static Handler configureServletContextHandler( Server server, ServletContextDef config ) {
+    public static Handler configureServletContextHandler( ServiceDirectory locator, Server server, ServletContextDef config ) {
 
         ServletContextHandler servletContextHandler = new ServletContextHandler( ( config.getSecurity() != null ) ? ServletContextHandler.SESSIONS : ServletContextHandler.NO_SESSIONS );
         servletContextHandler.setContextPath( config.getContextPath() );
@@ -140,6 +143,19 @@ public class JettyUtils {
             servletContextHandler.setSecurityHandler( createConstraintSecurityHandler( config.getSecurity() ) );
         }
 
+        // Add system session listener, if any.
+        for ( HttpSessionListener listener: locator.listServices( HttpSessionListener.class, SystemConfiguration.class )) {
+            servletContextHandler.addEventListener( listener );
+        }
+
+        // Add system configuration filters, if any.
+        for ( ServletFilterDef filterDef : locator.listServices( ServletFilterDef.class, SystemConfiguration.class )) {
+            servletContextHandler.addFilter( createFilterHolder( filterDef ),
+                                             filterDef.getPathSpec(),
+                                             EnumSet.of( DispatcherType.REQUEST ) );
+        }
+
+        // Add user filters, if any.
         for ( ServletFilterDef filterDef : config.getFilters() ) {
             servletContextHandler.addFilter( createFilterHolder( filterDef ),
                                              filterDef.getPathSpec(),
@@ -153,16 +169,16 @@ public class JettyUtils {
         return servletContextHandler;
     }
 
-    public static Handler configureServletContextsHandler( Server server, List<ServletContextDef> defs ) {
+    public static Handler configureServletContextsHandler( ServiceDirectory locator, Server server, List<ServletContextDef> defs ) {
         if ( defs == null || defs.size() == 0 ) {
             return null;
         } else if ( defs.size() == 1 ) {
-            return configureServletContextHandler( server, defs.get( 0 ) );
+            return configureServletContextHandler( locator, server, defs.get( 0 ) );
         } else {
             HandlerList result = new HandlerList();
             result.setServer( server );
             for ( ServletContextDef def : defs ) {
-                result.addHandler( configureServletContextHandler( server, def ) );
+                result.addHandler( configureServletContextHandler( locator, server, def ) );
             }
             return result;
         }

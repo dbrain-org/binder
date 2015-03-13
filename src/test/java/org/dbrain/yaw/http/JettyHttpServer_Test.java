@@ -17,40 +17,49 @@
 package org.dbrain.yaw.http;
 
 import org.dbrain.yaw.app.App;
-import org.dbrain.yaw.http.sample.SampleServlet;
+import org.dbrain.yaw.http.artifacts.SampleServlet;
 import org.dbrain.yaw.http.server.ServletContextBuilder;
 import org.dbrain.yaw.http.server.defs.ServletDef;
 import org.dbrain.yaw.system.app.AppImpl;
 import org.eclipse.jetty.server.Server;
+import org.glassfish.hk2.api.ServiceLocator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 
 public class JettyHttpServer_Test {
 
-    @Test
-    public void testHttpServer() throws Exception {
-
+    private App buildApp() {
         App app = new AppImpl();
 
-        app.configure( ( c ) -> {
+        app.configure( ( config ) -> {
 
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
             servletContext.serve( ServletDef.of( "/*", new SampleServlet() ) );
 
-            c.addFeature( JettyHttpServer.class ) //
+            config.addFeature( JettyHttpServer.class ) //
                     .listen( 40001 )              //
                     .serve( servletContext.build() ) //
                     .complete();
 
         } );
 
+        return app;
+    }
 
-        Server server = app.getInstance( Server.class );
 
-        assertNotNull( server );
-        server.start();
+    @Test
+    public void testHttpServer() throws Exception {
 
+        try ( App app = buildApp() ) {
+
+            Server server = app.getInstance( Server.class );
+
+            assertNotNull( server );
+            server.start();
+
+
+        }
 
     }
 

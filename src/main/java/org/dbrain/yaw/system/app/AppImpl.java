@@ -20,11 +20,14 @@ import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.system.lifecycle.BaseClassAnalyzer;
 import org.dbrain.yaw.system.scope.StandardScopeFeature;
-import org.dbrain.yaw.system.txs.TransactionBinder;
+import org.dbrain.yaw.system.http.server.HttpStandardScopeFeature;
+import org.dbrain.yaw.system.txs.TransactionFeature;
+import org.dbrain.yaw.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -46,23 +49,29 @@ public class AppImpl implements App {
     public AppImpl( String name ) {
         this.name = name;
         this.delegate = serviceLocatorFactory.create( name );
+
         ServiceLocatorUtilities.addClasses( delegate, BaseClassAnalyzer.class );
         delegate.setDefaultClassAnalyzerName( BaseClassAnalyzer.YAW_ANALYZER_NAME );
-        ServiceLocatorUtilities.addOneConstant( delegate, this, name );
+        ServiceLocatorUtilities.addOneConstant( delegate, this );
 
         Configuration session = new ConfigurationImpl( this );
-        session.defineService( ConfigurationImpl.class ) //
+        session.bind( ConfigurationImpl.class ) //
+                .to( Configuration.class ) //
                 .providedBy( () -> ConfigurationImpl.CURRENT_SESSION.get() ) //
-                .servicing( Configuration.class ) //
                 .complete();
         session.commit();
 
         ServiceLocatorUtilities.enablePerThreadScope( delegate );
-        ServiceLocatorUtilities.bind( delegate, new TransactionBinder() );
 
         session = startConfiguration();
+        session.addFeature( TransactionFeature.class ).complete();
         session.addFeature( StandardScopeFeature.class ).complete();
         session.commit();
+
+        session = startConfiguration();
+        session.addFeature( HttpStandardScopeFeature.class ).complete();
+        session.commit();
+
     }
 
     /**
@@ -88,6 +97,13 @@ public class AppImpl implements App {
         return new ConfigurationImpl( this );
     }
 
+    @Override
+    public <T> T getJitInstance( Class<T> serviceClass ) {
+        T result = delegate.create( serviceClass, BaseClassAnalyzer.YAW_ANALYZER_NAME );
+        Objects.requireNonNull( result,
+                                "Cannot create instance of " + serviceClass.getName() + " using application " + getName() + "." );
+        return result;
+    }
 
     @Override
     public <T> T getInstance( Class<T> serviceClass ) {
@@ -113,6 +129,15 @@ public class AppImpl implements App {
         return result;
     }
 
+    @Override
+    public <T> List<T> listServices( Class<T> serviceClass, Annotation qualifier ) {
+        return delegate.getAllServices( serviceClass, qualifier );
+    }
+
+    @Override
+    public <T> List<T> listServices( Class<T> serviceClass, Class<? extends Annotation> qualifier ) {
+        return delegate.getAllServices( serviceClass, AnnotationBuilder.of( qualifier ) );
+    }
 
     @Override
     public void close() throws Exception {

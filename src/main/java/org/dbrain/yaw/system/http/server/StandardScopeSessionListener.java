@@ -14,26 +14,27 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.directory;
+package org.dbrain.yaw.system.http.server;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
+import org.dbrain.yaw.system.lifecycle.ContextRegistry;
+
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 /**
- * Created by epoitras on 3/8/15.
+ * Created by epoitras on 3/13/15.
  */
-public interface ServiceDirectory {
+class StandardScopeSessionListener implements HttpSessionListener {
 
-    <T> T getJitInstance( Class<T> serviceClass );
+    @Override
+    public void sessionCreated( HttpSessionEvent se ) {
+    }
 
-    <T> T getInstance( Class<T> serviceClass );
-
-    <T> T getInstance( Class<T> serviceClass, String name );
-
-    <T> T getInstance( Class<T> serviceClass, Annotation qualifiers );
-
-    <T> List<T> listServices( Class<T> serviceClass, Annotation qualifier );
-
-    <T> List<T> listServices( Class<T> serviceClass, Class<? extends Annotation> qualifier );
-
+    @Override
+    public void sessionDestroyed( HttpSessionEvent se ) {
+        ContextRegistry registry1 = (ContextRegistry) se.getSession().getAttribute( ContextRegistry.class.getName() );
+        if ( registry1 != null ) {
+            registry1.close();
+        }
+    }
 }

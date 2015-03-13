@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.http.sample;
+package org.dbrain.yaw.http.artifacts;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

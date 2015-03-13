@@ -91,7 +91,7 @@ public class ConfiguratorImpl<T> implements ServiceConfigurator<T> {
     }
 
     @Override
-    public ServiceConfigurator<T> servicing( Type type ) {
+    public ServiceConfigurator<T> to( Type type ) {
         services.add( type );
         return this;
     }
@@ -100,6 +100,11 @@ public class ConfiguratorImpl<T> implements ServiceConfigurator<T> {
     public ServiceConfigurator<T> qualifiedBy( Annotation quality ) {
         qualifiers.add( quality );
         return this;
+    }
+
+    @Override
+    public ServiceConfigurator<T> qualifiedBy( Class<? extends Annotation> quality ) {
+        return qualifiedBy( AnnotationBuilder.of( quality ) );
     }
 
     @Override

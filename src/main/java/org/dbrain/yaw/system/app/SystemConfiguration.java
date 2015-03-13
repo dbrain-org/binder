@@ -14,18 +14,13 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.app;
+package org.dbrain.yaw.system.app;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * Created by epoitras on 3/10/15.
+ * Quality a hook to configure the system.
  */
-public interface Configuration {
-
-    <T> ServiceConfigurator<T> bind( Class<T> implementationClass );
-
-    <T> ServiceConfigurator<T> defineService( T implementation );
-
-    <T extends Feature> T addFeature( Class<T> feature );
-
-    void commit();
-}
+@Retention( RetentionPolicy.RUNTIME )
+public @interface SystemConfiguration {}

@@ -14,15 +14,30 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.hk2.impl;
+package org.dbrain.yaw.hk2.artifacts;
 
-import javax.inject.Qualifier;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import org.dbrain.yaw.hk2.InjectionUseCase_Test;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
-* Created by epoitras on 3/2/15.
+* Created by epoitras on 3/13/15.
 */
-@Qualifier
-@Retention( RetentionPolicy.RUNTIME )
-public @interface SomeQualifier {}
+public class InjectedBean {
+
+    @Inject
+    public InjectionUseCase_Test.SimpleService service1;
+
+    @Inject
+    public InjectionUseCase_Test.SimpleService service1_1;
+
+    @Inject
+    public InjectionUseCase_Test.SimpleService service1_2;
+
+
+    @Inject
+    @Named( "toto" )
+    public InjectionUseCase_Test.SimpleService service2;
+
+}

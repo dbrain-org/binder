@@ -72,11 +72,11 @@ public class TestMemberFeature extends QualifiedFeature<TestMemberFeature> {
     @Override
     public void complete() {
 
-        config.defineService( TestMember.class ) //
+        config.bind( TestMember.class ) //
                 .qualifiedBy( getQualifiers() ) //
                 .providedBy( () -> new TestMember( pw, name, failOnFlush, failOncommit ) ) //
-                .servicing( TestMember.class ) //
-                .servicing( TransactionMember.class ) //
+                .to( TestMember.class ) //
+                .to( TransactionMember.class ) //
                 .in( TransactionScoped.class ) //
                 .complete();
 

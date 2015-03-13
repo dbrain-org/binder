@@ -30,9 +30,11 @@ public interface ServiceConfigurator<T> {
 
     ServiceConfigurator<T> disposedBy( ServiceDisposer<T> disposer );
 
-    ServiceConfigurator<T> servicing( Type type );
+    ServiceConfigurator<T> to( Type type );
 
     ServiceConfigurator<T> qualifiedBy( Annotation quality );
+
+    ServiceConfigurator<T> qualifiedBy( Class<? extends Annotation> quality );
 
     ServiceConfigurator<T> qualifiedBy( Iterable<Annotation> quality );
 

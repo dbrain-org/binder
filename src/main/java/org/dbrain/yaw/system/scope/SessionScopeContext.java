@@ -22,6 +22,8 @@ import org.dbrain.yaw.system.lifecycle.ContextRegistry;
 import org.dbrain.yaw.system.lifecycle.DelegateContext;
 import org.dbrain.yaw.system.lifecycle.ThreadLocalProvider;
 
+import javax.inject.Provider;
+
 /**
  * Implementation of the session scope.
  */
@@ -34,12 +36,12 @@ public class SessionScopeContext extends DelegateContext<SessionScoped> {
         registryProvider = (ThreadLocalProvider<ContextRegistry>)getRegistryProvider();
     }
 
-    public void enter() {
-        registryProvider.enter( new ContextRegistry() );
+    public void enter( Provider<ContextRegistry> contextProvider ) {
+        registryProvider.enter( contextProvider );
     }
 
-    public void leave() {
-        registryProvider.leave().close();
+    public Provider<ContextRegistry> leave() {
+        return registryProvider.leave();
     }
 
     @Override
