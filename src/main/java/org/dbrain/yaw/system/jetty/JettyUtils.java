@@ -63,7 +63,9 @@ public class JettyUtils {
         def.accept( new ServletDef.Visitor() {
             @Override
             public void visit( ServletDef.InstanceServletDef servletDef ) {
-                result.addServlet( new ServletHolder( servletDef.getInstance() ), servletDef.getPathSpec() );
+                ServletHolder servletHolder = new ServletHolder( servletDef.getInstance() );
+                //servletHolder.setInitParameter(  );
+                result.addServlet( servletHolder, servletDef.getPathSpec() );
             }
         } );
     }

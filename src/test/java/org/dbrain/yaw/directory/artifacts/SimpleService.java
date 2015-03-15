@@ -14,15 +14,21 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.hk2.artifacts;
+package org.dbrain.yaw.directory.artifacts;
 
-import javax.inject.Qualifier;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.junit.Assert;
+
+import javax.inject.Inject;
 
 /**
-* Created by epoitras on 3/2/15.
+* Created by epoitras on 3/15/15.
 */
-@Qualifier
-@Retention( RetentionPolicy.RUNTIME )
-public @interface SomeQualifier {}
+public class SimpleService {
+
+    @Inject
+    public SimpleService( ServiceLocator sl ) {
+        Assert.assertNotNull( sl );
+    }
+
+}

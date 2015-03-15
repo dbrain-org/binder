@@ -101,7 +101,7 @@ public class AppImpl implements App {
 
     @Override
     public <T> T getJitInstance( Class<T> serviceClass ) {
-        T result = delegate.create( serviceClass, BaseClassAnalyzer.YAW_ANALYZER_NAME );
+        T result = delegate.createAndInitialize( serviceClass );
         Objects.requireNonNull( result,
                                 "Cannot create instance of " + serviceClass.getName() + " using application " + getName() + "." );
         return result;

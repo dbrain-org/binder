@@ -14,11 +14,12 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.hk2;
+package org.dbrain.yaw.directory;
 
 import org.dbrain.yaw.app.App;
-import org.dbrain.yaw.hk2.artifacts.InjectedBean;
-import org.dbrain.yaw.hk2.artifacts.SomeQualifier;
+import org.dbrain.yaw.directory.artifacts.InjectedBean;
+import org.dbrain.yaw.directory.artifacts.SimpleService;
+import org.dbrain.yaw.directory.artifacts.SomeQualifier;
 import org.dbrain.yaw.system.app.AppImpl;
 import org.dbrain.yaw.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.DynamicConfiguration;
@@ -28,14 +29,13 @@ import org.glassfish.hk2.utilities.BuilderHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
  * Created by epoitras on 3/4/15.
  */
-public class InjectionUseCase_Test {
+public class ServiceDirectory_Test {
 
 
     @Test
@@ -72,20 +72,11 @@ public class InjectionUseCase_Test {
             Assert.assertEquals( 3, sl.getAllServices( SimpleService.class ).size() );
 
             InjectedBean ti = sl.createAndInitialize( InjectedBean.class );
-            Assert.assertNotNull( ti.service1 );
+            Assert.assertNotNull( ti.getService1() );
             Assert.assertNotNull( ti.service2 );
 
 
         }
-    }
-
-    public static class SimpleService {
-
-        @Inject
-        public SimpleService( ServiceLocator sl ) {
-            Assert.assertNotNull( sl );
-        }
-
     }
 
 
