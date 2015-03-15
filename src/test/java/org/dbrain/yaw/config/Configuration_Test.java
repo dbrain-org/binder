@@ -17,8 +17,8 @@
 package org.dbrain.yaw.config;
 
 import org.dbrain.yaw.app.App;
-import org.dbrain.yaw.system.app.AppImpl;
 import org.dbrain.yaw.app.Configuration;
+import org.dbrain.yaw.system.app.AppImpl;
 import org.dbrain.yaw.system.app.ConfigurationImpl;
 import org.junit.Test;
 

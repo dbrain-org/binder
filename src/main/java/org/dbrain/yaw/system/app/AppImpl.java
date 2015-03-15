@@ -18,9 +18,10 @@ package org.dbrain.yaw.system.app;
 
 import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.app.Configuration;
+import org.dbrain.yaw.directory.ServiceKey;
+import org.dbrain.yaw.system.http.server.HttpStandardScopeFeature;
 import org.dbrain.yaw.system.lifecycle.BaseClassAnalyzer;
 import org.dbrain.yaw.system.scope.StandardScopeFeature;
-import org.dbrain.yaw.system.http.server.HttpStandardScopeFeature;
 import org.dbrain.yaw.system.txs.TransactionFeature;
 import org.dbrain.yaw.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
@@ -29,6 +30,7 @@ import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -122,10 +124,24 @@ public class AppImpl implements App {
     }
 
     @Override
-    public <T> T getInstance( Class<T> serviceClass, Annotation qualifiers ) {
-        T result = delegate.getService( serviceClass, qualifiers );
+    public <T> T getInstance( Class<T> serviceClass, Class<? extends Annotation> qualifiers ) {
+        T result = delegate.getService( serviceClass, AnnotationBuilder.of( qualifiers ) );
         Objects.requireNonNull( result,
                                 "Service of class " + serviceClass.getName() + " is not found in application " + getName() + "." );
+        return result;
+    }
+
+    @Override
+    public <T> T getInstance( ServiceKey<T> serviceKey ) {
+        Set<Annotation> qualifiers = serviceKey.getQualifiers();
+        T result;
+        if ( qualifiers.size() > 0 ) {
+            result = delegate.getService( serviceKey.getServiceType(), qualifiers.toArray( new Annotation[qualifiers.size()] ) );
+        } else {
+             result = delegate.getService( serviceKey.getServiceType() );
+        }
+        Objects.requireNonNull( result,
+                                "Service of class " + serviceKey.getServiceType() + " is not found in application " + getName() + "." );
         return result;
     }
 

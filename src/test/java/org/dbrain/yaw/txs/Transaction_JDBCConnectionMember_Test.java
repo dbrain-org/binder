@@ -18,9 +18,9 @@ package org.dbrain.yaw.txs;
 
 import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.app.Configuration;
-import org.dbrain.yaw.system.app.AppImpl;
 import org.dbrain.yaw.jdbc.JdbcDatasource;
 import org.dbrain.yaw.jdbc.JdbcDriverDatasource;
+import org.dbrain.yaw.system.app.AppImpl;
 import org.glassfish.hk2.api.ServiceHandle;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.h2.jdbcx.JdbcConnectionPool;

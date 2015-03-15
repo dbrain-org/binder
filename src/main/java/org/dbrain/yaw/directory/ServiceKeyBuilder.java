@@ -17,25 +17,22 @@
 package org.dbrain.yaw.directory;
 
 import java.lang.annotation.Annotation;
-import java.util.List;
 
 /**
- * Created by epoitras on 3/8/15.
+ * Created by epoitras on 3/15/15.
  */
-public interface ServiceDirectory {
+public interface ServiceKeyBuilder<T> {
 
-    <T> T getJitInstance( Class<T> serviceClass );
+    ServiceKeyBuilder<T> qualifiedBy( Annotation quality );
 
-    <T> T getInstance( Class<T> serviceClass );
+    ServiceKeyBuilder<T> qualifiedBy( Class<? extends Annotation> quality );
 
-    <T> T getInstance( Class<T> serviceClass, String name );
+    ServiceKeyBuilder<T> qualifiedBy( Iterable<Annotation> quality );
 
-    <T> T getInstance( Class<T> serviceClass, Class<? extends Annotation> qualifiers );
+    ServiceKeyBuilder<T> named( String name );
 
-    <T> T getInstance( ServiceKey<T> serviceKey );
+    public ServiceKey<T> build();
 
-    <T> List<T> listServices( Class<T> serviceClass, Annotation qualifier );
 
-    <T> List<T> listServices( Class<T> serviceClass, Class<? extends Annotation> qualifier );
 
 }

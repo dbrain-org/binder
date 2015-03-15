@@ -19,9 +19,9 @@ package org.dbrain.yaw.txs;
 import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.system.app.AppImpl;
-import org.dbrain.yaw.txs.impl.TestMember;
 import org.dbrain.yaw.txs.exceptions.CommitFailedException;
 import org.dbrain.yaw.txs.features.TestMemberFeature;
+import org.dbrain.yaw.txs.impl.TestMember;
 import org.junit.Test;
 
 import java.io.PrintWriter;

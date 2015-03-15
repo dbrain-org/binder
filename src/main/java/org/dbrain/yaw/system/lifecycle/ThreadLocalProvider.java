@@ -16,10 +16,7 @@
 
 package org.dbrain.yaw.system.lifecycle;
 
-import org.glassfish.hk2.api.Context;
-
 import javax.inject.Provider;
-import java.lang.annotation.Annotation;
 import java.util.Objects;
 import java.util.Stack;
 

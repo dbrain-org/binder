@@ -22,12 +22,16 @@ import org.dbrain.yaw.http.server.ServletContextBuilder;
 import org.dbrain.yaw.http.server.defs.ServletDef;
 import org.dbrain.yaw.system.app.AppImpl;
 import org.eclipse.jetty.server.Server;
-import org.glassfish.hk2.api.ServiceLocator;
+import org.junit.Assert;
 import org.junit.Test;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 
 import static org.junit.Assert.assertNotNull;
 
-public class JettyHttpServer_Test {
+public class HttpServer_Test {
 
     private App buildApp() {
         App app = new AppImpl();
@@ -58,7 +62,11 @@ public class JettyHttpServer_Test {
             assertNotNull( server );
             server.start();
 
+            Client httpClient = ClientBuilder.newClient();
+            WebTarget t = httpClient.target( "http://localhost:40001/" );
+            String s = t.request().get(String.class);
 
+            Assert.assertEquals( "Hello from sample servlet.", s);
         }
 
     }

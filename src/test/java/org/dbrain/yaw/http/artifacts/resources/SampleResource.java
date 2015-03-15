@@ -14,15 +14,22 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.system.scope;
+package org.dbrain.yaw.http.artifacts.resources;
 
-import javax.inject.Provider;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
 /**
- * Created with IntelliJ IDEA.
- * User: epoitras
- * Date: 10/07/13
- * Time: 9:19 PM
- * To change this template use File | Settings | File Templates.
+ * Created by epoitras on 3/15/15.
  */
-public interface ScopeRegistryProvider extends Provider<ScopeRegistry>, AutoCloseable {}
+@Path( "/" )
+public class SampleResource {
+
+    @GET
+    public String get() {
+        return "Result";
+    }
+
+
+
+}

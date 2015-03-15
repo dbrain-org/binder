@@ -16,8 +16,8 @@
 
 package org.dbrain.yaw.system.lifecycle;
 
-import org.dbrain.yaw.scope.DisposeException;
 import org.glassfish.hk2.api.ActiveDescriptor;
+import org.glassfish.hk2.api.MultiException;
 import org.glassfish.hk2.api.ServiceHandle;
 
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class ContextRegistry implements AutoCloseable {
     /**
      * {@inheritDoc}
      *
-     * @throws org.dbrain.yaw.scope.DisposeException In case one or more managed Disposable has thrown an exception.
+     * @throws org.glassfish.hk2.api.MultiException In case one or more managed Disposable has thrown an exception.
      */
     @Override
     public synchronized void close() {
@@ -94,7 +94,7 @@ public class ContextRegistry implements AutoCloseable {
 
         // Throw an exception if one occured.
         if ( exceptions != null ) {
-            throw new DisposeException( exceptions.toArray( new Throwable[exceptions.size()] ) );
+            throw new MultiException( exceptions );
         }
     }
 

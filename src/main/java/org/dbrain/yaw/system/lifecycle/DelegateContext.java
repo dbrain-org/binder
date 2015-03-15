@@ -16,7 +16,6 @@
 
 package org.dbrain.yaw.system.lifecycle;
 
-import org.dbrain.yaw.system.lifecycle.ContextRegistry;
 import org.glassfish.hk2.api.ActiveDescriptor;
 import org.glassfish.hk2.api.Context;
 import org.glassfish.hk2.api.ServiceHandle;

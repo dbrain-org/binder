@@ -18,8 +18,8 @@ package org.dbrain.yaw.hk2;
 
 import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.hk2.artifacts.InjectedBean;
-import org.dbrain.yaw.system.app.AppImpl;
 import org.dbrain.yaw.hk2.artifacts.SomeQualifier;
+import org.dbrain.yaw.system.app.AppImpl;
 import org.dbrain.yaw.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.DynamicConfigurationService;

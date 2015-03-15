@@ -18,8 +18,8 @@ package org.dbrain.yaw.system.app;
 
 import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.app.Configuration;
-import org.dbrain.yaw.app.ServiceConfigurator;
 import org.dbrain.yaw.app.Feature;
+import org.dbrain.yaw.app.ServiceConfigurator;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.DynamicConfigurationService;
 import org.glassfish.hk2.api.ServiceLocator;
