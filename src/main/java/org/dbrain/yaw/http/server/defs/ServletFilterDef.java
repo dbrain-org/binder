@@ -22,26 +22,75 @@ import javax.servlet.Filter;
  * Created with IntelliJ IDEA.
  * User: epoitras
  * Date: 15/07/13
- * Time: 10:16 PM
+ * Time: 10:25 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ServletFilterDef {
+public interface ServletFilterDef {
 
-    private final Filter instance;
-
-    private final String pathSpec;
-
-    public ServletFilterDef( Filter instance, String pathSpec ) {
-        this.instance = instance;
-        this.pathSpec = pathSpec;
+    public static ServletFilterDef of( String pathSpec, Filter instance ) {
+        return new ServletFilterInstanceDef( pathSpec, instance );
     }
 
-    public String getPathSpec() {
-        return pathSpec;
+    public static ServletFilterDef of( String pathSpec, Class<? extends Filter> filterClass ) {
+        return new ServletFilterClassDef( pathSpec, filterClass );
     }
 
-    public Filter getInstance() {
-        return instance;
+
+    public void accept( Visitor v );
+
+    public interface Visitor {
+        void visit( ServletFilterInstanceDef servletDef );
+        void visit( ServletFilterClassDef servletDef );
     }
 
+    public class ServletFilterClassDef implements ServletFilterDef {
+
+        private final String pathSpec;
+
+        private final Class<? extends Filter> filterClass;
+
+        public ServletFilterClassDef( String pathSpec, Class<? extends Filter> filterClass ) {
+            this.pathSpec = pathSpec;
+            this.filterClass = filterClass;
+        }
+
+        public String getPathSpec() {
+            return pathSpec;
+        }
+
+        public Class<? extends Filter> getFilterClass() {
+            return filterClass;
+        }
+
+        @Override
+        public void accept( Visitor v ) {
+            v.visit( this );
+        }
+
+    }
+
+    public class ServletFilterInstanceDef implements ServletFilterDef {
+
+        private final String pathSpec;
+
+        private final Filter instance;
+
+        public ServletFilterInstanceDef( String pathSpec, Filter instance ) {
+            this.instance = instance;
+            this.pathSpec = pathSpec;
+        }
+
+        public String getPathSpec() {
+            return pathSpec;
+        }
+
+        public Filter getInstance() {
+            return instance;
+        }
+
+        @Override
+        public void accept( Visitor v ) {
+            v.visit( this );
+        }
+    }
 }

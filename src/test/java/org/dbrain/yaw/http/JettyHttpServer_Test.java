@@ -18,7 +18,9 @@ package org.dbrain.yaw.http;
 
 import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.http.artifacts.SampleServlet;
+import org.dbrain.yaw.http.server.HttpsConnectorBuilder;
 import org.dbrain.yaw.http.server.ServletContextBuilder;
+import org.dbrain.yaw.http.server.defs.HttpsConnectorDef;
 import org.dbrain.yaw.http.server.defs.ServletDef;
 import org.dbrain.yaw.system.app.AppImpl;
 import org.eclipse.jetty.server.Server;
@@ -31,9 +33,9 @@ import javax.ws.rs.client.WebTarget;
 
 import static org.junit.Assert.assertNotNull;
 
-public class HttpServer_Test {
+public class JettyHttpServer_Test {
 
-    private App buildApp() {
+    private App buildApp() throws Exception {
         App app = new AppImpl();
 
         app.configure( ( config ) -> {

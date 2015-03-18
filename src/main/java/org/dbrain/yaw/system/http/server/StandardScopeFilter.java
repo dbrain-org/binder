@@ -47,6 +47,7 @@ public class StandardScopeFilter implements Filter {
 
     @Override
     public void init( FilterConfig filterConfig ) throws ServletException {
+        System.out.print( "" );
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -60,7 +61,7 @@ public class StandardScopeFilter implements Filter {
         // Go fetch the scope registry in the session.
         sessionScopeContext.enter( () -> {
             HttpServletRequest httpRequest = (HttpServletRequest)servletRequest;
-            HttpSession session = httpRequest.getSession( false );
+            HttpSession session = httpRequest.getSession( true );
             if ( session != null ) {
                 ContextRegistry registry = (ContextRegistry) session.getAttribute( ContextRegistry.class.getName() );
                 if ( registry == null ) {

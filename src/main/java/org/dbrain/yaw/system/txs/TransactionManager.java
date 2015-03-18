@@ -16,7 +16,7 @@
 
 package org.dbrain.yaw.system.txs;
 
-import org.dbrain.yaw.scope.TransactionScoped;
+import org.dbrain.yaw.lifecycle.TransactionScoped;
 import org.dbrain.yaw.txs.Transaction;
 import org.dbrain.yaw.txs.TransactionControl;
 import org.dbrain.yaw.txs.TransactionState;

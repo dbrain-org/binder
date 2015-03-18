@@ -14,45 +14,38 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.system.http.server;
+package org.dbrain.yaw.system.http.webapp;
 
 import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.app.Feature;
-import org.dbrain.yaw.http.server.defs.ServletFilterDef;
 import org.dbrain.yaw.system.app.SystemConfiguration;
-import org.dbrain.yaw.system.scope.RequestScopeContext;
-import org.dbrain.yaw.system.scope.SessionScopeContext;
+import org.glassfish.hk2.api.ServiceLocator;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpSessionListener;
+import javax.servlet.ServletContextListener;
 
 /**
  * Created by epoitras on 3/13/15.
  */
-public class HttpStandardScopeFeature implements Feature {
+public class WebAppFeature implements Feature {
 
-    private final Configuration config;
+    private final Configuration  config;
+    private final ServiceLocator serviceLocator;
 
     @Inject
-    public HttpStandardScopeFeature( Configuration config ) {
+    public WebAppFeature( Configuration config, ServiceLocator serviceLocator ) {
         this.config = config;
+        this.serviceLocator = serviceLocator;
     }
 
     @Override
     public void complete() {
 
-        ServletFilterDef scopeFilter = ServletFilterDef.of( "/*", StandardScopeFilter.class );
-
-        config.bind( ServletFilterDef.class )
-                .to( ServletFilterDef.class )
-                .providedBy( scopeFilter )
-                .qualifiedBy( SystemConfiguration.class )
-                .complete();
-
-        config.bind( StandardScopeSessionListener.class )
-                .to( HttpSessionListener.class )
-                .qualifiedBy( SystemConfiguration.class )
-                .complete();
+        config.bind( ServletContextListener.class )
+              .to( ServletContextListener.class )
+              .providedBy( new WebAppConfigServletContextListener( serviceLocator ) )
+              .qualifiedBy( SystemConfiguration.class )
+              .complete();
 
     }
 

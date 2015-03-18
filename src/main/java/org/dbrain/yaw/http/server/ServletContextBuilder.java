@@ -71,8 +71,8 @@ public class ServletContextBuilder {
         return this;
     }
 
-    public ServletContextBuilder filter( Filter filter, String pathSpec ) {
-        filters.add( new ServletFilterDef( filter, pathSpec ) );
+    public ServletContextBuilder filter( String pathSpec, Filter filter ) {
+        filters.add( ServletFilterDef.of( pathSpec, filter ) );
         return this;
     }
 

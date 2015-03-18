@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.scope;
+package org.dbrain.yaw.lifecycle;
 
 import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.system.app.AppImpl;

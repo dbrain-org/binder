@@ -14,20 +14,22 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.scope;
+package org.dbrain.yaw.http.artifacts.resources;
 
-
-import javax.inject.Scope;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.util.UUID;
 
 /**
- * Defines a service that is bound to a request scope.
+ * Created by epoitras on 3/16/15.
  */
-@Target( { ElementType.TYPE, ElementType.METHOD } )
-@Retention( RUNTIME )
-@Scope
-public @interface TransactionScoped {}
+public class GuidService {
+
+    private UUID uuid = UUID.randomUUID();
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid( UUID uuid ) {
+        this.uuid = uuid;
+    }
+}

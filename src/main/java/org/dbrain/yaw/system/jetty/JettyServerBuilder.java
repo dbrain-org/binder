@@ -32,6 +32,7 @@ import org.eclipse.jetty.security.authentication.FormAuthenticator;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -39,6 +40,8 @@ import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
 
 import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSessionListener;
 import javax.websocket.server.ServerContainer;
 import java.util.Arrays;
@@ -52,14 +55,36 @@ import java.util.List;
  * Time: 10:45 PM
  * To change this template use File | Settings | File Templates.
  */
-public class JettyUtils {
+public class JettyServerBuilder {
 
-    public static FilterHolder createFilterHolder( ServletFilterDef def ) {
-        FilterHolder result = new FilterHolder( def.getInstance() );
-        return result;
+    private final ServiceDirectory locator;
+
+    public JettyServerBuilder( ServiceDirectory locator ) {
+        this.locator = locator;
     }
 
-    public static void configureServlet( ServletContextHandler result, ServletDef def ) {
+    public void configureFilter( ServletContextHandler result, ServletFilterDef def ) {
+        def.accept( new ServletFilterDef.Visitor() {
+
+            @Override
+            public void visit( ServletFilterDef.ServletFilterInstanceDef servletDef ) {
+                result.addFilter( new FilterHolder( servletDef.getInstance() ),
+                                  servletDef.getPathSpec(),
+                                  EnumSet.of( DispatcherType.REQUEST ) );
+            }
+
+            @Override
+            public void visit( ServletFilterDef.ServletFilterClassDef servletDef ) {
+                Filter instance = locator.getJitInstance( servletDef.getFilterClass() );
+                result.addFilter( new FilterHolder( instance ),
+                                  servletDef.getPathSpec(),
+                                  EnumSet.of( DispatcherType.REQUEST ) );
+            }
+
+        } );
+    }
+
+    public void configureServlet( ServletContextHandler result, ServletDef def ) {
         def.accept( new ServletDef.Visitor() {
             @Override
             public void visit( ServletDef.InstanceServletDef servletDef ) {
@@ -70,17 +95,17 @@ public class JettyUtils {
         } );
     }
 
-    public static FormAuthenticator createFormAuthenticator( FormLocationDef def ) {
+    public FormAuthenticator createFormAuthenticator( FormLocationDef def ) {
         return new FormAuthenticator( def.getUrl(),
                                       def.getErrorURL(),
                                       false /* no, do not dispatch but redirect (302, 301?) to the error url */ );
     }
 
-    public static HashLoginService createHashLoginService( CredentialsDef def ) {
+    public HashLoginService createHashLoginService( CredentialsDef def ) {
         return new HashLoginService( def.getRealm(), def.getFile() );
     }
 
-    public static ConstraintSecurityHandler createConstraintSecurityHandler( ServletAppSecurityDef def ) {
+    public ConstraintSecurityHandler createConstraintSecurityHandler( ServletAppSecurityDef def ) {
 
         ConstraintMapping cm = new ConstraintMapping();
         cm.setPathSpec( def.getPathSpec() );
@@ -100,8 +125,7 @@ public class JettyUtils {
         return sh;
     }
 
-    public static void configureWebSocket( ServerContainer serverContainer,
-                                           WebSocketDef webSocketDef ) throws Exception {
+    public void configureWebSocket( ServerContainer serverContainer, WebSocketDef webSocketDef ) throws Exception {
         webSocketDef.accept( new WebSocketDef.Visitor() {
             @Override
             public void visit( WebSocketDef.EndpointClassWebSocketDef endpointClassWebSocketDef ) throws Exception {
@@ -117,7 +141,7 @@ public class JettyUtils {
     }
 
 
-    public static Handler configureServletContextHandler( ServiceDirectory locator, Server server, ServletContextDef config ) {
+    public Handler configureServletContextHandler( Server server, ServletContextDef config ) {
 
         ServletContextHandler servletContextHandler = new ServletContextHandler( ( config.getSecurity() != null ) ? ServletContextHandler.SESSIONS : ServletContextHandler.NO_SESSIONS );
         servletContextHandler.setContextPath( config.getContextPath() );
@@ -144,24 +168,27 @@ public class JettyUtils {
             servletContextHandler.setInitParameter( "org.eclipse.jetty.servlet.SessionIdPathParameterName", "none" );
             servletContextHandler.setSecurityHandler( createConstraintSecurityHandler( config.getSecurity() ) );
         }
-
-        // Add system session listener, if any.
-        for ( HttpSessionListener listener: locator.listServices( HttpSessionListener.class, SystemConfiguration.class )) {
-            servletContextHandler.addEventListener( listener );
+        SessionHandler sessionHandler = new SessionHandler();
+        servletContextHandler.setSessionHandler( new SessionHandler() );
+        if ( sessionHandler != null ) {
+            // Add system session listener, if any.
+            locator.listServices( HttpSessionListener.class, SystemConfiguration.class )
+                   .forEach( sessionHandler::addEventListener );
         }
+
+        // Add system servlet context listener, if any.
+        locator.listServices( ServletContextListener.class, SystemConfiguration.class )
+               .forEach( servletContextHandler::addEventListener );
 
         // Add system configuration filters, if any.
-        for ( ServletFilterDef filterDef : locator.listServices( ServletFilterDef.class, SystemConfiguration.class )) {
-            servletContextHandler.addFilter( createFilterHolder( filterDef ),
-                                             filterDef.getPathSpec(),
-                                             EnumSet.of( DispatcherType.REQUEST ) );
+        for ( ServletFilterDef filterDef : locator.listServices( ServletFilterDef.class, SystemConfiguration.class ) ) {
+            configureFilter( servletContextHandler, filterDef );
         }
+
 
         // Add user filters, if any.
         for ( ServletFilterDef filterDef : config.getFilters() ) {
-            servletContextHandler.addFilter( createFilterHolder( filterDef ),
-                                             filterDef.getPathSpec(),
-                                             EnumSet.of( DispatcherType.REQUEST ) );
+            configureFilter( servletContextHandler, filterDef );
         }
 
         for ( ServletDef servletDef : config.getServlets() ) {
@@ -171,16 +198,16 @@ public class JettyUtils {
         return servletContextHandler;
     }
 
-    public static Handler configureServletContextsHandler( ServiceDirectory locator, Server server, List<ServletContextDef> defs ) {
+    public Handler configureServletContextsHandler( Server server, List<ServletContextDef> defs ) {
         if ( defs == null || defs.size() == 0 ) {
             return null;
         } else if ( defs.size() == 1 ) {
-            return configureServletContextHandler( locator, server, defs.get( 0 ) );
+            return configureServletContextHandler( server, defs.get( 0 ) );
         } else {
             HandlerList result = new HandlerList();
             result.setServer( server );
             for ( ServletContextDef def : defs ) {
-                result.addHandler( configureServletContextHandler( locator, server, def ) );
+                result.addHandler( configureServletContextHandler( server, def ) );
             }
             return result;
         }

@@ -18,8 +18,8 @@ package org.dbrain.yaw.system.scope;
 
 import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.app.Feature;
-import org.dbrain.yaw.scope.RequestScoped;
-import org.dbrain.yaw.scope.SessionScoped;
+import org.dbrain.yaw.lifecycle.RequestScoped;
+import org.dbrain.yaw.lifecycle.SessionScoped;
 import org.glassfish.hk2.api.Context;
 import org.glassfish.hk2.api.TypeLiteral;
 

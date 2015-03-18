@@ -17,7 +17,7 @@
 package org.dbrain.yaw.jdbc;
 
 import org.dbrain.yaw.app.Configuration;
-import org.dbrain.yaw.scope.TransactionScoped;
+import org.dbrain.yaw.lifecycle.TransactionScoped;
 import org.dbrain.yaw.system.app.QualifiedFeature;
 
 import javax.inject.Inject;

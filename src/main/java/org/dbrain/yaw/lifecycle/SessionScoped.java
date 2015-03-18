@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.scope;
+package org.dbrain.yaw.lifecycle;
 
 
 import javax.inject.Scope;

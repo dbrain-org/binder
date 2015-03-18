@@ -20,10 +20,12 @@ import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.directory.ServiceKey;
 import org.dbrain.yaw.system.http.server.HttpStandardScopeFeature;
+import org.dbrain.yaw.system.http.webapp.WebAppFeature;
 import org.dbrain.yaw.system.lifecycle.BaseClassAnalyzer;
 import org.dbrain.yaw.system.scope.StandardScopeFeature;
 import org.dbrain.yaw.system.txs.TransactionFeature;
 import org.dbrain.yaw.system.util.AnnotationBuilder;
+import org.glassfish.hk2.api.MultiException;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 
@@ -72,6 +74,7 @@ public class AppImpl implements App {
 
         session = startConfiguration();
         session.addFeature( HttpStandardScopeFeature.class ).complete();
+        session.addFeature( WebAppFeature.class ).complete();
         session.commit();
 
     }
@@ -85,16 +88,19 @@ public class AppImpl implements App {
     }
 
     @Override
-    public void configure( Consumer<Configuration> configurator ) {
-        Configuration session = startConfiguration();
-        configurator.accept( session );
-        session.commit();
+    public void configure( ConfigurationConsumer configurator ) {
+        try {
+            Configuration session = startConfiguration();
+            configurator.accept( session );
+            session.commit();
+        } catch ( Exception e ) {
+            throw new MultiException( e );
+        }
     }
 
     /**
      * @return Start a new session of configuration.
      */
-    @Override
     public Configuration startConfiguration() {
         return new ConfigurationImpl( this );
     }

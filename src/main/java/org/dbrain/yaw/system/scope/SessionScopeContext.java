@@ -16,7 +16,7 @@
 
 package org.dbrain.yaw.system.scope;
 
-import org.dbrain.yaw.scope.SessionScoped;
+import org.dbrain.yaw.lifecycle.SessionScoped;
 import org.dbrain.yaw.system.lifecycle.ContextRegistry;
 import org.dbrain.yaw.system.lifecycle.DelegateContext;
 import org.dbrain.yaw.system.lifecycle.ThreadLocalProvider;

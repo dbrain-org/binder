@@ -16,6 +16,11 @@
 
 package org.dbrain.yaw.http.artifacts.resources;
 
+import org.dbrain.yaw.app.App;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
@@ -25,11 +30,33 @@ import javax.ws.rs.Path;
 @Path( "/" )
 public class SampleResource {
 
+    @Inject
+    App app;
+
+    @Inject
+    @Named( "session" )
+    GuidService sessionUid;
+
+    @Inject
+    @Named( "request" )
+    GuidService requestUid;
+
+
     @GET
     public String get() {
-        return "Result";
+        return "Hello from application " + app.getName();
     }
 
+    @GET
+    @Path( "sessionUid" )
+    public String getSessionUid() {
+        return sessionUid.getUuid().toString();
+    }
 
+    @GET
+    @Path( "requestUid" )
+    public String getRequestUid() {
+        return requestUid.getUuid().toString();
+    }
 
 }

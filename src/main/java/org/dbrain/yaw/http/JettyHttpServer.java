@@ -21,7 +21,7 @@ import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.http.server.defs.ConnectorDef;
 import org.dbrain.yaw.http.server.defs.HttpServerDef;
 import org.dbrain.yaw.system.jetty.JettyConnectors;
-import org.dbrain.yaw.system.jetty.JettyUtils;
+import org.dbrain.yaw.system.jetty.JettyServerBuilder;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 
@@ -61,7 +61,7 @@ public class JettyHttpServer extends AbstractHttpServer<JettyHttpServer> {
         }
 
         // Configure the servlet contexts
-        Handler handler = JettyUtils.configureServletContextsHandler( app, server, def.getServletContexts() );
+        Handler handler = new JettyServerBuilder( app ).configureServletContextsHandler( server, def.getServletContexts() );
         if ( handler != null ) {
             server.setHandler( handler );
         }

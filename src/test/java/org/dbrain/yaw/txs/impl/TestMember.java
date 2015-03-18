@@ -16,7 +16,7 @@
 
 package org.dbrain.yaw.txs.impl;
 
-import org.dbrain.yaw.scope.TransactionScoped;
+import org.dbrain.yaw.lifecycle.TransactionScoped;
 import org.dbrain.yaw.system.txs.TransactionMember;
 import org.dbrain.yaw.txs.TransactionException;
 

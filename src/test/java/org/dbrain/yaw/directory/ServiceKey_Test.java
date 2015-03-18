@@ -17,7 +17,7 @@
 package org.dbrain.yaw.directory;
 
 import org.dbrain.yaw.app.App;
-import org.dbrain.yaw.scope.SessionScoped;
+import org.dbrain.yaw.lifecycle.SessionScoped;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -64,6 +64,8 @@ public class ConfiguratorImpl<T> implements ServiceConfigurator<T> {
 
     private Class<? extends Annotation> scope;
 
+    private boolean useProxy = false;
+
     public ConfiguratorImpl( App app, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
         Objects.requireNonNull( app );
         Objects.requireNonNull( dc );
@@ -126,6 +128,11 @@ public class ConfiguratorImpl<T> implements ServiceConfigurator<T> {
         return this;
     }
 
+    @Override
+    public ServiceConfigurator<T> useProxy() {
+        this.useProxy = true;
+        return this;
+    }
 
     @Override
     public void complete() {
@@ -163,16 +170,22 @@ public class ConfiguratorImpl<T> implements ServiceConfigurator<T> {
                     factoryDescriptor.addContractType( new ParameterizedTypeImpl( Factory.class, service ) );
                 }
             }
+
             for ( Annotation a : qualifiers ) {
                 serviceDescriptor.qualifiedBy( a );
                 if ( factoryDescriptor != null ) {
                     factoryDescriptor.addQualifierAnnotation( a );
                 }
             }
+
             if ( scope != null ) {
                 serviceDescriptor.in( scope );
             } else {
                 serviceDescriptor.in( PerLookup.class );
+            }
+
+            if ( useProxy ) {
+                serviceDescriptor.proxy();
             }
 
             if ( factoryDescriptor == null ) {

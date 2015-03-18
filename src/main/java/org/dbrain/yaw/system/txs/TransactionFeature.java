@@ -18,7 +18,7 @@ package org.dbrain.yaw.system.txs;
 
 import org.dbrain.yaw.app.Configuration;
 import org.dbrain.yaw.app.Feature;
-import org.dbrain.yaw.scope.TransactionScoped;
+import org.dbrain.yaw.lifecycle.TransactionScoped;
 import org.dbrain.yaw.system.txs.jdbc.JdbcConnectionWrapper;
 import org.dbrain.yaw.txs.TransactionControl;
 import org.glassfish.hk2.api.Context;

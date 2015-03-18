@@ -14,25 +14,20 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.app;
+package org.dbrain.yaw.lifecycle;
 
-import org.dbrain.yaw.directory.ServiceDirectory;
-import org.jvnet.hk2.annotations.Contract;
 
-import java.util.function.Consumer;
+import javax.inject.Scope;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Created by epoitras on 3/10/15.
+ * Defines a service that is bound to a request scope.
  */
-@Contract
-public interface App extends AutoCloseable, ServiceDirectory {
-
-    String getName();
-
-    void configure( ConfigurationConsumer session );
-
-    public interface ConfigurationConsumer {
-        public void accept( Configuration config ) throws Exception;
-    }
-
-}
+@Target( { ElementType.TYPE, ElementType.METHOD } )
+@Retention( RUNTIME )
+@Scope
+public @interface TransactionScoped {}

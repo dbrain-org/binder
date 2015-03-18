@@ -42,6 +42,8 @@ public interface ServiceConfigurator<T> {
 
     ServiceConfigurator<T> in( Class<? extends Annotation> scope );
 
+    ServiceConfigurator<T> useProxy();
+
     void complete();
 
 }
