@@ -17,23 +17,25 @@
 package org.dbrain.yaw.http;
 
 import org.dbrain.yaw.app.App;
-import org.dbrain.yaw.http.artifacts.CrippledHttpsClient;
+import org.dbrain.yaw.http.artifacts.EventWs;
 import org.dbrain.yaw.http.artifacts.SampleServlet;
 import org.dbrain.yaw.http.server.HttpsConnectorBuilder;
 import org.dbrain.yaw.http.server.ServletContextBuilder;
 import org.dbrain.yaw.http.server.defs.HttpsConnectorDef;
 import org.dbrain.yaw.http.server.defs.ServletDef;
+import org.dbrain.yaw.http.server.defs.WebSocketDef;
 import org.dbrain.yaw.system.app.AppImpl;
 import org.eclipse.jetty.server.Server;
 import org.junit.Assert;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
 import static org.junit.Assert.assertNotNull;
 
-public class JettyHttpsServer_Test {
+public class JettyWebSocketServer_Test {
 
     private App buildApp() throws Exception {
         App app = new AppImpl();
@@ -42,14 +44,10 @@ public class JettyHttpsServer_Test {
 
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
             servletContext.serve( ServletDef.of( "/*", new SampleServlet() ) );
+            servletContext.serve( WebSocketDef.of( EventWs.class ) );
 
-            HttpsConnectorDef https = HttpsConnectorBuilder.from( "https://localhost:8443" )
-                                                           .keystore( getClass().getResource( "/keystore.jks" ).toURI(),
-                                                                      "password",
-                                                                      "password" )
-                                                           .build();
             config.addFeature( JettyHttpServer.class ) //
-                    .listen( https ) //
+                    .listen( 40001 ) //
                     .serve( servletContext.build() ) //
                     .complete();
 
@@ -61,6 +59,7 @@ public class JettyHttpsServer_Test {
 
     @Test
     public void testHttpsServer() throws Exception {
+
         try ( App app = buildApp() ) {
 
             Server server = app.getInstance( Server.class );
@@ -68,11 +67,11 @@ public class JettyHttpsServer_Test {
             assertNotNull( server );
             server.start();
 
-            Client httpClient = CrippledHttpsClient.create();
-            WebTarget t = httpClient.target( "https://localhost:8443/" );
-            String s = t.request().get( String.class );
+            Client httpClient = ClientBuilder.newClient();
+            WebTarget t = httpClient.target( "http://localhost:40001/" );
+            String s = t.request().get(String.class);
 
-            Assert.assertEquals( "Hello from sample servlet.", s );
+            Assert.assertEquals( "Hello from sample servlet.", s);
         }
 
     }

@@ -19,8 +19,6 @@ package org.dbrain.yaw.app;
 import org.dbrain.yaw.directory.ServiceDirectory;
 import org.jvnet.hk2.annotations.Contract;
 
-import java.util.function.Consumer;
-
 /**
  * Created by epoitras on 3/10/15.
  */
@@ -29,10 +27,19 @@ public interface App extends AutoCloseable, ServiceDirectory {
 
     String getName();
 
-    void configure( ConfigurationConsumer session );
+    void configure( AppConfigurator session );
 
-    public interface ConfigurationConsumer {
+    /**
+     * Internal functional interface to used to configure an application.
+     */
+    @FunctionalInterface
+    public interface AppConfigurator {
+
+        /**
+         * Accept a configuration, allowing to configure the App.
+         */
         public void accept( Configuration config ) throws Exception;
+
     }
 
 }

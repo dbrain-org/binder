@@ -168,17 +168,20 @@ public class JettyServerBuilder {
             servletContextHandler.setInitParameter( "org.eclipse.jetty.servlet.SessionIdPathParameterName", "none" );
             servletContextHandler.setSecurityHandler( createConstraintSecurityHandler( config.getSecurity() ) );
         }
+
         SessionHandler sessionHandler = new SessionHandler();
-        servletContextHandler.setSessionHandler( new SessionHandler() );
-        if ( sessionHandler != null ) {
-            // Add system session listener, if any.
-            locator.listServices( HttpSessionListener.class, SystemConfiguration.class )
-                   .forEach( sessionHandler::addEventListener );
-        }
+        servletContextHandler.setSessionHandler( sessionHandler );
 
         // Add system servlet context listener, if any.
         locator.listServices( ServletContextListener.class, SystemConfiguration.class )
                .forEach( servletContextHandler::addEventListener );
+
+        // Add system session listener, if any.
+        if ( sessionHandler != null ) {
+            locator.listServices( HttpSessionListener.class, SystemConfiguration.class )
+                   .forEach( sessionHandler::addEventListener );
+        }
+
 
         // Add system configuration filters, if any.
         for ( ServletFilterDef filterDef : locator.listServices( ServletFilterDef.class, SystemConfiguration.class ) ) {

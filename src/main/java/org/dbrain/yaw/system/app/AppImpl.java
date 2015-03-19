@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 /**
  * Created by epoitras on 3/4/15.
@@ -88,7 +87,7 @@ public class AppImpl implements App {
     }
 
     @Override
-    public void configure( ConfigurationConsumer configurator ) {
+    public void configure( AppConfigurator configurator ) {
         try {
             Configuration session = startConfiguration();
             configurator.accept( session );

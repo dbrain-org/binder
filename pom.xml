@@ -65,12 +65,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dbrain.platform</groupId>
-			<artifactId>guice</artifactId>
-			<version>${platform-version}</version>
-			<type>pom</type>
-		</dependency>
-		<dependency>
-			<groupId>org.dbrain.platform</groupId>
 			<artifactId>javax-servlet</artifactId>
 			<version>${platform-version}</version>
 			<type>pom</type>
