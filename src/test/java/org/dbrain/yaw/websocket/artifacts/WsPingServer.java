@@ -14,9 +14,13 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.http.artifacts;
+package org.dbrain.yaw.websocket.artifacts;
 
-import javax.websocket.ClientEndpoint;
+import org.dbrain.yaw.app.App;
+import org.dbrain.yaw.http.artifacts.resources.GuidService;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -28,26 +32,41 @@ import javax.websocket.server.ServerEndpoint;
 /**
  * Created by epoitras on 11/09/14.
  */
-@ClientEndpoint
-@ServerEndpoint( value = "/ws", subprotocols = { "v10.stomp", "v11.stomp" } )
-public class EventWs {
+@ServerEndpoint( value = "/ws" )
+public class WsPingServer {
 
-    public EventWs() {
-        System.out.println( " Creating websocket. " );
+    @Inject
+    @Named( "session" )
+    GuidService sessionUid;
+
+    @Inject
+    @Named( "request" )
+    GuidService requestUid;
+
+
+    Session session;
+
+    public WsPingServer() {
+        System.out.println( "Creating websocket. " );
     }
 
     @OnOpen
-    public void onWebSocketConnect( Session sess ) {
+    public void onWebSocketConnectJsrExtension( Session sess ) {
         System.out.println( "Socket Connected: " + sess );
-        sess.getAsyncRemote().sendText( "Hello !" );
+        session = sess;
 
     }
 
     @OnMessage
-    public void onWebSocketText( String message ) {
+    public void onWebSocketText( Session sess, String message ) {
         System.out.println( "Received TEXT message: " + message );
-        System.out.print( message );
-
+        if ( message.equalsIgnoreCase( "request" ) ) {
+            session.getAsyncRemote().sendText( requestUid.getUuid().toString() );
+        } else if ( message.equalsIgnoreCase( "session" ) ) {
+            session.getAsyncRemote().sendText( sessionUid.getUuid().toString() );
+        } else {
+            session.getAsyncRemote().sendText( message );
+        }
     }
 
     @OnClose

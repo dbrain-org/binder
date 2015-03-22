@@ -25,6 +25,10 @@ import org.dbrain.yaw.http.server.defs.ServletDef;
 import org.dbrain.yaw.http.server.defs.ServletFilterDef;
 import org.dbrain.yaw.http.server.defs.WebSocketDef;
 import org.dbrain.yaw.system.app.SystemConfiguration;
+import org.dbrain.yaw.system.http.server.StandardScopeExtension;
+import org.dbrain.yaw.system.http.server.StandardScopeWebSocketDriver;
+import org.dbrain.yaw.system.scope.RequestScopeContext;
+import org.dbrain.yaw.system.scope.SessionScopeContext;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -37,13 +41,20 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
+import org.eclipse.jetty.websocket.api.extensions.ExtensionFactory;
+import org.eclipse.jetty.websocket.common.events.EventDriverFactory;
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
+import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSessionListener;
-import javax.websocket.server.ServerContainer;
+import javax.websocket.server.ServerEndpointConfig;
+
+import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;
+import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
+
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
@@ -126,18 +137,45 @@ public class JettyServerBuilder {
     }
 
     public void configureWebSocket( ServerContainer serverContainer, WebSocketDef webSocketDef ) throws Exception {
+
         webSocketDef.accept( new WebSocketDef.Visitor() {
+
+            private void configureServerEndpointConfig( ServerEndpointConfig config ) throws Exception {
+                config = ServerEndpointConfig.Builder.create( config.getEndpointClass(), config.getPath() ) //
+                        .decoders( config.getDecoders() ) //
+                        .encoders( config.getEncoders() ) //
+                        .extensions( config.getExtensions() ) //
+                        .subprotocols( config.getSubprotocols() ) //
+                        .configurator( new WebSocketDirectoryConfigurator( locator, config.getConfigurator() ) ) //
+                        .build();
+
+                serverContainer.addEndpoint( config );
+            }
+
             @Override
             public void visit( WebSocketDef.EndpointClassWebSocketDef endpointClassWebSocketDef ) throws Exception {
-                serverContainer.addEndpoint( endpointClassWebSocketDef.getEndpointClass() );
+                ServerEndpointConfig config = serverContainer //
+                        .getServerEndpointMetadata( endpointClassWebSocketDef.getEndpointClass(), null ) //
+                        .getConfig();
+
+                // Configure the endpoint
+                configureServerEndpointConfig( config );
             }
 
             @Override
             public void visit( WebSocketDef.ServerEndpointConfigWebSocketDef serverEndpointConfig ) throws Exception {
-                serverContainer.addEndpoint( serverEndpointConfig.getConfig() );
+                // Configure the endpoint
+                configureServerEndpointConfig( serverEndpointConfig.getConfig() );
             }
         } );
 
+    }
+
+
+    public void configureWebSocketInjection( ServletContextHandler servletContextHandler ) throws Exception {
+        WebSocketUpgradeFilter filter = WebSocketUpgradeFilter.configureContext( servletContextHandler );
+        ExtensionFactory factory = filter.getFactory().getExtensionFactory();
+        factory.register( StandardScopeExtension.NAME, StandardScopeExtension.class );
     }
 
 
@@ -150,8 +188,10 @@ public class JettyServerBuilder {
         // Initialize javax.websocket layer
         if ( config.getWebSockets().size() > 0 ) {
             try {
-                ServerContainer wscontainer = WebSocketServerContainerInitializer.configureContext(
-                        servletContextHandler );
+                ServerContainer wscontainer = //
+                        WebSocketServerContainerInitializer.configureContext( servletContextHandler );
+
+                configureWebSocketInjection( servletContextHandler );
 
                 for ( WebSocketDef wsd : config.getWebSockets() ) {
                     configureWebSocket( wscontainer, wsd );
@@ -169,6 +209,7 @@ public class JettyServerBuilder {
             servletContextHandler.setSecurityHandler( createConstraintSecurityHandler( config.getSecurity() ) );
         }
 
+        // Create a session handler for the server.
         SessionHandler sessionHandler = new SessionHandler();
         servletContextHandler.setSessionHandler( sessionHandler );
 
