@@ -26,9 +26,6 @@ import org.dbrain.yaw.http.server.defs.ServletFilterDef;
 import org.dbrain.yaw.http.server.defs.WebSocketDef;
 import org.dbrain.yaw.system.app.SystemConfiguration;
 import org.dbrain.yaw.system.http.server.StandardScopeExtension;
-import org.dbrain.yaw.system.http.server.StandardScopeWebSocketDriver;
-import org.dbrain.yaw.system.scope.RequestScopeContext;
-import org.dbrain.yaw.system.scope.SessionScopeContext;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -42,7 +39,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.websocket.api.extensions.ExtensionFactory;
-import org.eclipse.jetty.websocket.common.events.EventDriverFactory;
+import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
 import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
 
@@ -51,10 +48,6 @@ import javax.servlet.Filter;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSessionListener;
 import javax.websocket.server.ServerEndpointConfig;
-
-import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;
-import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
-
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
