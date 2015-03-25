@@ -35,18 +35,18 @@ import javax.inject.Singleton;
  *   Server   : The jetty server.
  *
  */
-public class JettyHttpServer extends AbstractHttpServer<JettyHttpServer> {
+public class JettyServerFeature extends AbstractHttpServerFeature<JettyServerFeature> {
 
     private final App app;
 
     @Inject
-    public JettyHttpServer( App app, Configuration config  ) {
+    public JettyServerFeature( App app, Configuration config ) {
         super( config );
         this.app = app;
     }
 
     @Override
-    protected JettyHttpServer self() {
+    protected JettyServerFeature self() {
         return this;
     }
 

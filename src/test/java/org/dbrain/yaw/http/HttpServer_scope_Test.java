@@ -49,7 +49,7 @@ public class HttpServer_scope_Test {
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
             servletContext.serve( ServletDef.of( "/*", webApp.build() ) );
 
-            config.addFeature( JettyHttpServer.class ) //
+            config.addFeature( JettyServerFeature.class ) //
                     .listen( 40001 )              //
                     .serve( servletContext.build() ) //
                     .complete();

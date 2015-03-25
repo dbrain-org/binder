@@ -28,23 +28,23 @@ import java.sql.Connection;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class JdbcDriverDatasource extends QualifiedFeature<JdbcDriverDatasource> {
+public class JdbcDriverDatasourceFeature extends QualifiedFeature<JdbcDriverDatasourceFeature> {
 
     private final Configuration config;
 
     private Provider<Connection> connectionProvider;
 
     @Inject
-    public JdbcDriverDatasource( Configuration config ) {
+    public JdbcDriverDatasourceFeature( Configuration config ) {
         this.config = config;
     }
 
     @Override
-    protected JdbcDriverDatasource self() {
+    protected JdbcDriverDatasourceFeature self() {
         return this;
     }
 
-    public JdbcDriverDatasource withProvider( Provider<Connection> connectionProvider ) {
+    public JdbcDriverDatasourceFeature withProvider( Provider<Connection> connectionProvider ) {
         this.connectionProvider = connectionProvider;
         return this;
     }

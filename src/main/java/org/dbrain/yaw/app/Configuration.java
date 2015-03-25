@@ -23,7 +23,7 @@ public interface Configuration {
 
     <T> ServiceConfigurator<T> bind( Class<T> implementationClass );
 
-    <T> ServiceConfigurator<T> defineService( T implementation );
+    <T> ServiceConfigurator<T> bind( T implementation );
 
     <T extends Feature> T addFeature( Class<T> feature );
 

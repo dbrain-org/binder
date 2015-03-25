@@ -31,8 +31,6 @@ public interface ServiceKeyBuilder<T> {
 
     ServiceKeyBuilder<T> named( String name );
 
-    public ServiceKey<T> build();
-
-
+    ServiceKey<T> build();
 
 }

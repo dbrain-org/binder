@@ -17,7 +17,7 @@
 package org.dbrain.yaw.websocket;
 
 import org.dbrain.yaw.app.App;
-import org.dbrain.yaw.http.JettyHttpServer;
+import org.dbrain.yaw.http.JettyServerFeature;
 import org.dbrain.yaw.http.artifacts.resources.GuidService;
 import org.dbrain.yaw.http.server.ServletContextBuilder;
 import org.dbrain.yaw.http.server.defs.WebSocketDef;
@@ -48,7 +48,7 @@ public class JettyWebSocketServer_Test {
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
             servletContext.serve( WebSocketDef.of( WsPingServer.class ) );
 
-            config.addFeature( JettyHttpServer.class ) //
+            config.addFeature( JettyServerFeature.class ) //
                     .listen( 40001 ) //
                     .serve( servletContext.build() ) //
                     .complete();

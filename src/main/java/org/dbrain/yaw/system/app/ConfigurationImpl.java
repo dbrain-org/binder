@@ -48,7 +48,7 @@ public class ConfigurationImpl implements Configuration {
     }
 
     @Override
-    public <T> ServiceConfigurator<T> defineService( T implementation ) {
+    public <T> ServiceConfigurator<T> bind( T implementation ) {
         return bind( (Class<T>) implementation.getClass() ).providedBy( implementation );
     }
 

@@ -48,7 +48,7 @@ public class JettyHttpsServer_Test {
                                                                       "password",
                                                                       "password" )
                                                            .build();
-            config.addFeature( JettyHttpServer.class ) //
+            config.addFeature( JettyServerFeature.class ) //
                     .listen( https ) //
                     .serve( servletContext.build() ) //
                     .complete();

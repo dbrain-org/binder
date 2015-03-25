@@ -85,6 +85,7 @@
 			<groupId>org.dbrain.platform</groupId>
 			<artifactId>hazelcast</artifactId>
 			<version>${platform-version}</version>
+			<type>pom</type>
 		</dependency>
 
 		<dependency>

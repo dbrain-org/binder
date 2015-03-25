@@ -29,23 +29,23 @@ import java.sql.Connection;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class JdbcDatasource extends QualifiedFeature<JdbcDatasource> {
+public class JdbcDatasourceFeature extends QualifiedFeature<JdbcDatasourceFeature> {
 
     private final Configuration session;
 
     private DataSource dataSource;
 
     @Inject
-    public JdbcDatasource( Configuration session ) {
+    public JdbcDatasourceFeature( Configuration session ) {
         this.session = session;
     }
 
     @Override
-    protected JdbcDatasource self() {
+    protected JdbcDatasourceFeature self() {
         return this;
     }
 
-    public JdbcDatasource dataSource( DataSource dataSource ) {
+    public JdbcDatasourceFeature dataSource( DataSource dataSource ) {
         this.dataSource = dataSource;
         return this;
     }

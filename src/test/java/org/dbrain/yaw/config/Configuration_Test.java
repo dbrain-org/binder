@@ -70,8 +70,7 @@ public class Configuration_Test {
         TestService1 instance = new TestService1();
         try ( App app = new AppImpl() ) {
             Configuration session = new ConfigurationImpl( app );
-            session.bind( TestService1.class ) //
-                    .providedBy( instance ) //
+            session.bind( instance ) //
                     .to( TestService1.class ) //
                     .complete();
             session.commit();

@@ -33,12 +33,12 @@ public interface App extends AutoCloseable, ServiceDirectory {
      * Internal functional interface to used to configure an application.
      */
     @FunctionalInterface
-    public interface AppConfigurator {
+    interface AppConfigurator {
 
         /**
          * Accept a configuration, allowing to configure the App.
          */
-        public void accept( Configuration config ) throws Exception;
+        void accept( Configuration config ) throws Exception;
 
     }
 

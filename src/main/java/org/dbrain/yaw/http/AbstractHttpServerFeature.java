@@ -26,13 +26,13 @@ import org.dbrain.yaw.system.app.QualifiedFeature;
 
 import javax.inject.Inject;
 
-public abstract class AbstractHttpServer<T extends AbstractHttpServer> extends QualifiedFeature<T> {
+public abstract class AbstractHttpServerFeature<T extends AbstractHttpServerFeature> extends QualifiedFeature<T> {
 
     private final Configuration config;
     private HttpServerDef building = new HttpServerDef();
 
     @Inject
-    public AbstractHttpServer( Configuration config ) {
+    public AbstractHttpServerFeature( Configuration config ) {
         this.config = config;
     }
 

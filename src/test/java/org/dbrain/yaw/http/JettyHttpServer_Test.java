@@ -18,9 +18,7 @@ package org.dbrain.yaw.http;
 
 import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.http.artifacts.SampleServlet;
-import org.dbrain.yaw.http.server.HttpsConnectorBuilder;
 import org.dbrain.yaw.http.server.ServletContextBuilder;
-import org.dbrain.yaw.http.server.defs.HttpsConnectorDef;
 import org.dbrain.yaw.http.server.defs.ServletDef;
 import org.dbrain.yaw.system.app.AppImpl;
 import org.eclipse.jetty.server.Server;
@@ -43,7 +41,7 @@ public class JettyHttpServer_Test {
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
             servletContext.serve( ServletDef.of( "/*", new SampleServlet() ) );
 
-            config.addFeature( JettyHttpServer.class ) //
+            config.addFeature( JettyServerFeature.class ) //
                     .listen( 40001 )              //
                     .serve( servletContext.build() ) //
                     .complete();
