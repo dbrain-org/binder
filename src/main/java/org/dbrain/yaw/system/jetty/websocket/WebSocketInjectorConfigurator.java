@@ -14,13 +14,9 @@
  *     limitations under the License.
  */
 
-package org.dbrain.yaw.system.jetty;
+package org.dbrain.yaw.system.jetty.websocket;
 
-import org.dbrain.yaw.app.App;
 import org.dbrain.yaw.directory.ServiceDirectory;
-import org.dbrain.yaw.system.http.server.StandardScopeExtension;
-import org.eclipse.jetty.websocket.api.extensions.ExtensionConfig;
-import org.eclipse.jetty.websocket.jsr356.JsrExtension;
 
 import javax.websocket.Extension;
 import javax.websocket.HandshakeResponse;
@@ -31,12 +27,12 @@ import java.util.List;
 /**
  * Created by epoitras on 3/21/15.
  */
-public class WebSocketDirectoryConfigurator extends ServerEndpointConfig.Configurator {
+public class WebSocketInjectorConfigurator extends ServerEndpointConfig.Configurator {
 
     private final ServiceDirectory                  directory;
     private final ServerEndpointConfig.Configurator delegate;
 
-    public WebSocketDirectoryConfigurator( ServiceDirectory directory, ServerEndpointConfig.Configurator delegate ) {
+    public WebSocketInjectorConfigurator( ServiceDirectory directory, ServerEndpointConfig.Configurator delegate ) {
         this.directory = directory;
         this.delegate = delegate;
     }
@@ -48,13 +44,7 @@ public class WebSocketDirectoryConfigurator extends ServerEndpointConfig.Configu
 
     @Override
     public List<Extension> getNegotiatedExtensions( List<Extension> installed, List<Extension> requested ) {
-        List<Extension> result = delegate.getNegotiatedExtensions( installed, requested );
-
-        ExtensionConfig standardScopeExtension = new ExtensionConfig( StandardScopeExtension.NAME );
-        standardScopeExtension.setParameter( StandardScopeExtension.PARAM_APP,
-                                             directory.getInstance( App.class ).getName() );
-        result.add( new JsrExtension( standardScopeExtension ));
-        return result;
+        return  delegate.getNegotiatedExtensions( installed, requested );
     }
 
     @Override

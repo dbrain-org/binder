@@ -170,6 +170,8 @@ public class JettyWebSocketServer_Test {
             // close the client
             client.close();
 
+            server.join();
+
             Assert.assertEquals( 2, sb.size() );
             Assert.assertEquals( sb.get( 0 ), sb.get( 1 ) );
         }
