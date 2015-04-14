@@ -129,6 +129,9 @@ public class JettyServerBuilder {
         return sh;
     }
 
+    /**
+     * Configure web socket definitions into the server container.
+     */
     public void configureWebSocket( ServerContainer serverContainer, WebSocketDef webSocketDef ) throws Exception {
 
         webSocketDef.accept( new WebSocketDef.Visitor() {
@@ -164,11 +167,10 @@ public class JettyServerBuilder {
 
     }
 
-
     /**
-     * Jetty Native approach.
-     * <p>
-     * Note: this will add the Upgrade filter to the existing list, with no regard for order.  It will just be tacked onto the end of the list.
+     * Configure the Upgrade filter into the Servlet Context Handler.
+     *
+     * Taken from org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
      */
     public ServerContainer configureContext( ServletContextHandler context ) throws ServletException {
 
@@ -176,6 +178,9 @@ public class JettyServerBuilder {
         WebSocketUpgradeFilter filter = WebSocketUpgradeFilter.configureContext( context );
 
         JsrScopedSessionFactory scopedSessionFactory = locator.getJitInstance( JsrScopedSessionFactory.class );
+
+        // TODO: This is a bit edgy since it works only because the other session factory in registered
+        // later in the ServerContainer. There should be a better way to do this ?
         filter.getFactory().addSessionFactory( scopedSessionFactory );
 
         // Create the Jetty ServerContainer implementation
