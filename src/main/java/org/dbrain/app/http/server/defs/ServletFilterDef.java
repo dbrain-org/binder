@@ -27,23 +27,23 @@ import javax.servlet.Filter;
  */
 public interface ServletFilterDef {
 
-    public static ServletFilterDef of( String pathSpec, Filter instance ) {
+    static ServletFilterDef of( String pathSpec, Filter instance ) {
         return new ServletFilterInstanceDef( pathSpec, instance );
     }
 
-    public static ServletFilterDef of( String pathSpec, Class<? extends Filter> filterClass ) {
+    static ServletFilterDef of( String pathSpec, Class<? extends Filter> filterClass ) {
         return new ServletFilterClassDef( pathSpec, filterClass );
     }
 
 
-    public void accept( Visitor v );
+    void accept( Visitor v );
 
-    public interface Visitor {
+    interface Visitor {
         void visit( ServletFilterInstanceDef servletDef );
         void visit( ServletFilterClassDef servletDef );
     }
 
-    public class ServletFilterClassDef implements ServletFilterDef {
+    class ServletFilterClassDef implements ServletFilterDef {
 
         private final String pathSpec;
 
@@ -69,7 +69,7 @@ public interface ServletFilterDef {
 
     }
 
-    public class ServletFilterInstanceDef implements ServletFilterDef {
+    class ServletFilterInstanceDef implements ServletFilterDef {
 
         private final String pathSpec;
 

@@ -27,17 +27,17 @@ import javax.servlet.Servlet;
  */
 public interface ServletDef {
 
-    public static ServletDef of( String pathSpec, Servlet instance ) {
+    static ServletDef of( String pathSpec, Servlet instance ) {
         return new InstanceServletDef( pathSpec, instance );
     }
 
-    public void accept( Visitor v );
+    void accept( Visitor v );
 
-    public interface Visitor {
+    interface Visitor {
         void visit( InstanceServletDef servletDef );
     }
 
-    public class InstanceServletDef implements ServletDef {
+    class InstanceServletDef implements ServletDef {
 
         private final Servlet instance;
 

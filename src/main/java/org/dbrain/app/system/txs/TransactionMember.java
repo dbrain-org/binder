@@ -23,11 +23,11 @@ import org.dbrain.app.txs.TransactionException;
  */
 public interface TransactionMember {
 
-    public void flush() throws TransactionException;
+    void flush() throws TransactionException;
 
-    public void commit() throws TransactionException;
+    void commit() throws TransactionException;
 
-    public void rollback() throws TransactionException;
+    void rollback() throws TransactionException;
 
     /**
      * Created by epoitras on 3/5/15.

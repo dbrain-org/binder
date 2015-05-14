@@ -179,7 +179,7 @@ public class JettyServerBuilder {
 
         JsrScopedSessionFactory scopedSessionFactory = locator.getJitInstance( JsrScopedSessionFactory.class );
 
-        // TODO: This is a bit edgy since it works only because the other session factory in registered
+        // TODO: This is a bit edgy since it works only because the other session factory are registered
         // later in the ServerContainer. There should be a better way to do this ?
         filter.getFactory().addSessionFactory( scopedSessionFactory );
 

@@ -25,12 +25,12 @@ package org.dbrain.app.txs;
  */
 public interface Transaction extends AutoCloseable {
 
-    public TransactionState getStatus();
+    TransactionState getStatus();
 
-    public void commit() throws TransactionException;
+    void commit() throws TransactionException;
 
-    public void rollback() throws TransactionException;
+    void rollback() throws TransactionException;
 
-    public void close() throws TransactionException;
+    void close() throws TransactionException;
 
 }

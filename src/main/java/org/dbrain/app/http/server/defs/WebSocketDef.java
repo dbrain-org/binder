@@ -26,14 +26,14 @@ public interface WebSocketDef {
     /**
      * Websocket defined using standard javax.websocket.* annotations.
      */
-    public static EndpointClassWebSocketDef of( Class<?> endpointClass ) {
+    static EndpointClassWebSocketDef of( Class<?> endpointClass ) {
         return new EndpointClassWebSocketDef( endpointClass );
     }
 
     /**
      * Websocket defined with a server enpoint configuration.
      */
-    public static ServerEndpointConfigWebSocketDef of( ServerEndpointConfig endpointConfig ) {
+    static ServerEndpointConfigWebSocketDef of( ServerEndpointConfig endpointConfig ) {
         return new ServerEndpointConfigWebSocketDef( endpointConfig );
     }
 
@@ -43,7 +43,7 @@ public interface WebSocketDef {
     /**
      * Visitor for configuration.
      */
-    public interface Visitor {
+    interface Visitor {
 
         void visit( EndpointClassWebSocketDef endpointClassWebSocketDef ) throws Exception;
 
@@ -51,7 +51,7 @@ public interface WebSocketDef {
 
     }
 
-    public class EndpointClassWebSocketDef implements WebSocketDef {
+    class EndpointClassWebSocketDef implements WebSocketDef {
 
         private final Class<?> endpointClass;
 
@@ -69,7 +69,7 @@ public interface WebSocketDef {
         }
     }
 
-    public class ServerEndpointConfigWebSocketDef implements WebSocketDef {
+    class ServerEndpointConfigWebSocketDef implements WebSocketDef {
 
         private final ServerEndpointConfig config;
 
