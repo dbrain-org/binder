@@ -16,6 +16,8 @@
 
 package org.dbrain.app.http.server.defs;
 
+import org.dbrain.app.directory.ServiceKey;
+
 import javax.websocket.server.ServerEndpointConfig;
 
 /**
@@ -27,8 +29,16 @@ public interface WebSocketDef {
      * Websocket defined using standard javax.websocket.* annotations.
      */
     static EndpointClassWebSocketDef of( Class<?> endpointClass ) {
-        return new EndpointClassWebSocketDef( endpointClass );
+        return new EndpointClassWebSocketDef( ServiceKey.of( endpointClass ) );
     }
+
+    /**
+     * Websocket service defined using standard javax.websocket.* annotations.
+     */
+    static EndpointClassWebSocketDef of( ServiceKey<?> endpointService ) {
+        return new EndpointClassWebSocketDef( endpointService );
+    }
+
 
     /**
      * Websocket defined with a server enpoint configuration.
@@ -53,14 +63,14 @@ public interface WebSocketDef {
 
     class EndpointClassWebSocketDef implements WebSocketDef {
 
-        private final Class<?> endpointClass;
+        private final ServiceKey<?> endpointService;
 
-        private EndpointClassWebSocketDef( Class<?> endpointClass ) {
-            this.endpointClass = endpointClass;
+        private EndpointClassWebSocketDef( ServiceKey<?> endpointService ) {
+            this.endpointService = endpointService;
         }
 
-        public Class<?> getEndpointClass() {
-            return endpointClass;
+        public ServiceKey<?> getEndpointService() {
+            return endpointService;
         }
 
         @Override

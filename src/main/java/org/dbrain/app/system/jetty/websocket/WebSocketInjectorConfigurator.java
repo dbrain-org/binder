@@ -17,6 +17,7 @@
 package org.dbrain.app.system.jetty.websocket;
 
 import org.dbrain.app.directory.ServiceDirectory;
+import org.dbrain.app.directory.ServiceKey;
 
 import javax.websocket.Extension;
 import javax.websocket.HandshakeResponse;
@@ -25,16 +26,18 @@ import javax.websocket.server.ServerEndpointConfig;
 import java.util.List;
 
 /**
- * Created by epoitras on 3/21/15.
+ * Support injection into Websocket instances.
  */
 public class WebSocketInjectorConfigurator extends ServerEndpointConfig.Configurator {
 
     private final ServiceDirectory                  directory;
     private final ServerEndpointConfig.Configurator delegate;
+    private final ServiceKey<?> serviceKey;
 
-    public WebSocketInjectorConfigurator( ServiceDirectory directory, ServerEndpointConfig.Configurator delegate ) {
+    public WebSocketInjectorConfigurator( ServiceDirectory directory, ServerEndpointConfig.Configurator delegate, ServiceKey<?> serviceKey ) {
         this.directory = directory;
         this.delegate = delegate;
+        this.serviceKey = serviceKey;
     }
 
     @Override
@@ -59,7 +62,6 @@ public class WebSocketInjectorConfigurator extends ServerEndpointConfig.Configur
 
     @Override
     public <T> T getEndpointInstance( Class<T> endpointClass ) throws InstantiationException {
-        return directory.getJitInstance( endpointClass );
-        //return delegate.getEndpointInstance( endpointClass );
+        return endpointClass.cast( directory.getOrCreateInstance( serviceKey.getServiceClass() ) );
     }
 }

@@ -21,60 +21,88 @@ import org.dbrain.app.directory.artifacts.InjectedBean;
 import org.dbrain.app.directory.artifacts.SimpleService;
 import org.dbrain.app.directory.artifacts.SomeQualifier;
 import org.dbrain.app.system.app.AppImpl;
-import org.dbrain.app.system.util.AnnotationBuilder;
-import org.glassfish.hk2.api.DynamicConfiguration;
-import org.glassfish.hk2.api.DynamicConfigurationService;
-import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.hk2.utilities.BuilderHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by epoitras on 3/4/15.
  */
 public class ServiceDirectory_Test {
 
+    private App buildApp() {
+
+        App app = new AppImpl();
+        app.configure( ( config ) -> {
+
+            config.bind( SimpleService.class ) //
+                    .named( "toto" ) //
+                    .to( SimpleService.class ) //
+                    .complete();
+
+            config.bind( SimpleService.class ) //
+                    .named( "toto" ) //
+                    .qualifiedBy( SomeQualifier.class ) //
+                    .to( SimpleService.class ) //
+                    .complete();
+
+            config.bind( SimpleService.class ) //
+                    .to( SimpleService.class ) //
+                    .in( Singleton.class ) //
+                    .complete();
+
+            config.bind( InjectedBean.class ) //
+                    .to( InjectedBean.class ) //
+                    .complete();
+
+        } );
+
+        return app;
+    }
+
 
     @Test
-    public void testBasicUseCase() throws Exception {
+    public void testLocate() throws Exception {
 
-        try ( App app = new AppImpl() ) {
-            ServiceLocator sl = app.getInstance( ServiceLocator.class );
+        try ( App app = buildApp() ) {
 
-            DynamicConfiguration dc = sl.getService( DynamicConfigurationService.class ).createDynamicConfiguration();
+            InjectedBean s1i1 = app.locate( InjectedBean.class );
+            SimpleService s2i1 = app.locate( SimpleService.class, SomeQualifier.class );
+            SimpleService s2i2 = app.locate( SimpleService.class, SomeQualifier.class );
+            SimpleService s2i3 = app.locate( ServiceKey.from( SimpleService.class ) //
+                                                     .named( "toto" ) //
+                                                     .qualifiedBy( SomeQualifier.class ) //
+                                                     .build() //
+                                           );
 
-            dc.bind( BuilderHelper.activeLink( SimpleService.class )  //
-                             .named( "toto" )                     //
-                             .to( SimpleService.class )            //
-                             .build() );
+            assertNotNull( s1i1 );
+            assertNotNull( s2i1 );
+            assertNotNull( s2i2 );
+            assertNotNull( s2i3 );
 
+        }
 
-            dc.bind( BuilderHelper.activeLink( SimpleService.class ) //
-                             .to( SimpleService.class )          //
-                             .in( Singleton.class ) //
-                             .build() );
+    }
 
-            dc.bind( BuilderHelper.activeLink( SimpleService.class )   //
-                             .named( "toto" )                      //
-                             .qualifiedBy( AnnotationBuilder.of( SomeQualifier.class ) ) //
-                             .to( SimpleService.class )                             //
-                             .build() );
-            dc.commit();
+    @Test
+    public void testListServices() throws Exception {
 
+        try ( App app = buildApp() ) {
 
-            Assert.assertEquals( 1, sl.getAllServices( SimpleService.class, AnnotationBuilder.of( SomeQualifier.class ) ).size() );
-            Assert.assertEquals( 2,
-                                 sl.getAllServices( SimpleService.class,
-                                                    AnnotationBuilder.of( Named.class, "toto" ) ).size() );
-            Assert.assertEquals( 3, sl.getAllServices( SimpleService.class ).size() );
+            List<SimpleService> l1 = app.listServices( SimpleService.class, SomeQualifier.class );
+            assertEquals( 1, l1.size() );
 
-            InjectedBean ti = sl.createAndInitialize( InjectedBean.class );
-            Assert.assertNotNull( ti.getService1() );
-            Assert.assertNotNull( ti.service2 );
+            List<SimpleService> l2 = app.listServices( SimpleService.class, "toto" );
+            assertEquals( 2, l2.size() );
 
+            List<SimpleService> l3 = app.listServices( SimpleService.class );
+            assertEquals( 3, l3.size() );
 
         }
     }

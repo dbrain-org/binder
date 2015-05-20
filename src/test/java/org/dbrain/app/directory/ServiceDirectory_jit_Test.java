@@ -34,7 +34,7 @@ public class ServiceDirectory_jit_Test {
     @Test
     public void testGetJitInstance() throws Exception {
         try ( App app = buildApp() ) {
-            JitBean jitClass  = app.getJitInstance( JitBean.class );
+            JitBean jitClass  = app.getOrCreateInstance( JitBean.class );
 
             assertEquals( app.getInstance( App.class ), jitClass.getInjectedConstructor1() );
             assertEquals( app.getInstance( ServiceLocator.class ), jitClass.getInjectedConstructor2() );
@@ -42,4 +42,27 @@ public class ServiceDirectory_jit_Test {
 
         }
     }
+
+    @Test
+    public void testGetJitInstance_serviceKey() throws Exception {
+        try ( App app = buildApp() ) {
+            JitBean jitClass  = app.getOrCreateInstance( ServiceKey.of( JitBean.class ) );
+
+            assertEquals( app.getInstance( App.class ), jitClass.getInjectedConstructor1() );
+            assertEquals( app.getInstance( ServiceLocator.class ), jitClass.getInjectedConstructor2() );
+            assertEquals( app.getInstance( App.class ), jitClass.getInjectedField1() );
+
+        }
+    }
+
+    @Test(expected = NullPointerException.class )
+    public void testGetJitInstance_qualified() throws Exception {
+        try ( App app = buildApp() ) {
+            JitBean jitClass  = app.getOrCreateInstance( ServiceKey.of( JitBean.class, "named" ) );
+
+            assertNull( jitClass );
+        }
+    }
+
+
 }

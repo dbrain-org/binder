@@ -17,6 +17,7 @@
 package org.dbrain.app.system.jetty;
 
 import org.dbrain.app.directory.ServiceDirectory;
+import org.dbrain.app.directory.ServiceKey;
 import org.dbrain.app.http.server.defs.CredentialsDef;
 import org.dbrain.app.http.server.defs.FormLocationDef;
 import org.dbrain.app.http.server.defs.ServletAppSecurityDef;
@@ -79,7 +80,7 @@ public class JettyServerBuilder {
 
             @Override
             public void visit( ServletFilterDef.ServletFilterClassDef servletDef ) {
-                Filter instance = locator.getJitInstance( servletDef.getFilterClass() );
+                Filter instance = locator.getOrCreateInstance( servletDef.getFilterClass() );
                 result.addFilter( new FilterHolder( instance ),
                                   servletDef.getPathSpec(),
                                   EnumSet.of( DispatcherType.REQUEST ) );
@@ -136,13 +137,16 @@ public class JettyServerBuilder {
 
         webSocketDef.accept( new WebSocketDef.Visitor() {
 
-            private void configureServerEndpointConfig( ServerEndpointConfig config ) throws Exception {
+            private void configureServerEndpointConfig( ServerEndpointConfig config,
+                                                        ServiceKey<?> serviceKey ) throws Exception {
                 config = ServerEndpointConfig.Builder.create( config.getEndpointClass(), config.getPath() ) //
                         .decoders( config.getDecoders() ) //
                         .encoders( config.getEncoders() ) //
                         .extensions( config.getExtensions() ) //
                         .subprotocols( config.getSubprotocols() ) //
-                        .configurator( new WebSocketInjectorConfigurator( locator, config.getConfigurator() ) ) //
+                        .configurator( new WebSocketInjectorConfigurator( locator,
+                                                                          config.getConfigurator(),
+                                                                          serviceKey ) ) //
                         .build();
 
                 serverContainer.addEndpoint( config );
@@ -151,17 +155,19 @@ public class JettyServerBuilder {
             @Override
             public void visit( WebSocketDef.EndpointClassWebSocketDef endpointClassWebSocketDef ) throws Exception {
                 ServerEndpointConfig config = serverContainer //
-                        .getServerEndpointMetadata( endpointClassWebSocketDef.getEndpointClass(), null ) //
+                        .getServerEndpointMetadata( endpointClassWebSocketDef.getEndpointService().getServiceClass(),
+                                                    null ) //
                         .getConfig();
 
                 // Configure the endpoint
-                configureServerEndpointConfig( config );
+                configureServerEndpointConfig( config, endpointClassWebSocketDef.getEndpointService() );
             }
 
             @Override
             public void visit( WebSocketDef.ServerEndpointConfigWebSocketDef serverEndpointConfig ) throws Exception {
                 // Configure the endpoint
-                configureServerEndpointConfig( serverEndpointConfig.getConfig() );
+                configureServerEndpointConfig( serverEndpointConfig.getConfig(),
+                                               ServiceKey.of( serverEndpointConfig.getConfig().getEndpointClass() ) );
             }
         } );
 
@@ -177,7 +183,7 @@ public class JettyServerBuilder {
         // Create Filter
         WebSocketUpgradeFilter filter = WebSocketUpgradeFilter.configureContext( context );
 
-        JsrScopedSessionFactory scopedSessionFactory = locator.getJitInstance( JsrScopedSessionFactory.class );
+        JsrScopedSessionFactory scopedSessionFactory = locator.getOrCreateInstance( JsrScopedSessionFactory.class );
 
         // TODO: This is a bit edgy since it works only because the other session factory are registered
         // later in the ServerContainer. There should be a better way to do this ?

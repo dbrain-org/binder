@@ -28,7 +28,7 @@ import org.junit.Test;
 public class App_Test {
 
     @Test
-    public void testBasi6cCreation() throws Exception {
+    public void testBasicCreation() throws Exception {
 
         App app = new AppImpl();
 

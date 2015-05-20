@@ -29,6 +29,7 @@ import org.glassfish.hk2.api.MultiException;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 
+import javax.inject.Named;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Objects;
@@ -105,16 +106,36 @@ public class AppImpl implements App {
     }
 
     @Override
-    public <T> T getJitInstance( Class<T> serviceClass ) {
-        T result = delegate.createAndInitialize( serviceClass );
-        Objects.requireNonNull( result,
-                                "Cannot create instance of " + serviceClass.getName() + " using application " + getName() + "." );
-        return result;
+    public <T> T locate( Class<T> serviceClass ) {
+        return delegate.getService( serviceClass );
     }
 
     @Override
+    public <T> T locate( Class<T> serviceClass, String name ) {
+        return delegate.getService( serviceClass, name );
+    }
+
+    @Override
+    public <T> T locate( Class<T> serviceClass, Class<? extends Annotation> qualifiers ) {
+        return delegate.getService( serviceClass, AnnotationBuilder.of( qualifiers ) );
+    }
+
+    @Override
+    public <T> T locate( ServiceKey<T> serviceKey ) {
+        Set<Annotation> qualifiers = serviceKey.getQualifiers();
+        T result;
+        if ( qualifiers.size() > 0 ) {
+            result = delegate.getService( serviceKey.getServiceType(), qualifiers.toArray( new Annotation[qualifiers.size()] ) );
+        } else {
+            result = delegate.getService( serviceKey.getServiceType() );
+        }
+        return result;
+    }
+
+
+    @Override
     public <T> T getInstance( Class<T> serviceClass ) {
-        T result = delegate.getService( serviceClass );
+        T result = locate( serviceClass );
         Objects.requireNonNull( result,
                                 "Service of class " + serviceClass.getName() + " is not found in application " + getName() + "." );
         return result;
@@ -122,7 +143,7 @@ public class AppImpl implements App {
 
     @Override
     public <T> T getInstance( Class<T> serviceClass, String name ) {
-        T result = delegate.getService( serviceClass, name );
+        T result = locate( serviceClass, name );
         Objects.requireNonNull( result,
                                 "Service of class " + serviceClass.getName() + " is not found in application " + getName() + "." );
         return result;
@@ -130,7 +151,7 @@ public class AppImpl implements App {
 
     @Override
     public <T> T getInstance( Class<T> serviceClass, Class<? extends Annotation> qualifiers ) {
-        T result = delegate.getService( serviceClass, AnnotationBuilder.of( qualifiers ) );
+        T result = locate( serviceClass, qualifiers );
         Objects.requireNonNull( result,
                                 "Service of class " + serviceClass.getName() + " is not found in application " + getName() + "." );
         return result;
@@ -138,21 +159,38 @@ public class AppImpl implements App {
 
     @Override
     public <T> T getInstance( ServiceKey<T> serviceKey ) {
-        Set<Annotation> qualifiers = serviceKey.getQualifiers();
-        T result;
-        if ( qualifiers.size() > 0 ) {
-            result = delegate.getService( serviceKey.getServiceType(), qualifiers.toArray( new Annotation[qualifiers.size()] ) );
-        } else {
-             result = delegate.getService( serviceKey.getServiceType() );
-        }
+        T result = locate( serviceKey );
         Objects.requireNonNull( result,
                                 "Service of class " + serviceKey.getServiceType() + " is not found in application " + getName() + "." );
         return result;
     }
 
     @Override
-    public <T> List<T> listServices( Class<T> serviceClass, Annotation qualifier ) {
-        return delegate.getAllServices( serviceClass, qualifier );
+    public <T> T getOrCreateInstance( Class<T> serviceClass ) {
+        return getOrCreateInstance( ServiceKey.of( serviceClass ) );
+    }
+
+    @Override
+    public <T> T getOrCreateInstance( ServiceKey<T> serviceKey ) {
+        T result = locate( serviceKey );
+
+        // Use the Jit path only for unqualified services
+        if ( result == null && serviceKey.getQualifiers().size() == 0 ) {
+            result = delegate.createAndInitialize( serviceKey.getServiceClass() );
+        }
+        Objects.requireNonNull( result,
+                                "Cannot create instance of " + serviceKey.getServiceClass().getName() + " using application " + getName() + "." );
+        return result;
+    }
+
+    @Override
+    public <T> List<T> listServices( Class<T> serviceClass ) {
+        return delegate.getAllServices( serviceClass );
+    }
+
+    @Override
+    public <T> List<T> listServices( Class<T> serviceClass, String name ) {
+        return delegate.getAllServices( serviceClass, AnnotationBuilder.of( Named.class, name ) );
     }
 
     @Override

@@ -20,11 +20,37 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
- * Created by epoitras on 3/8/15.
+ * Directory service interface.
  */
 public interface ServiceDirectory {
 
-    <T> T getJitInstance( Class<T> serviceClass );
+    /**
+     * Locate a service of the specified class.
+     *
+     * @return A service or null if none is found.
+     */
+    <T> T locate( Class<T> serviceClass );
+
+    /**
+     * Locate a named service of the specified class.
+     *
+     * @return A service or null if none is found.
+     */
+    <T> T locate( Class<T> serviceClass, String name );
+
+    /**
+     * Locate a qualified service of the specified class.
+     *
+     * @return A service or null if none is found.
+     */
+    <T> T locate( Class<T> serviceClass, Class<? extends Annotation> qualifiers );
+
+    /**
+     * Locate a service identified by the key.
+     *
+     * @return A service or null if none is found.
+     */
+    <T> T locate( ServiceKey<T> serviceKey );
 
     <T> T getInstance( Class<T> serviceClass );
 
@@ -34,7 +60,21 @@ public interface ServiceDirectory {
 
     <T> T getInstance( ServiceKey<T> serviceKey );
 
-    <T> List<T> listServices( Class<T> serviceClass, Annotation qualifier );
+    /**
+     * @return Query registry for the specified service. If not found, attempt to
+     * create a new unmanaged instance.
+     */
+    <T> T getOrCreateInstance( Class<T> serviceClass );
+
+    /**
+     * Get a service instance, or create an unmanaged one if no service is registered.
+     * The unmanaged service will be created only if the key is unqualified.
+     */
+    <T> T getOrCreateInstance( ServiceKey<T> serviceKey );
+
+    <T> List<T> listServices( Class<T> serviceClass );
+
+    <T> List<T> listServices( Class<T> serviceClass, String name );
 
     <T> List<T> listServices( Class<T> serviceClass, Class<? extends Annotation> qualifier );
 
