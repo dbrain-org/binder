@@ -41,7 +41,7 @@ public class Transaction_JDBCConnectionMember_Test {
     @Test
     public void testSingleMember() throws Exception {
 
-        App app = new AppImpl();
+        App app = App.create();
         app.configure( ( Configuration config ) -> {
 
             config.addFeature( JdbcDriverDatasourceFeature.class ) //

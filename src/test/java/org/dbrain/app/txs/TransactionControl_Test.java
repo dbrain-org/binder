@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
 public class TransactionControl_Test {
 
     public App buildApp() {
-        App app = new AppImpl();
+        App app = App.create();
 
         app.configure( ( Configuration config ) -> {
             config.addFeature( TestMemberFeature.class ) //

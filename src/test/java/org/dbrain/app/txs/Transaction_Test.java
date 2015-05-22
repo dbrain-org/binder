@@ -37,7 +37,7 @@ import static org.junit.Assert.assertNotNull;
 public class Transaction_Test {
 
     private App buildApp( Writer writer ) {
-        App app = new AppImpl();
+        App app = App.create();
 
         PrintWriter pw = new PrintWriter( writer );
         app.configure( ( Configuration config ) -> {

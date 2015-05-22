@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 public class ServiceDirectory_jit_Test {
 
     App buildApp() {
-        return new AppImpl(  );
+        return App.create();
     }
 
 

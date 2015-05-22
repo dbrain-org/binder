@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
 public class HttpServer_scope_Test {
 
     private App buildApp() {
-        App app = new AppImpl();
+        App app = App.create();
 
         app.configure( ( config ) -> {
 

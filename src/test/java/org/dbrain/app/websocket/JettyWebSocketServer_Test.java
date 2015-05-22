@@ -41,7 +41,7 @@ import static org.junit.Assert.assertNotNull;
 public class JettyWebSocketServer_Test {
 
     private App buildApp() throws Exception {
-        App app = new AppImpl();
+        App app = App.create();
 
         app.configure( ( config ) -> {
 

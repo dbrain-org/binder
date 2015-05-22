@@ -36,7 +36,7 @@ public class Configuration_Test {
 
     @Test
     public void testPerLookup() throws Exception {
-        try ( App app = new AppImpl() ) {
+        try ( App app = App.create() ) {
             Configuration session = new ConfigurationImpl( app );
             session.bind( TestService1.class ).to( TestService1.class ).complete();
             session.commit();
@@ -50,7 +50,7 @@ public class Configuration_Test {
 
     @Test
     public void testSingletonScoped() throws Exception {
-        try ( App app = new AppImpl() ) {
+        try ( App app = App.create() ) {
             Configuration session = new ConfigurationImpl( app );
             session.bind( TestService1.class ) //
                     .to( TestService1.class ) //
@@ -68,7 +68,7 @@ public class Configuration_Test {
     @Test
     public void testServeInstance() throws Exception {
         TestService1 instance = new TestService1();
-        try ( App app = new AppImpl() ) {
+        try ( App app = App.create() ) {
             Configuration session = new ConfigurationImpl( app );
             session.bind( instance ) //
                     .to( TestService1.class ) //
@@ -92,7 +92,7 @@ public class Configuration_Test {
         Set<TestService1> disposed = new HashSet<>();
 
         Set<TestService1> comparable = new HashSet<>( sources );
-        try ( App app = new AppImpl() ) {
+        try ( App app = App.create() ) {
             Configuration session = new ConfigurationImpl( app );
             session.bind( TestService1.class ) //
                     .providedBy( () -> sources.pop() ) //
@@ -118,7 +118,7 @@ public class Configuration_Test {
 
         Set<TestService1> provided = new HashSet<>();
         Set<TestService1> disposed = new HashSet<>();
-        try ( App app = new AppImpl() ) {
+        try ( App app = App.create() ) {
             Configuration session = new ConfigurationImpl( app );
             session.bind( TestService1.class ) //
                     .disposedBy( ( e ) -> disposed.add( e ) ) //

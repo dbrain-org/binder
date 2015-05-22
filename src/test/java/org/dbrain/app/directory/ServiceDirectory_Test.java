@@ -21,15 +21,14 @@ import org.dbrain.app.directory.artifacts.InjectedBean;
 import org.dbrain.app.directory.artifacts.SimpleService;
 import org.dbrain.app.directory.artifacts.SomeQualifier;
 import org.dbrain.app.system.app.AppImpl;
-import org.junit.Assert;
 import org.junit.Test;
 
 import javax.inject.Singleton;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by epoitras on 3/4/15.
@@ -38,7 +37,7 @@ public class ServiceDirectory_Test {
 
     private App buildApp() {
 
-        App app = new AppImpl();
+        App app = App.create();
         app.configure( ( config ) -> {
 
             config.bind( SimpleService.class ) //
@@ -50,6 +49,7 @@ public class ServiceDirectory_Test {
                     .named( "toto" ) //
                     .qualifiedBy( SomeQualifier.class ) //
                     .to( SimpleService.class ) //
+                    .in( Singleton.class ) //
                     .complete();
 
             config.bind( SimpleService.class ) //
@@ -80,15 +80,92 @@ public class ServiceDirectory_Test {
                                                      .qualifiedBy( SomeQualifier.class ) //
                                                      .build() //
                                            );
+            // Got no string registered
+            String s3 = app.locate( String.class );
 
             assertNotNull( s1i1 );
             assertNotNull( s2i1 );
             assertNotNull( s2i2 );
             assertNotNull( s2i3 );
+            assertEquals( s2i1, s2i2 );
+            assertEquals( s2i1, s2i3 );
+            assertNull( s3 );
 
         }
 
     }
+
+    @Test
+    public void testGetInstance() throws Exception {
+
+        try ( App app = buildApp() ) {
+
+            InjectedBean s1i1 = app.getInstance( InjectedBean.class );
+            SimpleService s2i1 = app.getInstance( SimpleService.class, SomeQualifier.class );
+            SimpleService s2i2 = app.getInstance( SimpleService.class, SomeQualifier.class );
+            SimpleService s2i3 = app.getInstance( ServiceKey.from( SimpleService.class ) //
+                                                          .named( "toto" ) //
+                                                          .qualifiedBy( SomeQualifier.class ) //
+                                                          .build() //
+                                                );
+            assertNotNull( s1i1 );
+            assertNotNull( s2i1 );
+            assertNotNull( s2i2 );
+            assertNotNull( s2i3 );
+            assertEquals( s2i1, s2i2 );
+            assertEquals( s2i1, s2i3 );
+
+        }
+
+    }
+
+    @Test( expected = NullPointerException.class )
+    public void testGetInstance_fail1() throws Exception {
+
+        try ( App app = buildApp() ) {
+
+            app.getInstance( String.class );
+
+        }
+
+    }
+
+    @Test( expected = NullPointerException.class )
+    public void testGetInstance_fail2() throws Exception {
+
+        try ( App app = buildApp() ) {
+
+            app.getInstance( String.class, SomeQualifier.class );
+
+        }
+
+    }
+
+    @Test( expected = NullPointerException.class )
+    public void testGetInstance_fail3() throws Exception {
+
+        try ( App app = buildApp() ) {
+
+            app.getInstance( String.class, "toto" );
+
+        }
+
+    }
+
+    @Test( expected = NullPointerException.class )
+    public void testGetInstance_fail4() throws Exception {
+
+        try ( App app = buildApp() ) {
+
+            app.getInstance( ServiceKey.of( String.class ) );
+
+        }
+
+    }
+
+
+
+
 
     @Test
     public void testListServices() throws Exception {

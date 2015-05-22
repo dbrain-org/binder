@@ -16,7 +16,6 @@
 
 package org.dbrain.app;
 
-import org.dbrain.app.system.app.AppImpl;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Assert;
@@ -30,7 +29,7 @@ public class App_Test {
     @Test
     public void testBasicCreation() throws Exception {
 
-        App app = new AppImpl();
+        App app = App.create();
 
         ServiceLocator locator = app.getInstance( ServiceLocator.class );
         Assert.assertNotNull( locator );
@@ -38,10 +37,37 @@ public class App_Test {
 
     }
 
-    @Test(expected = NullPointerException.class )
-    public void testInstanceNotFound() throws Exception {
-        App app = new AppImpl();
-        app.getInstance( App_Test.class );
+    @Test
+    public void testNamedCreation() throws Exception {
+
+        try ( App app1 = App.getOrCreate( "testCreation" );
+                App app2 = App.getOrCreate( "testCreation" ) ) {
+
+            Assert.assertEquals( app1, app2 );
+        }
+
     }
+
+    /**
+     * Create twice the same app and ensure they are not the same instances.
+     */
+    @Test
+    public void testNamedCreation2() throws Exception {
+        App app1;App app2;
+
+        try ( App app = App.getOrCreate( "testCreation" ) ) {
+            app1 = app;
+        }
+
+        try ( App app = App.getOrCreate( "testCreation" ) ) {
+            app2 = app;
+        }
+
+        Assert.assertNotEquals( app1, app2 );
+
+    }
+
+
+
 
 }

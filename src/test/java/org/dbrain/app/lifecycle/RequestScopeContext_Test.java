@@ -30,7 +30,7 @@ public class RequestScopeContext_Test {
     public static class TestService {}
 
     private App buildApp() {
-        App app = new AppImpl();
+        App app = App.create();
         app.configure( ( c ) -> c.bind( TestService.class )
                                  .to( TestService.class )
                                  .in( RequestScoped.class )

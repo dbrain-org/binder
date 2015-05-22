@@ -50,6 +50,7 @@ public class AppImpl implements App {
         this( UUID.randomUUID().toString() );
     }
 
+    // TODO @epoitras Does not works in a "multi-threaded" concurrent scenario.
     public AppImpl( String name ) {
         this.name = name;
         this.delegate = serviceLocatorFactory.create( name );

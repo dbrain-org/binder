@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNotNull;
 public class JettyHttpServer_Test {
 
     private App buildApp() throws Exception {
-        App app = new AppImpl();
+        App app = App.create();
 
         app.configure( ( config ) -> {
 

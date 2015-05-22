@@ -18,6 +18,9 @@ package org.dbrain.app;
 
 import org.dbrain.app.conf.Configuration;
 import org.dbrain.app.directory.ServiceDirectory;
+import org.dbrain.app.system.app.AppImpl;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.api.ServiceLocatorFactory;
 import org.jvnet.hk2.annotations.Contract;
 
 /**
@@ -26,6 +29,31 @@ import org.jvnet.hk2.annotations.Contract;
  */
 @Contract
 public interface App extends AutoCloseable, ServiceDirectory {
+
+    /**
+     * @return Create an application with an auto-generated name.
+     */
+    static App create() {
+        return new AppImpl();
+    }
+
+    /**
+     * @return Get or create an application with a specific name.
+     *
+     * The application will be created only if it does not preexists.
+     *
+     */
+    static App getOrCreate( String name ) {
+        App app = null;
+        ServiceLocator serviceLocator = ServiceLocatorFactory.getInstance().find( name );
+        if ( serviceLocator != null ) {
+            app = serviceLocator.getService( App.class );
+        }
+        if ( app == null ) {
+            app = new AppImpl( name );
+        }
+        return app;
+    }
 
     /**
      * The instance name. Can be used to retrieve the application by name.
