@@ -36,7 +36,10 @@ public class TransactionException extends RuntimeException {
         super( cause );
     }
 
-    public TransactionException( String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace ) {
+    public TransactionException( String message,
+                                 Throwable cause,
+                                 boolean enableSuppression,
+                                 boolean writableStackTrace ) {
         super( message, cause, enableSuppression, writableStackTrace );
     }
 }

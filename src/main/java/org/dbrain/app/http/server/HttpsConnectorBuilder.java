@@ -90,7 +90,7 @@ public class HttpsConnectorBuilder extends AbstractHttpConnectorBuilder<HttpsCon
 
     public HttpsConnectorDef build() {
         Integer finalPort = getPort();
-        finalPort = finalPort != null ? finalPort  : 443;
+        finalPort = finalPort != null ? finalPort : 443;
 
         HttpsConnectorDef result = new HttpsConnectorDef();
         result.setPort( finalPort );

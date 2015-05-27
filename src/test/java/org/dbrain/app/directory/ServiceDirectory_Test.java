@@ -20,7 +20,6 @@ import org.dbrain.app.App;
 import org.dbrain.app.directory.artifacts.InjectedBean;
 import org.dbrain.app.directory.artifacts.SimpleService;
 import org.dbrain.app.directory.artifacts.SomeQualifier;
-import org.dbrain.app.system.app.AppImpl;
 import org.junit.Test;
 
 import javax.inject.Singleton;
@@ -162,10 +161,6 @@ public class ServiceDirectory_Test {
         }
 
     }
-
-
-
-
 
     @Test
     public void testListServices() throws Exception {

@@ -30,7 +30,7 @@ public class RequestScopeContext extends DelegateContext<RequestScoped> {
 
     public RequestScopeContext() {
         super( RequestScoped.class, new ThreadLocalProvider<>(), false );
-        registryProvider = (ThreadLocalProvider<ContextRegistry>)getRegistryProvider();
+        registryProvider = (ThreadLocalProvider<ContextRegistry>) getRegistryProvider();
     }
 
     public void enter() {

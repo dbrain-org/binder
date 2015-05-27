@@ -18,11 +18,11 @@ package org.dbrain.app.directory;
 
 import org.dbrain.app.App;
 import org.dbrain.app.directory.artifacts.JitBean;
-import org.dbrain.app.system.app.AppImpl;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class ServiceDirectory_jit_Test {
 
@@ -34,7 +34,7 @@ public class ServiceDirectory_jit_Test {
     @Test
     public void testGetJitInstance() throws Exception {
         try ( App app = buildApp() ) {
-            JitBean jitClass  = app.getOrCreateInstance( JitBean.class );
+            JitBean jitClass = app.getOrCreateInstance( JitBean.class );
 
             assertEquals( app.getInstance( App.class ), jitClass.getInjectedConstructor1() );
             assertEquals( app.getInstance( ServiceLocator.class ), jitClass.getInjectedConstructor2() );
@@ -46,7 +46,7 @@ public class ServiceDirectory_jit_Test {
     @Test
     public void testGetJitInstance_serviceKey() throws Exception {
         try ( App app = buildApp() ) {
-            JitBean jitClass  = app.getOrCreateInstance( ServiceKey.of( JitBean.class ) );
+            JitBean jitClass = app.getOrCreateInstance( ServiceKey.of( JitBean.class ) );
 
             assertEquals( app.getInstance( App.class ), jitClass.getInjectedConstructor1() );
             assertEquals( app.getInstance( ServiceLocator.class ), jitClass.getInjectedConstructor2() );
@@ -55,10 +55,10 @@ public class ServiceDirectory_jit_Test {
         }
     }
 
-    @Test(expected = NullPointerException.class )
+    @Test( expected = NullPointerException.class )
     public void testGetJitInstance_qualified() throws Exception {
         try ( App app = buildApp() ) {
-            JitBean jitClass  = app.getOrCreateInstance( ServiceKey.of( JitBean.class, "named" ) );
+            JitBean jitClass = app.getOrCreateInstance( ServiceKey.of( JitBean.class, "named" ) );
 
             assertNull( jitClass );
         }

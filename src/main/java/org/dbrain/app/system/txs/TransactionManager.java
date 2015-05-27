@@ -37,7 +37,7 @@ import java.lang.annotation.Annotation;
  */
 public class TransactionManager implements TransactionControl, Context<TransactionScoped> {
 
-    private final ServiceLocator sl;
+    private final ServiceLocator                      sl;
     private final Iterable<TransactionMember.Wrapper> memberFactories;
     private final ThreadLocal<TransactionImpl> transaction = new ThreadLocal<>();
 

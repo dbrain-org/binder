@@ -42,15 +42,15 @@ public class HttpStandardScopeFeature implements Feature {
         ServletFilterDef scopeFilter = ServletFilterDef.of( "/*", StandardScopeFilter.class );
 
         config.bind( ServletFilterDef.class )
-                .to( ServletFilterDef.class )
-                .providedBy( scopeFilter )
-                .qualifiedBy( SystemConfiguration.class )
-                .complete();
+              .to( ServletFilterDef.class )
+              .providedBy( scopeFilter )
+              .qualifiedBy( SystemConfiguration.class )
+              .complete();
 
         config.bind( StandardScopeSessionListener.class )
-                .to( HttpSessionListener.class )
-                .qualifiedBy( SystemConfiguration.class )
-                .complete();
+              .to( HttpSessionListener.class )
+              .qualifiedBy( SystemConfiguration.class )
+              .complete();
 
     }
 

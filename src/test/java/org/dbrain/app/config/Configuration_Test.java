@@ -18,7 +18,6 @@ package org.dbrain.app.config;
 
 import org.dbrain.app.App;
 import org.dbrain.app.conf.Configuration;
-import org.dbrain.app.system.app.AppImpl;
 import org.dbrain.app.system.app.ConfigurationImpl;
 import org.junit.Test;
 
@@ -135,8 +134,6 @@ public class Configuration_Test {
         assertEquals( provided, disposed );
 
     }
-
-
 
 
 }

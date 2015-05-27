@@ -22,8 +22,8 @@ import org.glassfish.hk2.api.ServiceLocator;
 import javax.inject.Inject;
 
 /**
-* Created by epoitras on 3/15/15.
-*/
+ * Created by epoitras on 3/15/15.
+ */
 public class JitBean {
 
     private final App            injectedConstructor1;

@@ -18,7 +18,6 @@ package org.dbrain.app.txs;
 
 import org.dbrain.app.App;
 import org.dbrain.app.conf.Configuration;
-import org.dbrain.app.system.app.AppImpl;
 import org.dbrain.app.txs.features.TestMemberFeature;
 import org.dbrain.app.txs.impl.TestMember;
 import org.glassfish.hk2.api.ServiceLocator;

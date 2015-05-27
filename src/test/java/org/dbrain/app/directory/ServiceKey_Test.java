@@ -39,7 +39,8 @@ public class ServiceKey_Test {
         assertEquals( ServiceKey.of( App.class ), ServiceKey.of( App.class ) );
         assertEquals( ServiceKey.of( App.class, "named" ), ServiceKey.of( App.class, "named" ) );
         assertEquals( ServiceKey.from( App.class ).build(), ServiceKey.of( App.class ) );
-        assertEquals( ServiceKey.from( App.class ).qualifiedBy( SessionScoped.class ).build(), ServiceKey.of( App.class, SessionScoped.class ) );
+        assertEquals( ServiceKey.from( App.class ).qualifiedBy( SessionScoped.class ).build(),
+                      ServiceKey.of( App.class, SessionScoped.class ) );
 
         assertEquals( ServiceKey.of( App.class ).hashCode(), ServiceKey.of( App.class ).hashCode() );
         assertEquals( ServiceKey.of( App.class, "named" ).hashCode(), ServiceKey.of( App.class, "named" ).hashCode() );

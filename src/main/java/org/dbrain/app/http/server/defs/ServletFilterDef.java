@@ -40,6 +40,7 @@ public interface ServletFilterDef {
 
     interface Visitor {
         void visit( ServletFilterInstanceDef servletDef );
+
         void visit( ServletFilterClassDef servletDef );
     }
 

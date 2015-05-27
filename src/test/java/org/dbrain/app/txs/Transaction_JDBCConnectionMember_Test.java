@@ -20,7 +20,6 @@ import org.dbrain.app.App;
 import org.dbrain.app.conf.Configuration;
 import org.dbrain.app.jdbc.JdbcDatasourceFeature;
 import org.dbrain.app.jdbc.JdbcDriverDatasourceFeature;
-import org.dbrain.app.system.app.AppImpl;
 import org.glassfish.hk2.api.ServiceHandle;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.h2.jdbcx.JdbcConnectionPool;

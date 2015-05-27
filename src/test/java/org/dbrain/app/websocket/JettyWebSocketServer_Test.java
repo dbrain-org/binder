@@ -23,7 +23,6 @@ import org.dbrain.app.http.server.ServletContextBuilder;
 import org.dbrain.app.http.server.defs.WebSocketDef;
 import org.dbrain.app.lifecycle.RequestScoped;
 import org.dbrain.app.lifecycle.SessionScoped;
-import org.dbrain.app.system.app.AppImpl;
 import org.dbrain.app.websocket.artifacts.WsPingClient;
 import org.dbrain.app.websocket.artifacts.WsPingServer;
 import org.eclipse.jetty.server.Server;
@@ -78,18 +77,18 @@ public class JettyWebSocketServer_Test {
 
         try ( App app = buildApp() ) {
 
-            CountDownLatch completeSignal = new CountDownLatch(1);
+            CountDownLatch completeSignal = new CountDownLatch( 1 );
 
-            StringBuilder sb = new StringBuilder(  );
+            StringBuilder sb = new StringBuilder();
 
             Server server = app.getInstance( Server.class );
 
             assertNotNull( server );
             server.start();
 
-            WsPingClient client = new WsPingClient( URI.create( "ws://localhost:40001/ws") );
+            WsPingClient client = new WsPingClient( URI.create( "ws://localhost:40001/ws" ) );
 
-            client.addMessageHandler( (s) -> {
+            client.addMessageHandler( ( s ) -> {
                 sb.append( s );
                 completeSignal.countDown();
             } );
@@ -111,7 +110,7 @@ public class JettyWebSocketServer_Test {
 
         try ( App app = buildApp() ) {
 
-            CountDownLatch completeSignal = new CountDownLatch(2);
+            CountDownLatch completeSignal = new CountDownLatch( 2 );
 
             List<String> sb = new ArrayList<>();
 
@@ -120,9 +119,9 @@ public class JettyWebSocketServer_Test {
             assertNotNull( server );
             server.start();
 
-            WsPingClient client = new WsPingClient( URI.create( "ws://localhost:40001/ws") );
+            WsPingClient client = new WsPingClient( URI.create( "ws://localhost:40001/ws" ) );
 
-            client.addMessageHandler( (s) -> {
+            client.addMessageHandler( ( s ) -> {
                 sb.add( s );
                 completeSignal.countDown();
             } );
@@ -146,7 +145,7 @@ public class JettyWebSocketServer_Test {
 
         try ( App app = buildApp() ) {
 
-            CountDownLatch completeSignal = new CountDownLatch(2);
+            CountDownLatch completeSignal = new CountDownLatch( 2 );
 
             List<String> sb = new ArrayList<>();
 
@@ -155,9 +154,9 @@ public class JettyWebSocketServer_Test {
             assertNotNull( server );
             server.start();
 
-            WsPingClient client = new WsPingClient( URI.create( "ws://localhost:40001/ws") );
+            WsPingClient client = new WsPingClient( URI.create( "ws://localhost:40001/ws" ) );
 
-            client.addMessageHandler( (s) -> {
+            client.addMessageHandler( ( s ) -> {
                 sb.add( s );
                 completeSignal.countDown();
             } );

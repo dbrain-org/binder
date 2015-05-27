@@ -32,7 +32,7 @@ public class SessionScopeContext extends DelegateContext<SessionScoped> {
 
     public SessionScopeContext() {
         super( SessionScoped.class, new ThreadLocalProvider<>(), false );
-        registryProvider = (ThreadLocalProvider<ContextRegistry>)getRegistryProvider();
+        registryProvider = (ThreadLocalProvider<ContextRegistry>) getRegistryProvider();
     }
 
     public void enter( Provider<ContextRegistry> contextProvider ) {

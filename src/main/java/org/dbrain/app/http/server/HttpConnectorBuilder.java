@@ -43,7 +43,7 @@ public class HttpConnectorBuilder extends AbstractHttpConnectorBuilder<HttpConne
         Integer finalPort = getPort();
 
         // What is the final port ?
-        finalPort = finalPort != null ? finalPort  : 80;
+        finalPort = finalPort != null ? finalPort : 80;
 
         HttpConnectorDef result = new HttpConnectorDef();
         result.setPort( finalPort );

@@ -20,7 +20,6 @@ import org.dbrain.app.App;
 import org.dbrain.app.http.artifacts.SampleServlet;
 import org.dbrain.app.http.server.ServletContextBuilder;
 import org.dbrain.app.http.server.defs.ServletDef;
-import org.dbrain.app.system.app.AppImpl;
 import org.eclipse.jetty.server.Server;
 import org.junit.Assert;
 import org.junit.Test;
@@ -64,9 +63,9 @@ public class JettyHttpServer_Test {
 
             Client httpClient = ClientBuilder.newClient();
             WebTarget t = httpClient.target( "http://localhost:40001/" );
-            String s = t.request().get(String.class);
+            String s = t.request().get( String.class );
 
-            Assert.assertEquals( "Hello from sample servlet.", s);
+            Assert.assertEquals( "Hello from sample servlet.", s );
         }
 
     }

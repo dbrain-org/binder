@@ -24,6 +24,7 @@ public interface ServiceProvider<T> {
 
     /**
      * @return An instance of the service.
+     *
      * @throws Exception If the creation failed.
      */
     T get() throws Exception;

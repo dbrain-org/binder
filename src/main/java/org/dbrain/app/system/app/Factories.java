@@ -30,43 +30,43 @@ public class Factories {
      * Create a factory from a provider.
      */
     public static <T> Factory<T> of( final Provider<T> provider ) {
-       return new Factory<T>() {
-           @Override
-           public T provide() {
-               return provider.get();
-           }
+        return new Factory<T>() {
+            @Override
+            public T provide() {
+                return provider.get();
+            }
 
-           @Override
-           public void dispose( T instance ) {
-               if ( instance instanceof AutoCloseable ) {
-                   try {
-                       ( (AutoCloseable) instance ).close();
-                   } catch ( Exception e ) {
-                       throw new IllegalStateException( e );
-                   }
+            @Override
+            public void dispose( T instance ) {
+                if ( instance instanceof AutoCloseable ) {
+                    try {
+                        ( (AutoCloseable) instance ).close();
+                    } catch ( Exception e ) {
+                        throw new IllegalStateException( e );
+                    }
 
-               }
+                }
 
-           }
-       };
+            }
+        };
     }
 
     public static <T extends AutoCloseable> Factory<T> of( final T instance ) {
-         return new Factory<T>() {
-             @Override
-             public T provide() {
-                 return instance;
-             }
+        return new Factory<T>() {
+            @Override
+            public T provide() {
+                return instance;
+            }
 
-             @Override
-             public void dispose( T instance ) {
-                 try {
-                     instance.close();
-                 } catch ( Exception e ) {
-                     throw new IllegalStateException( e );
-                 }
-             }
-         };
+            @Override
+            public void dispose( T instance ) {
+                try {
+                    instance.close();
+                } catch ( Exception e ) {
+                    throw new IllegalStateException( e );
+                }
+            }
+        };
     }
 
     public static <T extends Closeable> Factory<T> of( final T instance ) {

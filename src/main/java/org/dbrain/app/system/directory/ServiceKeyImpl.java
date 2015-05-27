@@ -58,7 +58,7 @@ public class ServiceKeyImpl<T> implements ServiceKey<T> {
     @Override
     public boolean equals( Object o ) {
         if ( this == o ) return true;
-        if ( o == null || !(o instanceof ServiceKey) ) return false;
+        if ( o == null || !( o instanceof ServiceKey ) ) return false;
 
         ServiceKey that = (ServiceKey) o;
 

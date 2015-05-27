@@ -50,23 +50,23 @@ public class JdbcConnectionWrapper implements TransactionMember.Wrapper<Connecti
 
         @Override
         public void flush() throws TransactionException {
-           // Nothing to do.
+            // Nothing to do.
         }
 
         @Override
         public void commit() throws TransactionException {
-           try {
-               connection.commit();
-           } catch( SQLException e ) {
-               throw new TransactionException( e );
-           }
+            try {
+                connection.commit();
+            } catch ( SQLException e ) {
+                throw new TransactionException( e );
+            }
         }
 
         @Override
         public void rollback() throws TransactionException {
             try {
                 connection.rollback();
-            } catch( SQLException e ) {
+            } catch ( SQLException e ) {
                 throw new TransactionException( e );
             }
         }

@@ -41,7 +41,6 @@ public interface App extends AutoCloseable, ServiceDirectory {
      * @return Get or create an application with a specific name.
      *
      * The application will be created only if it does not preexists.
-     *
      */
     static App getOrCreate( String name ) {
         App app = null;

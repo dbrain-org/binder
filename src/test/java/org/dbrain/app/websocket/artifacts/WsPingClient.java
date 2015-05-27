@@ -62,11 +62,11 @@ public class WsPingClient {
      * Callback hook for Connection close events.
      *
      * @param userSession the userSession which is getting closed.
-     * @param reason the reason for connection close
+     * @param reason      the reason for connection close
      */
     @OnClose
     public void onClose( Session userSession, CloseReason reason ) {
-        System.out.println("closing websocket");
+        System.out.println( "closing websocket" );
         this.userSession = null;
     }
 
@@ -76,29 +76,27 @@ public class WsPingClient {
      * @param message The text message
      */
     @OnMessage
-    public void onMessage(String message) {
-        if (this.messageHandler != null) {
-            this.messageHandler.accept(message);
+    public void onMessage( String message ) {
+        if ( this.messageHandler != null ) {
+            this.messageHandler.accept( message );
         }
     }
 
     /**
      * register message handler
      */
-    public void addMessageHandler(Consumer<String> msgHandler) {
+    public void addMessageHandler( Consumer<String> msgHandler ) {
         this.messageHandler = msgHandler;
     }
 
     /**
      * Send a message.
-     *
-     * @param message
      */
-    public void sendMessage(String message) {
-        this.userSession.getAsyncRemote().sendText(message);
+    public void sendMessage( String message ) {
+        this.userSession.getAsyncRemote().sendText( message );
     }
 
-    public void close() throws Exception{
+    public void close() throws Exception {
         this.userSession.close();
     }
 

@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class TransactionFeature implements Feature{
+public class TransactionFeature implements Feature {
 
     private Configuration config;
 
@@ -43,15 +43,15 @@ public class TransactionFeature implements Feature{
     public void complete() {
 
         config.bind( TransactionManager.class )
-                .to( TransactionControl.class )
-                .to( new TypeLiteral<Context<TransactionScoped>>() {}.getType() )
-                .in( Singleton.class )
-                .complete();
+              .to( TransactionControl.class )
+              .to( new TypeLiteral<Context<TransactionScoped>>() {}.getType() )
+              .in( Singleton.class )
+              .complete();
 
         config.bind( JdbcConnectionWrapper.class )
-                .to( TransactionMember.Wrapper.class )
-                .in( Singleton.class )
-                .complete();
+              .to( TransactionMember.Wrapper.class )
+              .in( Singleton.class )
+              .complete();
 
     }
 

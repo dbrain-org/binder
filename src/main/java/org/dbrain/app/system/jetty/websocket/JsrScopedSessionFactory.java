@@ -61,7 +61,8 @@ public class JsrScopedSessionFactory implements SessionFactory {
                                      connection,
                                      container,
                                      getNextId(),
-                                     requestURI, websocket,
+                                     requestURI,
+                                     websocket,
                                      listeners );
     }
 

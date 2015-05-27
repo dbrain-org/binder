@@ -23,7 +23,6 @@ import org.dbrain.app.http.server.HttpsConnectorBuilder;
 import org.dbrain.app.http.server.ServletContextBuilder;
 import org.dbrain.app.http.server.defs.HttpsConnectorDef;
 import org.dbrain.app.http.server.defs.ServletDef;
-import org.dbrain.app.system.app.AppImpl;
 import org.eclipse.jetty.server.Server;
 import org.junit.Assert;
 import org.junit.Test;

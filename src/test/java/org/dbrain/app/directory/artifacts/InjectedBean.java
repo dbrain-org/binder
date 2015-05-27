@@ -20,8 +20,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
-* Created by epoitras on 3/13/15.
-*/
+ * Created by epoitras on 3/13/15.
+ */
 public class InjectedBean {
 
     @Inject
@@ -36,7 +36,6 @@ public class InjectedBean {
     @Inject
     @Named( "toto" )
     public SimpleService service2;
-
 
 
     public SimpleService getService1() {

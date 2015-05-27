@@ -29,9 +29,9 @@ import java.io.PrintWriter;
 public class TestMember implements TransactionMember {
 
     private final PrintWriter printWriter;
-    private final String name;
-    private final boolean failOnFlush;
-    private final boolean failOnCommit;
+    private final String      name;
+    private final boolean     failOnFlush;
+    private final boolean     failOnCommit;
 
     public TestMember( PrintWriter printWriter, String name, boolean failOnFlush, boolean failOnCommit ) {
         this.printWriter = printWriter;
@@ -43,21 +43,21 @@ public class TestMember implements TransactionMember {
     @Override
     public void flush() throws TransactionException {
         if ( failOnFlush ) {
-            throw new IllegalStateException(  );
+            throw new IllegalStateException();
         }
-        printWriter.print( "flush:" + name + ";");
+        printWriter.print( "flush:" + name + ";" );
     }
 
     @Override
     public void commit() throws TransactionException {
         if ( failOnCommit ) {
-            throw new IllegalStateException(  );
+            throw new IllegalStateException();
         }
-        printWriter.print( "commit:" + name + ";");
+        printWriter.print( "commit:" + name + ";" );
     }
 
     @Override
     public void rollback() throws TransactionException {
-        printWriter.print( "rollback:" + name + ";");
+        printWriter.print( "rollback:" + name + ";" );
     }
 }

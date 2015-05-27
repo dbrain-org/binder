@@ -32,8 +32,7 @@ import javax.inject.Singleton;
  * Register a Jetty Http Server.
  *
  * Provider services:
- *   Server   : The jetty server.
- *
+ * Server   : The jetty server.
  */
 public class JettyServerFeature extends AbstractHttpServerFeature<JettyServerFeature> {
 
@@ -61,7 +60,8 @@ public class JettyServerFeature extends AbstractHttpServerFeature<JettyServerFea
         }
 
         // Configure the servlet contexts
-        Handler handler = new JettyServerBuilder( app ).configureServletContextsHandler( server, def.getServletContexts() );
+        Handler handler = new JettyServerBuilder( app ).configureServletContextsHandler( server,
+                                                                                         def.getServletContexts() );
         if ( handler != null ) {
             server.setHandler( handler );
         }
@@ -74,7 +74,7 @@ public class JettyServerFeature extends AbstractHttpServerFeature<JettyServerFea
     public void complete() {
         getConfig().bind( Server.class )
                    .providedBy( build( getHttpServerConfig() ) )
-                   .disposedBy( (server) -> server.stop() )
+                   .disposedBy( ( server ) -> server.stop() )
                    .qualifiedBy( getQualifiers() )
                    .to( Server.class )
                    .in( Singleton.class )

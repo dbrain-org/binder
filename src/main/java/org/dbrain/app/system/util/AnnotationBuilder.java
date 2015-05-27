@@ -107,9 +107,9 @@ public class AnnotationBuilder<A extends Annotation> {
 
     public A build() {
         for ( Property p : properties.values() ) {
-           if ( p.getValue() == null ) {
-               throw new IllegalArgumentException( "Missing " + p.getName() + " value." );
-           }
+            if ( p.getValue() == null ) {
+                throw new IllegalArgumentException( "Missing " + p.getName() + " value." );
+            }
         }
 
         return new Proxy<>( annotationClass, properties, getHashCode() ).getProxy();
@@ -207,10 +207,10 @@ public class AnnotationBuilder<A extends Annotation> {
      */
     static final class Property {
 
-        private final String name;
+        private final String   name;
         private final Class<?> type;
-        private final Method method;
-        private Object value;
+        private final Method   method;
+        private       Object   value;
 
         public Property( Method method ) {
             this.name = method.getName();
@@ -246,13 +246,12 @@ public class AnnotationBuilder<A extends Annotation> {
          * @param value the property value.
          */
         public void setValue( Object value ) {
-            if ( value != null &&
-                    !( this.type.isAssignableFrom( value.getClass() ) ||
-                            ( this.type == Boolean.TYPE && value
-                    .getClass() == Boolean.class ) || ( this.type == Byte.TYPE && value.getClass() == Byte.class ) || ( this.type == Character.TYPE && value
-                    .getClass() == Character.class ) || ( this.type == Double.TYPE && value.getClass() == Double.class ) || ( this.type == Float.TYPE && value
-                    .getClass() == Float.class ) || ( this.type == Integer.TYPE && value.getClass() == Integer.class ) || ( this.type == Long.TYPE && value
-                    .getClass() == Long.class ) || ( this.type == Short.TYPE && value.getClass() == Short.class ) ) ) {
+            if ( value != null && !( this.type.isAssignableFrom( value.getClass() ) ||
+                    ( this.type == Boolean.TYPE && value.getClass() == Boolean.class ) || ( this.type == Byte.TYPE && value
+                    .getClass() == Byte.class ) || ( this.type == Character.TYPE && value.getClass() == Character.class ) || ( this.type == Double.TYPE && value
+                    .getClass() == Double.class ) || ( this.type == Float.TYPE && value.getClass() == Float.class ) || ( this.type == Integer.TYPE && value
+                    .getClass() == Integer.class ) || ( this.type == Long.TYPE && value.getClass() == Long.class ) || ( this.type == Short.TYPE && value
+                    .getClass() == Short.class ) ) ) {
                 throw new IllegalArgumentException( "Cannot assign value of type '" + value.getClass()
                                                                                            .getName() + "' to property '" + this.name + "' of type '" + this.type
                         .getName() + "'" );
@@ -303,27 +302,27 @@ public class AnnotationBuilder<A extends Annotation> {
          * @return the {@code toString} of the property value.
          */
         protected String valueToString() {
-            if (!this.type.isArray()) {
-                return String.valueOf(this.value);
+            if ( !this.type.isArray() ) {
+                return String.valueOf( this.value );
             }
 
             Class<?> arrayType = this.type.getComponentType();
-            if (arrayType == Boolean.TYPE) {
-                return Arrays.toString((boolean[]) this.value);
-            } else if (arrayType == Byte.TYPE) {
-                return Arrays.toString((byte[]) this.value);
-            } else if (arrayType == Character.TYPE) {
-                return Arrays.toString((char[]) this.value);
-            } else if (arrayType == Double.TYPE) {
-                return Arrays.toString((double[]) this.value);
-            } else if (arrayType == Float.TYPE) {
-                return Arrays.toString((float[]) this.value);
-            } else if (arrayType == Integer.TYPE) {
-                return Arrays.toString((int[]) this.value);
-            } else if (arrayType == Long.TYPE) {
-                return Arrays.toString((long[]) this.value);
-            } else if (arrayType == Short.TYPE) {
-                return Arrays.toString((short[]) this.value);
+            if ( arrayType == Boolean.TYPE ) {
+                return Arrays.toString( (boolean[]) this.value );
+            } else if ( arrayType == Byte.TYPE ) {
+                return Arrays.toString( (byte[]) this.value );
+            } else if ( arrayType == Character.TYPE ) {
+                return Arrays.toString( (char[]) this.value );
+            } else if ( arrayType == Double.TYPE ) {
+                return Arrays.toString( (double[]) this.value );
+            } else if ( arrayType == Float.TYPE ) {
+                return Arrays.toString( (float[]) this.value );
+            } else if ( arrayType == Integer.TYPE ) {
+                return Arrays.toString( (int[]) this.value );
+            } else if ( arrayType == Long.TYPE ) {
+                return Arrays.toString( (long[]) this.value );
+            } else if ( arrayType == Short.TYPE ) {
+                return Arrays.toString( (short[]) this.value );
             }
 
             return Arrays.toString( (Object[]) this.value );

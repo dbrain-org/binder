@@ -17,7 +17,6 @@
 package org.dbrain.app.lifecycle;
 
 import org.dbrain.app.App;
-import org.dbrain.app.system.app.AppImpl;
 import org.dbrain.app.system.scope.RequestScopeContext;
 import org.junit.Test;
 

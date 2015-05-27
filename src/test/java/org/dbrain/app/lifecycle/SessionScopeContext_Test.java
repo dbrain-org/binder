@@ -17,7 +17,6 @@
 package org.dbrain.app.lifecycle;
 
 import org.dbrain.app.App;
-import org.dbrain.app.system.app.AppImpl;
 import org.dbrain.app.system.lifecycle.ContextRegistry;
 import org.dbrain.app.system.scope.SessionScopeContext;
 import org.junit.Test;
@@ -46,7 +45,7 @@ public class SessionScopeContext_Test {
         try ( App app = buildApp(); ContextRegistry session1 = new ContextRegistry(); ContextRegistry session2 = new ContextRegistry() ) {
 
             SessionScopeContext rsc = app.getInstance( SessionScopeContext.class );
-            rsc.enter( () -> session1);
+            rsc.enter( () -> session1 );
             TestService s1 = app.getInstance( TestService.class );
             TestService s2 = app.getInstance( TestService.class );
             rsc.leave();
@@ -56,7 +55,7 @@ public class SessionScopeContext_Test {
             TestService s4 = app.getInstance( TestService.class );
             rsc.leave();
 
-            rsc.enter( () -> session1);
+            rsc.enter( () -> session1 );
             TestService s5 = app.getInstance( TestService.class );
             TestService s6 = app.getInstance( TestService.class );
             rsc.leave();

@@ -25,7 +25,6 @@ import org.dbrain.app.http.server.WebApplicationBuilder;
 import org.dbrain.app.http.server.defs.ServletDef;
 import org.dbrain.app.lifecycle.RequestScoped;
 import org.dbrain.app.lifecycle.SessionScoped;
-import org.dbrain.app.system.app.AppImpl;
 import org.eclipse.jetty.server.Server;
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,11 +54,11 @@ public class HttpServer_scope_Test {
                     .complete();
 
             config.bind( GuidService.class )
-                    .to( GuidService.class )
-                    .in( RequestScoped.class )
-                    .named( "request" )
-                    .useProxy()
-                    .complete();
+                  .to( GuidService.class )
+                  .in( RequestScoped.class )
+                  .named( "request" )
+                  .useProxy()
+                  .complete();
 
             config.bind( GuidService.class )
                   .to( GuidService.class )
@@ -86,9 +85,9 @@ public class HttpServer_scope_Test {
 
             Client httpClient = ClientBuilder.newClient();
             WebTarget t = httpClient.target( "http://localhost:40001/" );
-            String s = t.request().get(String.class);
+            String s = t.request().get( String.class );
 
-            Assert.assertEquals( "Hello from application " + app.getName(), s);
+            Assert.assertEquals( "Hello from application " + app.getName(), s );
         }
 
     }
@@ -105,8 +104,8 @@ public class HttpServer_scope_Test {
 
             Client httpClient = ClientBuilder.newClient();
             WebTarget t = httpClient.target( "http://localhost:40001/requestUid" );
-            String r1 = t.request().get(String.class);
-            String r2 = t.request().get(String.class);
+            String r1 = t.request().get( String.class );
+            String r2 = t.request().get( String.class );
 
             Assert.assertNotEquals( r1, r2 );
         }
@@ -129,8 +128,8 @@ public class HttpServer_scope_Test {
             httpClient.register( new CookieClientFilter() );
 
             WebTarget t = httpClient.target( "http://localhost:40001/sessionUid" );
-            String r1 = t.request().get(String.class);
-            String r2 = t.request().get(String.class);
+            String r1 = t.request().get( String.class );
+            String r2 = t.request().get( String.class );
 
             Assert.assertEquals( r1, r2 );
         }

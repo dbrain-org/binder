@@ -60,7 +60,7 @@ public class StandardScopeFilter implements Filter {
 
         // Go fetch the scope registry in the session.
         sessionScopeContext.enter( () -> {
-            HttpServletRequest httpRequest = (HttpServletRequest)servletRequest;
+            HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
             HttpSession session = httpRequest.getSession( true );
             if ( session != null ) {
                 ContextRegistry registry = (ContextRegistry) session.getAttribute( ContextRegistry.class.getName() );
@@ -72,7 +72,7 @@ public class StandardScopeFilter implements Filter {
             } else {
                 return null;
             }
-        });
+        } );
         try {
             filterChain.doFilter( servletRequest, servletResponse );
         } finally {

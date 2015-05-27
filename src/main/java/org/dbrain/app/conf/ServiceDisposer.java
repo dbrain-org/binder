@@ -24,6 +24,7 @@ public interface ServiceDisposer<T> {
 
     /**
      * @return An instance of the service, or null.
+     *
      * @throws Exception If the dispose failed.
      */
     void dispose( T instance ) throws Exception;

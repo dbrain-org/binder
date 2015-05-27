@@ -30,7 +30,8 @@ import java.util.Set;
 /**
  * Created by epoitras on 3/6/15.
  */
-@Singleton @Named( BaseClassAnalyzer.YAW_ANALYZER_NAME )
+@Singleton
+@Named( BaseClassAnalyzer.YAW_ANALYZER_NAME )
 public class BaseClassAnalyzer implements ClassAnalyzer {
 
     public static final String YAW_ANALYZER_NAME = "YAW-ANALYZER";
@@ -67,7 +68,7 @@ public class BaseClassAnalyzer implements ClassAnalyzer {
         Method m = defaultAnalyzer.getPreDestroyMethod( clazz );
         // Search for the Close method if Closeable.
         if ( m == null ) {
-            if (AutoCloseable.class.isAssignableFrom( clazz ) ) {
+            if ( AutoCloseable.class.isAssignableFrom( clazz ) ) {
                 try {
                     m = clazz.getDeclaredMethod( "close" );
                 } catch ( Exception e ) {

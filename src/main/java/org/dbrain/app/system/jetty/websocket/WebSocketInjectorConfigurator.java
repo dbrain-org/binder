@@ -32,9 +32,11 @@ public class WebSocketInjectorConfigurator extends ServerEndpointConfig.Configur
 
     private final ServiceDirectory                  directory;
     private final ServerEndpointConfig.Configurator delegate;
-    private final ServiceKey<?> serviceKey;
+    private final ServiceKey<?>                     serviceKey;
 
-    public WebSocketInjectorConfigurator( ServiceDirectory directory, ServerEndpointConfig.Configurator delegate, ServiceKey<?> serviceKey ) {
+    public WebSocketInjectorConfigurator( ServiceDirectory directory,
+                                          ServerEndpointConfig.Configurator delegate,
+                                          ServiceKey<?> serviceKey ) {
         this.directory = directory;
         this.delegate = delegate;
         this.serviceKey = serviceKey;
@@ -47,7 +49,7 @@ public class WebSocketInjectorConfigurator extends ServerEndpointConfig.Configur
 
     @Override
     public List<Extension> getNegotiatedExtensions( List<Extension> installed, List<Extension> requested ) {
-        return  delegate.getNegotiatedExtensions( installed, requested );
+        return delegate.getNegotiatedExtensions( installed, requested );
     }
 
     @Override

@@ -41,8 +41,8 @@ public class CrippledHttpsClient {
         JerseyClientBuilder jcb = new JerseyClientBuilder();
 
         // configure the SSLContext with a TrustManager
-        SSLContext ctx = SSLContext.getInstance("TLS");
-        ctx.init(new KeyManager[0], new TrustManager[] {new CripledTrustManagerForTest()}, new SecureRandom());
+        SSLContext ctx = SSLContext.getInstance( "TLS" );
+        ctx.init( new KeyManager[0], new TrustManager[]{ new CripledTrustManagerForTest() }, new SecureRandom() );
 
         jcb.sslContext( ctx );
         jcb.hostnameVerifier( ( s, sslSession ) -> true );
@@ -51,15 +51,15 @@ public class CrippledHttpsClient {
     }
 
     /**
-    * Created by epoitras on 3/18/15.
-    */
+     * Created by epoitras on 3/18/15.
+     */
     public static class CripledTrustManagerForTest implements X509TrustManager {
 
         @Override
-        public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {    }
+        public void checkClientTrusted( X509Certificate[] arg0, String arg1 ) throws CertificateException { }
 
         @Override
-        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {    }
+        public void checkServerTrusted( X509Certificate[] arg0, String arg1 ) throws CertificateException { }
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {

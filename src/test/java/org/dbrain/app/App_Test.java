@@ -53,7 +53,8 @@ public class App_Test {
      */
     @Test
     public void testNamedCreation2() throws Exception {
-        App app1;App app2;
+        App app1;
+        App app2;
 
         try ( App app = App.getOrCreate( "testCreation" ) ) {
             app1 = app;
@@ -66,8 +67,6 @@ public class App_Test {
         Assert.assertNotEquals( app1, app2 );
 
     }
-
-
 
 
 }

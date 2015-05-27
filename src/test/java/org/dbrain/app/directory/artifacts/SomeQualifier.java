@@ -21,8 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
-* Created by epoitras on 3/2/15.
-*/
+ * Created by epoitras on 3/2/15.
+ */
 @Qualifier
 @Retention( RetentionPolicy.RUNTIME )
 public @interface SomeQualifier {}

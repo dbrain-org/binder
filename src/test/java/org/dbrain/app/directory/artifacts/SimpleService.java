@@ -22,8 +22,8 @@ import org.junit.Assert;
 import javax.inject.Inject;
 
 /**
-* Created by epoitras on 3/15/15.
-*/
+ * Created by epoitras on 3/15/15.
+ */
 public class SimpleService {
 
     @Inject

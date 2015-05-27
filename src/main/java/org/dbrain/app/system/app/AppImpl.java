@@ -126,7 +126,8 @@ public class AppImpl implements App {
         Set<Annotation> qualifiers = serviceKey.getQualifiers();
         T result;
         if ( qualifiers.size() > 0 ) {
-            result = delegate.getService( serviceKey.getServiceType(), qualifiers.toArray( new Annotation[qualifiers.size()] ) );
+            result = delegate.getService( serviceKey.getServiceType(),
+                                          qualifiers.toArray( new Annotation[qualifiers.size()] ) );
         } else {
             result = delegate.getService( serviceKey.getServiceType() );
         }
@@ -180,7 +181,8 @@ public class AppImpl implements App {
             result = delegate.createAndInitialize( serviceKey.getServiceClass() );
         }
         Objects.requireNonNull( result,
-                                "Cannot create instance of " + serviceKey.getServiceClass().getName() + " using application " + getName() + "." );
+                                "Cannot create instance of " + serviceKey.getServiceClass()
+                                                                         .getName() + " using application " + getName() + "." );
         return result;
     }
 
