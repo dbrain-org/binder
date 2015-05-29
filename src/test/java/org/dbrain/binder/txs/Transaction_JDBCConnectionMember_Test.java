@@ -18,8 +18,8 @@ package org.dbrain.binder.txs;
 
 import org.dbrain.binder.App;
 import org.dbrain.binder.conf.Binder;
-import org.dbrain.binder.jdbc.JdbcDatasourceFeature;
-import org.dbrain.binder.jdbc.JdbcDriverDatasourceFeature;
+import org.dbrain.binder.jdbc.JdbcDatasourceComponent;
+import org.dbrain.binder.jdbc.JdbcDriverDatasourceComponent;
 import org.glassfish.hk2.api.ServiceHandle;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.h2.jdbcx.JdbcConnectionPool;
@@ -43,7 +43,7 @@ public class Transaction_JDBCConnectionMember_Test {
         App app = App.create();
         app.configure( ( Binder binder ) -> {
 
-            binder.addFeature( JdbcDriverDatasourceFeature.class ) //
+            binder.bindComponent(JdbcDriverDatasourceComponent.class) //
                     .named( "prov1" ) //
                     .withProvider( () -> {
                         try {
@@ -53,7 +53,7 @@ public class Transaction_JDBCConnectionMember_Test {
                         }
                     } ).complete();
 
-            binder.addFeature( JdbcDriverDatasourceFeature.class ) //
+            binder.bindComponent(JdbcDriverDatasourceComponent.class) //
                     .named( "prov2" ) //
                     .withProvider( () -> {
                         try {
@@ -63,7 +63,7 @@ public class Transaction_JDBCConnectionMember_Test {
                         }
                     } ).complete();
 
-            binder.addFeature( JdbcDatasourceFeature.class ) //
+            binder.bindComponent(JdbcDatasourceComponent.class) //
                     .named( "prov3" )//
                     .dataSource( JdbcConnectionPool.create( "jdbc:h2:mem:prov3", "sa", "sa" ) ) //
                     .complete();

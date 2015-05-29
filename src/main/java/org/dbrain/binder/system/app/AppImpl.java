@@ -19,11 +19,11 @@ package org.dbrain.binder.system.app;
 import org.dbrain.binder.App;
 import org.dbrain.binder.conf.Binder;
 import org.dbrain.binder.directory.ServiceKey;
-import org.dbrain.binder.system.http.server.HttpStandardScopeFeature;
-import org.dbrain.binder.system.http.webapp.WebAppFeature;
+import org.dbrain.binder.system.http.server.HttpStandardScopeComponent;
+import org.dbrain.binder.system.http.webapp.WebAppComponent;
 import org.dbrain.binder.system.lifecycle.BaseClassAnalyzer;
-import org.dbrain.binder.system.scope.StandardScopeFeature;
-import org.dbrain.binder.system.txs.TransactionFeature;
+import org.dbrain.binder.system.scope.StandardScopeComponent;
+import org.dbrain.binder.system.txs.TransactionComponent;
 import org.dbrain.binder.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.MultiException;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
@@ -69,13 +69,13 @@ public class AppImpl implements App {
         ServiceLocatorUtilities.enablePerThreadScope( delegate );
 
         session = startConfiguration();
-        session.addFeature( TransactionFeature.class ).complete();
-        session.addFeature( StandardScopeFeature.class ).complete();
+        session.bindComponent(TransactionComponent.class).complete();
+        session.bindComponent(StandardScopeComponent.class).complete();
         session.commit();
 
         session = startConfiguration();
-        session.addFeature( HttpStandardScopeFeature.class ).complete();
-        session.addFeature( WebAppFeature.class ).complete();
+        session.bindComponent(HttpStandardScopeComponent.class).complete();
+        session.bindComponent(WebAppComponent.class).complete();
         session.commit();
 
     }

@@ -18,7 +18,7 @@ package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.App;
 import org.dbrain.binder.conf.Binder;
-import org.dbrain.binder.conf.Feature;
+import org.dbrain.binder.conf.Component;
 import org.dbrain.binder.conf.ServiceConfigurator;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.DynamicConfigurationService;
@@ -53,7 +53,7 @@ public class ConfigurationImpl implements Binder {
     }
 
     @Override
-    public <T extends Feature> T addFeature( Class<T> featureClass ) {
+    public <T extends Component> T bindComponent(Class<T> featureClass) {
         CURRENT_SESSION.set( this );
         try {
             return app.getInstance( ServiceLocator.class ).create( featureClass );

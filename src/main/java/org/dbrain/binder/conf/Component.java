@@ -16,29 +16,15 @@
 
 package org.dbrain.binder.conf;
 
+
 /**
- * Defines methods to bind services into an application.
+ * A component is a set of services that works together.
  */
-public interface Binder {
+public interface Component {
 
     /**
-     * Start binging a service from the specific implementation class.
+     * Complete the setup of the feature and validate all the previous parameters entered.
      */
-    <T> ServiceConfigurator<T> bind( Class<T> implementationClass );
-
-    /**
-     * Start binging a service from the specific implementation instance.
-     */
-    <T> ServiceConfigurator<T> bind( T implementation );
-
-    /**
-     * Start binding a component (Collection of services).
-     */
-    <T extends Component> T bindComponent(Class<T> feature);
-
-    /**
-     * Commit the bindings into the application.
-     */
-    void commit();
+    void complete();
 
 }

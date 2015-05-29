@@ -19,7 +19,7 @@ package org.dbrain.binder.txs;
 import org.dbrain.binder.App;
 import org.dbrain.binder.conf.Binder;
 import org.dbrain.binder.txs.exceptions.CommitFailedException;
-import org.dbrain.binder.txs.features.TestMemberFeature;
+import org.dbrain.binder.txs.features.TestMemberComponent;
 import org.dbrain.binder.txs.impl.TestMember;
 import org.junit.Test;
 
@@ -40,10 +40,10 @@ public class Transaction_Test {
 
         PrintWriter pw = new PrintWriter( writer );
         app.configure( ( Binder binder ) -> {
-            binder.addFeature( TestMemberFeature.class ).named( "MemberA" ).printWriter( pw ).complete();
-            binder.addFeature( TestMemberFeature.class ).named( "MemberB" ).printWriter( pw ).complete();
-            binder.addFeature( TestMemberFeature.class ).named( "MemberC" ).printWriter( pw ).failOnFlush().complete();
-            binder.addFeature( TestMemberFeature.class ).named( "MemberD" ).printWriter( pw ).failOnCommit().complete();
+            binder.bindComponent(TestMemberComponent.class).named( "MemberA" ).printWriter( pw ).complete();
+            binder.bindComponent(TestMemberComponent.class).named( "MemberB" ).printWriter( pw ).complete();
+            binder.bindComponent(TestMemberComponent.class).named( "MemberC" ).printWriter( pw ).failOnFlush().complete();
+            binder.bindComponent(TestMemberComponent.class).named( "MemberD" ).printWriter( pw ).failOnCommit().complete();
         } );
 
         return app;

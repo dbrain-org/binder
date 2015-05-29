@@ -48,7 +48,7 @@ public class HttpServer_scope_Test {
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
             servletContext.serve( ServletDef.of( "/*", webApp.build() ) );
 
-            binder.addFeature( JettyServerFeature.class ) //
+            binder.bindComponent(JettyServerComponent.class) //
                     .listen( 40001 )              //
                     .serve( servletContext.build() ) //
                     .complete();
