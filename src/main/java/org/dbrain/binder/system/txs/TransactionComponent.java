@@ -16,9 +16,9 @@
 
 package org.dbrain.binder.system.txs;
 
-import org.dbrain.binder.conf.Binder;
-import org.dbrain.binder.conf.Component;
+import org.dbrain.binder.app.ServiceConfigurator;
 import org.dbrain.binder.lifecycle.TransactionScoped;
+import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.system.txs.jdbc.JdbcConnectionWrapper;
 import org.dbrain.binder.txs.TransactionControl;
 import org.glassfish.hk2.api.Context;
@@ -30,29 +30,18 @@ import javax.inject.Singleton;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class TransactionComponent implements Component {
-
-    private Binder config;
+public class TransactionComponent implements ServiceConfigurator {
 
     @Inject
-    public TransactionComponent(Binder config) {
-        this.config = config;
-    }
+    public TransactionComponent( BindingStack hook ) {
+        hook.push( ( binder ) -> {
+            binder.bind( TransactionManager.class )
+                  .to( TransactionControl.class )
+                  .to( new TypeLiteral<Context<TransactionScoped>>() {}.getType() )
+                  .in( Singleton.class );
 
-    @Override
-    public void complete() {
-
-        config.bind( TransactionManager.class )
-              .to( TransactionControl.class )
-              .to( new TypeLiteral<Context<TransactionScoped>>() {}.getType() )
-              .in( Singleton.class )
-              .complete();
-
-        config.bind( JdbcConnectionWrapper.class )
-              .to( TransactionMember.Wrapper.class )
-              .in( Singleton.class )
-              .complete();
-
+            binder.bind( JdbcConnectionWrapper.class ).to( TransactionMember.Wrapper.class ).in( Singleton.class );
+        } );
     }
 
 }

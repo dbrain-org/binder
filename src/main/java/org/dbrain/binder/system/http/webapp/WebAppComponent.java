@@ -16,8 +16,8 @@
 
 package org.dbrain.binder.system.http.webapp;
 
-import org.dbrain.binder.conf.Binder;
-import org.dbrain.binder.conf.Component;
+import org.dbrain.binder.app.ServiceConfigurator;
+import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.system.app.SystemConfiguration;
 import org.glassfish.hk2.api.ServiceLocator;
 
@@ -27,26 +27,19 @@ import javax.servlet.ServletContextListener;
 /**
  * Created by epoitras on 3/13/15.
  */
-public class WebAppComponent implements Component {
+public class WebAppComponent implements ServiceConfigurator {
 
-    private final Binder         config;
     private final ServiceLocator serviceLocator;
 
     @Inject
-    public WebAppComponent(Binder config, ServiceLocator serviceLocator) {
-        this.config = config;
+    public WebAppComponent(BindingStack hook, ServiceLocator serviceLocator) {
         this.serviceLocator = serviceLocator;
-    }
-
-    @Override
-    public void complete() {
-
-        config.bind( ServletContextListener.class )
-              .to( ServletContextListener.class )
-              .providedBy( new WebAppConfigServletContextListener( serviceLocator ) )
-              .qualifiedBy( SystemConfiguration.class )
-              .complete();
-
+        hook.push( ( binder ) -> {
+            binder.bind( ServletContextListener.class )
+                  .to( ServletContextListener.class )
+                  .providedBy( new WebAppConfigServletContextListener( serviceLocator ) )
+                  .qualifiedBy( SystemConfiguration.class );
+        } );
     }
 
 }

@@ -14,8 +14,9 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder;
+package org.dbrain.binder.app;
 
+import org.dbrain.binder.app.App;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Assert;

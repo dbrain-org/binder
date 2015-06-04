@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.lifecycle;
 
-import org.dbrain.binder.App;
+import org.dbrain.binder.app.App;
 import org.dbrain.binder.system.lifecycle.ContextRegistry;
 import org.dbrain.binder.system.scope.SessionScopeContext;
 import org.junit.Test;
@@ -34,7 +34,7 @@ public class SessionScopeContext_Test {
         app.configure( ( c ) -> c.bind( TestService.class )
                                  .to( TestService.class )
                                  .in( SessionScoped.class )
-                                 .complete() );
+                     );
         return app;
     }
 

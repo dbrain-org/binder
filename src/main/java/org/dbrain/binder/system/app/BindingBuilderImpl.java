@@ -16,10 +16,10 @@
 
 package org.dbrain.binder.system.app;
 
-import org.dbrain.binder.App;
-import org.dbrain.binder.conf.ServiceConfigurator;
-import org.dbrain.binder.conf.ServiceDisposer;
-import org.dbrain.binder.conf.ServiceProvider;
+import org.dbrain.binder.app.App;
+import org.dbrain.binder.app.Binder;
+import org.dbrain.binder.app.BindingStack;
+import org.dbrain.binder.app.BindingConfigurator;
 import org.dbrain.binder.system.lifecycle.BaseClassAnalyzer;
 import org.dbrain.binder.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.ClassAnalyzer;
@@ -39,14 +39,16 @@ import javax.inject.Named;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 /**
  * Service configuration description.
  */
-public class ConfiguratorImpl<T> implements ServiceConfigurator<T> {
+public class BindingBuilderImpl<T> implements BindingConfigurator<T> {
 
     private final App app;
 
@@ -66,51 +68,122 @@ public class ConfiguratorImpl<T> implements ServiceConfigurator<T> {
 
     private boolean useProxy = false;
 
-    public ConfiguratorImpl( App app, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
+    public BindingBuilderImpl( App app, BindingStack stack, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
         Objects.requireNonNull( app );
+        Objects.requireNonNull( stack );
         Objects.requireNonNull( dc );
         Objects.requireNonNull( serviceProviderClass );
         this.app = app;
         this.dc = dc;
         this.serviceProviderClass = serviceProviderClass;
+
+        stack.push( ( binder ) -> {
+            try {
+                // Retrieve an instance of the service locator.
+                ServiceLocator sl = app.getInstance( ServiceLocator.class );
+
+                Factory factory = null;
+                if ( provider != null || disposer != null ) {
+                    ServiceProvider<T> finalProvider = provider;
+                    ServiceDisposer<T> finalDisposer = disposer;
+                    if ( finalProvider == null ) {
+                        finalProvider = new StandardProvider<>( app, serviceProviderClass );
+                    }
+                    if ( finalDisposer == null ) {
+                        finalDisposer = new StandardDisposer<>( app, serviceProviderClass );
+                    }
+                    factory = new StandardFactory<>( finalProvider, finalDisposer );
+                }
+
+                AbstractActiveDescriptor factoryDescriptor;
+                ActiveDescriptorBuilder serviceDescriptor;
+                if ( factory != null ) {
+                    factoryDescriptor = BuilderHelper.createConstantDescriptor( factory );
+                    factoryDescriptor.addContractType( Factory.class );
+                    serviceDescriptor = BuilderHelper.activeLink( factory.getClass() );
+                } else {
+                    factoryDescriptor = null;
+                    serviceDescriptor = BuilderHelper.activeLink( serviceProviderClass );
+                }
+
+                List<Type> finalServices = new ArrayList<>( services );
+                if ( finalServices.size() == 0 ) {
+                    finalServices.add( serviceProviderClass );
+                }
+                for ( Type service : finalServices ) {
+                    serviceDescriptor.to( service );
+                    if ( factoryDescriptor != null ) {
+                        factoryDescriptor.addContractType( new ParameterizedTypeImpl( Factory.class, service ) );
+                    }
+                }
+
+                for ( Annotation a : qualifiers ) {
+                    serviceDescriptor.qualifiedBy( a );
+                    if ( factoryDescriptor != null ) {
+                        factoryDescriptor.addQualifierAnnotation( a );
+                    }
+                }
+
+                if ( scope != null ) {
+                    serviceDescriptor.in( scope );
+                } else {
+                    serviceDescriptor.in( PerLookup.class );
+                }
+
+                if ( useProxy ) {
+                    serviceDescriptor.proxy();
+                }
+
+                if ( factoryDescriptor == null ) {
+                    dc.bind( sl.reifyDescriptor( serviceDescriptor.build() ) );
+                } else {
+                    dc.bind( new FactoryDescriptorsImpl( factoryDescriptor, serviceDescriptor.buildProvideMethod() ) );
+                }
+            } catch ( RuntimeException e ) {
+                throw e;
+            } catch ( Exception e ) {
+                throw new MultiException( e );
+            }
+
+        } );
     }
 
     @Override
-    public ServiceConfigurator<T> providedBy( final T instance ) {
+    public BindingConfigurator<T> providedBy( final T instance ) {
         return providedBy( () -> instance );
     }
 
     @Override
-    public ServiceConfigurator<T> providedBy( ServiceProvider<T> provider ) {
+    public BindingConfigurator<T> providedBy( ServiceProvider<T> provider ) {
         this.provider = provider;
         return this;
     }
 
     @Override
-    public ServiceConfigurator<T> disposedBy( ServiceDisposer<T> disposer ) {
+    public BindingConfigurator<T> disposedBy( ServiceDisposer<T> disposer ) {
         this.disposer = disposer;
         return this;
     }
 
     @Override
-    public ServiceConfigurator<T> to( Type type ) {
+    public BindingConfigurator<T> to( Type type ) {
         services.add( type );
         return this;
     }
 
     @Override
-    public ServiceConfigurator<T> qualifiedBy( Annotation quality ) {
+    public BindingConfigurator<T> qualifiedBy( Annotation quality ) {
         qualifiers.add( quality );
         return this;
     }
 
     @Override
-    public ServiceConfigurator<T> qualifiedBy( Class<? extends Annotation> quality ) {
+    public BindingConfigurator<T> qualifiedBy( Class<? extends Annotation> quality ) {
         return qualifiedBy( AnnotationBuilder.of( quality ) );
     }
 
     @Override
-    public ServiceConfigurator<T> qualifiedBy( Iterable<Annotation> qualities ) {
+    public BindingConfigurator<T> qualifiedBy( Iterable<Annotation> qualities ) {
         for ( Annotation quality : qualities ) {
             qualifiedBy( quality );
         }
@@ -118,86 +191,23 @@ public class ConfiguratorImpl<T> implements ServiceConfigurator<T> {
     }
 
     @Override
-    public ServiceConfigurator<T> named( String name ) {
+    public BindingConfigurator<T> named( String name ) {
         return qualifiedBy( AnnotationBuilder.from( Named.class ).value( name ).build() );
     }
 
     @Override
-    public ServiceConfigurator<T> in( Class<? extends Annotation> scope ) {
+    public BindingConfigurator<T> in( Class<? extends Annotation> scope ) {
         this.scope = scope;
         return this;
     }
 
     @Override
-    public ServiceConfigurator<T> useProxy() {
+    public BindingConfigurator<T> useProxy() {
         this.useProxy = true;
         return this;
     }
 
-    @Override
-    public void complete() {
-        try {
-            // Retrieve an instance of the service locator.
-            ServiceLocator sl = app.getInstance( ServiceLocator.class );
-
-            Factory factory = null;
-            if ( provider != null || disposer != null ) {
-                ServiceProvider<T> finalProvider = provider;
-                ServiceDisposer<T> finalDisposer = disposer;
-                if ( finalProvider == null ) {
-                    finalProvider = new StandardProvider<>( app, serviceProviderClass );
-                }
-                if ( finalDisposer == null ) {
-                    finalDisposer = new StandardDisposer<>( app, serviceProviderClass );
-                }
-                factory = new StandardFactory<>( finalProvider, finalDisposer );
-            }
-
-            AbstractActiveDescriptor factoryDescriptor;
-            ActiveDescriptorBuilder serviceDescriptor;
-            if ( factory != null ) {
-                factoryDescriptor = BuilderHelper.createConstantDescriptor( factory );
-                factoryDescriptor.addContractType( Factory.class );
-                serviceDescriptor = BuilderHelper.activeLink( factory.getClass() );
-            } else {
-                factoryDescriptor = null;
-                serviceDescriptor = BuilderHelper.activeLink( serviceProviderClass );
-            }
-
-            for ( Type service : services ) {
-                serviceDescriptor.to( service );
-                if ( factoryDescriptor != null ) {
-                    factoryDescriptor.addContractType( new ParameterizedTypeImpl( Factory.class, service ) );
-                }
-            }
-
-            for ( Annotation a : qualifiers ) {
-                serviceDescriptor.qualifiedBy( a );
-                if ( factoryDescriptor != null ) {
-                    factoryDescriptor.addQualifierAnnotation( a );
-                }
-            }
-
-            if ( scope != null ) {
-                serviceDescriptor.in( scope );
-            } else {
-                serviceDescriptor.in( PerLookup.class );
-            }
-
-            if ( useProxy ) {
-                serviceDescriptor.proxy();
-            }
-
-            if ( factoryDescriptor == null ) {
-                dc.bind( sl.reifyDescriptor( serviceDescriptor.build() ) );
-            } else {
-                dc.bind( new FactoryDescriptorsImpl( factoryDescriptor, serviceDescriptor.buildProvideMethod() ) );
-            }
-        } catch ( RuntimeException e ) {
-            throw e;
-        } catch ( Exception e ) {
-            throw new MultiException( e );
-        }
+    private void complete( Binder binder ) {
 
     }
 

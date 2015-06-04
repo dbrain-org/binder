@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.directory.artifacts;
 
-import org.dbrain.binder.App;
+import org.dbrain.binder.app.App;
 import org.glassfish.hk2.api.ServiceLocator;
 
 import javax.inject.Inject;

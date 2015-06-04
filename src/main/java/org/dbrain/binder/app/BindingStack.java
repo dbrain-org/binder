@@ -14,19 +14,15 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.conf;
+package org.dbrain.binder.app;
+
+import java.util.function.Consumer;
 
 /**
- * A disposer that can fail miserably by throwing an exception.
+ * Created by epoitras on 6/3/15.
  */
-@FunctionalInterface
-public interface ServiceDisposer<T> {
+public interface BindingStack {
 
-    /**
-     * @return An instance of the service, or null.
-     *
-     * @throws Exception If the dispose failed.
-     */
-    void dispose( T instance ) throws Exception;
+    void push( Consumer<Binder> c );
 
 }

@@ -16,10 +16,10 @@
 
 package org.dbrain.binder.system.scope;
 
-import org.dbrain.binder.conf.Binder;
-import org.dbrain.binder.conf.Component;
+import org.dbrain.binder.app.ServiceConfigurator;
 import org.dbrain.binder.lifecycle.RequestScoped;
 import org.dbrain.binder.lifecycle.SessionScoped;
+import org.dbrain.binder.app.BindingStack;
 import org.glassfish.hk2.api.Context;
 import org.glassfish.hk2.api.TypeLiteral;
 
@@ -29,31 +29,23 @@ import javax.inject.Singleton;
 /**
  * This feature defines both the Request and Session scopes.
  */
-public class StandardScopeComponent implements Component {
-
-    private final Binder config;
+public class StandardScopeComponent implements ServiceConfigurator {
 
     @Inject
-    public StandardScopeComponent(Binder config) {
-        this.config = config;
+    public StandardScopeComponent( BindingStack hook ) {
+        hook.push( ( binder ) -> {
+            // Define the request scope
+            binder.bind( RequestScopeContext.class ) //
+                    .to( new TypeLiteral<Context<RequestScoped>>() {}.getType() ) //
+                    .to( RequestScopeContext.class ) //
+                    .in( Singleton.class );
+
+            // Define the session scope
+            binder.bind( SessionScopeContext.class ) //
+                    .to( new TypeLiteral<Context<SessionScoped>>() {}.getType() ) //
+                    .to( SessionScopeContext.class ) //
+                    .in( Singleton.class );
+        } );
     }
 
-    @Override
-    public void complete() {
-
-        // Define the request scope
-        config.bind( RequestScopeContext.class ) //
-                .to( new TypeLiteral<Context<RequestScoped>>() {}.getType() ) //
-                .to( RequestScopeContext.class ) //
-                .in( Singleton.class ) //
-                .complete();
-
-        // Define the session scope
-        config.bind( SessionScopeContext.class ) //
-                .to( new TypeLiteral<Context<SessionScoped>>() {}.getType() ) //
-                .to( SessionScopeContext.class ) //
-                .in( Singleton.class ) //
-                .complete();
-
-    }
 }

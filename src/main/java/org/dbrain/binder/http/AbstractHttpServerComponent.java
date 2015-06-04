@@ -16,7 +16,6 @@
 
 package org.dbrain.binder.http;
 
-import org.dbrain.binder.conf.Binder;
 import org.dbrain.binder.http.server.HttpConnectorBuilder;
 import org.dbrain.binder.http.server.defs.ConnectorDef;
 import org.dbrain.binder.http.server.defs.HttpConnectorDef;
@@ -24,21 +23,9 @@ import org.dbrain.binder.http.server.defs.HttpServerDef;
 import org.dbrain.binder.http.server.defs.ServletContextDef;
 import org.dbrain.binder.system.app.QualifiedComponent;
 
-import javax.inject.Inject;
-
 public abstract class AbstractHttpServerComponent<T extends AbstractHttpServerComponent> extends QualifiedComponent<T> {
 
-    private final Binder config;
     private HttpServerDef building = new HttpServerDef();
-
-    @Inject
-    public AbstractHttpServerComponent(Binder config) {
-        this.config = config;
-    }
-
-    protected Binder getConfig() {
-        return config;
-    }
 
     public T listen( Integer port ) {
         return listen( HttpConnectorBuilder.of( port ) );

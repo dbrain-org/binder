@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.directory;
 
-import org.dbrain.binder.App;
+import org.dbrain.binder.app.App;
 import org.dbrain.binder.directory.artifacts.JitBean;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.junit.Test;

@@ -16,8 +16,8 @@
 
 package org.dbrain.binder.txs;
 
-import org.dbrain.binder.App;
-import org.dbrain.binder.conf.Binder;
+import org.dbrain.binder.app.App;
+import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.txs.exceptions.CommitFailedException;
 import org.dbrain.binder.txs.features.TestMemberComponent;
 import org.dbrain.binder.txs.impl.TestMember;
@@ -40,10 +40,10 @@ public class Transaction_Test {
 
         PrintWriter pw = new PrintWriter( writer );
         app.configure( ( Binder binder ) -> {
-            binder.bindComponent(TestMemberComponent.class).named( "MemberA" ).printWriter( pw ).complete();
-            binder.bindComponent(TestMemberComponent.class).named( "MemberB" ).printWriter( pw ).complete();
-            binder.bindComponent(TestMemberComponent.class).named( "MemberC" ).printWriter( pw ).failOnFlush().complete();
-            binder.bindComponent(TestMemberComponent.class).named( "MemberD" ).printWriter( pw ).failOnCommit().complete();
+            binder.service( TestMemberComponent.class ).named( "MemberA" ).printWriter( pw );
+            binder.service( TestMemberComponent.class ).named( "MemberB" ).printWriter( pw );
+            binder.service( TestMemberComponent.class ).named( "MemberC" ).printWriter( pw ).failOnFlush();
+            binder.service( TestMemberComponent.class ).named( "MemberD" ).printWriter( pw ).failOnCommit();
         } );
 
         return app;

@@ -16,8 +16,9 @@
 
 package org.dbrain.binder.system.app;
 
-import org.dbrain.binder.App;
-import org.dbrain.binder.conf.Binder;
+import org.dbrain.binder.app.App;
+import org.dbrain.binder.app.Binder;
+import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.directory.ServiceKey;
 import org.dbrain.binder.system.http.server.HttpStandardScopeComponent;
 import org.dbrain.binder.system.http.webapp.WebAppComponent;
@@ -45,6 +46,7 @@ public class AppImpl implements App {
 
     private final String                               name;
     private final org.glassfish.hk2.api.ServiceLocator delegate;
+    private final SimpleBindingStack simpleBindingStack = new SimpleBindingStack();
 
     public AppImpl() {
         this( UUID.randomUUID().toString() );
@@ -59,24 +61,24 @@ public class AppImpl implements App {
         delegate.setDefaultClassAnalyzerName( BaseClassAnalyzer.YAW_ANALYZER_NAME );
         ServiceLocatorUtilities.addOneConstant( delegate, this );
 
-        Binder session = new ConfigurationImpl( this );
-        session.bind( ConfigurationImpl.class ) //
-                .to( Binder.class ) //
-                .providedBy( () -> ConfigurationImpl.CURRENT_SESSION.get() ) //
-                .complete();
-        session.commit();
+        SimpleBinder binder = startConfiguration();
+        binder.bind( SimpleBindingStack.class ) //
+                .to( BindingStack.class ) //
+                .to( SimpleBindingStack.class ) //
+                .providedBy( simpleBindingStack );
+        binder.commit();
 
         ServiceLocatorUtilities.enablePerThreadScope( delegate );
 
-        session = startConfiguration();
-        session.bindComponent(TransactionComponent.class).complete();
-        session.bindComponent(StandardScopeComponent.class).complete();
-        session.commit();
+        binder = startConfiguration();
+        binder.service( TransactionComponent.class );
+        binder.service( StandardScopeComponent.class );
+        binder.commit();
 
-        session = startConfiguration();
-        session.bindComponent(HttpStandardScopeComponent.class).complete();
-        session.bindComponent(WebAppComponent.class).complete();
-        session.commit();
+        binder = startConfiguration();
+        binder.service( HttpStandardScopeComponent.class );
+        binder.service( WebAppComponent.class );
+        binder.commit();
 
     }
 
@@ -91,9 +93,9 @@ public class AppImpl implements App {
     @Override
     public void configure( AppConfigurator configurator ) {
         try {
-            Binder session = startConfiguration();
-            configurator.accept( session );
-            session.commit();
+            SimpleBinder binder = startConfiguration();
+            configurator.accept( binder );
+            binder.commit();
         } catch ( Exception e ) {
             throw new MultiException( e );
         }
@@ -102,8 +104,8 @@ public class AppImpl implements App {
     /**
      * @return Start a new session of configuration.
      */
-    public Binder startConfiguration() {
-        return new ConfigurationImpl( this );
+    public SimpleBinder startConfiguration() {
+        return new SimpleBinder( this, simpleBindingStack );
     }
 
     @Override

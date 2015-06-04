@@ -16,9 +16,9 @@
 
 package org.dbrain.binder.jdbc;
 
-import org.dbrain.binder.conf.Binder;
 import org.dbrain.binder.lifecycle.TransactionScoped;
 import org.dbrain.binder.system.app.QualifiedComponent;
+import org.dbrain.binder.app.BindingStack;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,13 +31,23 @@ import java.sql.Connection;
  */
 public class JdbcDatasourceComponent extends QualifiedComponent<JdbcDatasourceComponent> {
 
-    private final Binder session;
-
     private DataSource dataSource;
 
     @Inject
-    public JdbcDatasourceComponent(Binder session) {
-        this.session = session;
+    public JdbcDatasourceComponent( BindingStack binderHook ) {
+        binderHook.push( ( binder ) -> {
+            binder.bind( DataSource.class ) //
+                    .to( DataSource.class ) //
+                    .providedBy( () -> dataSource ) //
+                    .qualifiedBy( getQualifiers() ) //
+                    .in( Singleton.class );
+
+            binder.bind( Connection.class ) //
+                    .to( Connection.class ) //
+                    .providedBy( () -> dataSource.getConnection() )//
+                    .qualifiedBy( getQualifiers() ) //
+                    .in( TransactionScoped.class );
+        } );
     }
 
     @Override
@@ -48,25 +58,6 @@ public class JdbcDatasourceComponent extends QualifiedComponent<JdbcDatasourceCo
     public JdbcDatasourceComponent dataSource( DataSource dataSource ) {
         this.dataSource = dataSource;
         return this;
-    }
-
-    @Override
-    public void complete() {
-
-        session.bind( DataSource.class ) //
-                .to( DataSource.class ) //
-                .providedBy( () -> dataSource ) //
-                .qualifiedBy( getQualifiers() ) //
-                .in( Singleton.class )//
-                .complete();
-
-        session.bind( Connection.class ) //
-                .to( Connection.class ) //
-                .providedBy( () -> dataSource.getConnection() )//
-                .qualifiedBy( getQualifiers() ) //
-                .in( TransactionScoped.class ) //
-                .complete();
-
     }
 
 }

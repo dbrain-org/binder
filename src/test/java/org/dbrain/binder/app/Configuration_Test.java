@@ -14,11 +14,8 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.config;
+package org.dbrain.binder.app;
 
-import org.dbrain.binder.App;
-import org.dbrain.binder.conf.Binder;
-import org.dbrain.binder.system.app.ConfigurationImpl;
 import org.junit.Test;
 
 import javax.inject.Singleton;
@@ -36,9 +33,8 @@ public class Configuration_Test {
     @Test
     public void testPerLookup() throws Exception {
         try ( App app = App.create() ) {
-            Binder session = new ConfigurationImpl( app );
-            session.bind( TestService1.class ).to( TestService1.class ).complete();
-            session.commit();
+
+            app.configure( session -> session.bind( TestService1.class ).to( TestService1.class ) );
 
             TestService1 ts1_1 = app.getInstance( TestService1.class );
             TestService1 ts1_2 = app.getInstance( TestService1.class );
@@ -50,12 +46,9 @@ public class Configuration_Test {
     @Test
     public void testSingletonScoped() throws Exception {
         try ( App app = App.create() ) {
-            Binder session = new ConfigurationImpl( app );
-            session.bind( TestService1.class ) //
+            app.configure( session -> session.bind( TestService1.class ) //
                     .to( TestService1.class ) //
-                    .in( Singleton.class ) //
-                    .complete();
-            session.commit();
+                    .in( Singleton.class ) );
 
             TestService1 ts1_1 = app.getInstance( TestService1.class );
             TestService1 ts1_2 = app.getInstance( TestService1.class );
@@ -68,15 +61,9 @@ public class Configuration_Test {
     public void testServeInstance() throws Exception {
         TestService1 instance = new TestService1();
         try ( App app = App.create() ) {
-            Binder session = new ConfigurationImpl( app );
-            session.bind( instance ) //
-                    .to( TestService1.class ) //
-                    .complete();
-            session.commit();
-
+            app.configure( session -> session.bind( instance ).to( TestService1.class ) );
             TestService1 ts1_1 = app.getInstance( TestService1.class );
             TestService1 ts1_2 = app.getInstance( TestService1.class );
-
             assertEquals( instance, ts1_1 );
             assertEquals( instance, ts1_2 );
         }
@@ -92,15 +79,12 @@ public class Configuration_Test {
 
         Set<TestService1> comparable = new HashSet<>( sources );
         try ( App app = App.create() ) {
-            Binder session = new ConfigurationImpl( app );
-            session.bind( TestService1.class ) //
+            app.configure( binder -> binder.bind( TestService1.class ) //
                     .providedBy( () -> sources.pop() ) //
                     .disposedBy( ( e ) -> disposed.add( e ) ) //
                     .to( TestService1.class ) //
                     .named( "test" ) //
-                    .in( Singleton.class ) //
-                    .complete();
-            session.commit();
+                    .in( Singleton.class ) );
 
             Set<TestService1> provided = new HashSet<>();
             provided.add( app.getInstance( TestService1.class ) );
@@ -118,15 +102,11 @@ public class Configuration_Test {
         Set<TestService1> provided = new HashSet<>();
         Set<TestService1> disposed = new HashSet<>();
         try ( App app = App.create() ) {
-            Binder session = new ConfigurationImpl( app );
-            session.bind( TestService1.class ) //
+            app.configure( session -> session.bind( TestService1.class ) //
                     .disposedBy( ( e ) -> disposed.add( e ) ) //
                     .to( TestService1.class ) //
                     .named( "test" ) //
-                    .in( Singleton.class ) //
-                    .complete();
-            session.commit();
-
+                    .in( Singleton.class ) );
             provided.add( app.getInstance( TestService1.class ) );
             provided.add( app.getInstance( TestService1.class ) );
 

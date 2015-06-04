@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.directory;
 
-import org.dbrain.binder.App;
+import org.dbrain.binder.app.App;
 import org.dbrain.binder.directory.artifacts.InjectedBean;
 import org.dbrain.binder.directory.artifacts.SimpleService;
 import org.dbrain.binder.directory.artifacts.SomeQualifier;
@@ -41,24 +41,20 @@ public class ServiceDirectory_Test {
 
             binder.bind( SimpleService.class ) //
                     .named( "toto" ) //
-                    .to( SimpleService.class ) //
-                    .complete();
+                    .to( SimpleService.class );
 
             binder.bind( SimpleService.class ) //
                     .named( "toto" ) //
                     .qualifiedBy( SomeQualifier.class ) //
                     .to( SimpleService.class ) //
-                    .in( Singleton.class ) //
-                    .complete();
+                    .in( Singleton.class );
 
             binder.bind( SimpleService.class ) //
                     .to( SimpleService.class ) //
-                    .in( Singleton.class ) //
-                    .complete();
+                    .in( Singleton.class );
 
             binder.bind( InjectedBean.class ) //
-                    .to( InjectedBean.class ) //
-                    .complete();
+                    .to( InjectedBean.class );
 
         } );
 

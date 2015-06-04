@@ -16,9 +16,9 @@
 
 package org.dbrain.binder.txs.features;
 
-import org.dbrain.binder.conf.Binder;
 import org.dbrain.binder.lifecycle.TransactionScoped;
 import org.dbrain.binder.system.app.QualifiedComponent;
+import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.system.txs.TransactionMember;
 import org.dbrain.binder.txs.impl.TestMember;
 
@@ -31,8 +31,6 @@ import java.io.PrintWriter;
  */
 public class TestMemberComponent extends QualifiedComponent<TestMemberComponent> {
 
-    private final Binder config;
-
     private PrintWriter pw;
     private String      name;
     private boolean failOnFlush  = false;
@@ -40,8 +38,16 @@ public class TestMemberComponent extends QualifiedComponent<TestMemberComponent>
 
 
     @Inject
-    public TestMemberComponent(Binder config) {
-        this.config = config;
+    public TestMemberComponent( BindingStack hook ) {
+        super();
+        hook.push( ( binder ) -> {
+            binder.bind( TestMember.class ) //
+                    .qualifiedBy( getQualifiers() ) //
+                    .providedBy( () -> new TestMember( pw, name, failOnFlush, failOncommit ) ) //
+                    .to( TestMember.class ) //
+                    .to( TransactionMember.class ) //
+                    .in( TransactionScoped.class );
+        } );
     }
 
     @Override
@@ -67,20 +73,6 @@ public class TestMemberComponent extends QualifiedComponent<TestMemberComponent>
     public TestMemberComponent failOnCommit() {
         this.failOncommit = true;
         return self();
-    }
-
-    @Override
-    public void complete() {
-
-        config.bind( TestMember.class ) //
-                .qualifiedBy( getQualifiers() ) //
-                .providedBy( () -> new TestMember( pw, name, failOnFlush, failOncommit ) ) //
-                .to( TestMember.class ) //
-                .to( TransactionMember.class ) //
-                .in( TransactionScoped.class ) //
-                .complete();
-
-
     }
 
 }

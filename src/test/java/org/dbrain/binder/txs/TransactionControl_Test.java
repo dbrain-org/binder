@@ -16,8 +16,8 @@
 
 package org.dbrain.binder.txs;
 
-import org.dbrain.binder.App;
-import org.dbrain.binder.conf.Binder;
+import org.dbrain.binder.app.App;
+import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.txs.features.TestMemberComponent;
 import org.dbrain.binder.txs.impl.TestMember;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -38,10 +38,9 @@ public class TransactionControl_Test {
         App app = App.create();
 
         app.configure( ( Binder binder ) -> {
-            binder.bindComponent(TestMemberComponent.class) //
+            binder.service( TestMemberComponent.class ) //
                     .named( "Test" ) //
-                    .printWriter( new PrintWriter( System.out ) ) //
-                    .complete();
+                    .printWriter( new PrintWriter( System.out ) );
         } );
 
 

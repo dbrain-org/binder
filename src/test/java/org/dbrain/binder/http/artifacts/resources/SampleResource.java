@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.http.artifacts.resources;
 
-import org.dbrain.binder.App;
+import org.dbrain.binder.app.App;
 
 import javax.inject.Inject;
 import javax.inject.Named;

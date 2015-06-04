@@ -16,9 +16,9 @@
 
 package org.dbrain.binder.system.http.server;
 
-import org.dbrain.binder.conf.Binder;
-import org.dbrain.binder.conf.Component;
+import org.dbrain.binder.app.ServiceConfigurator;
 import org.dbrain.binder.http.server.defs.ServletFilterDef;
+import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.system.app.SystemConfiguration;
 
 import javax.inject.Inject;
@@ -27,31 +27,24 @@ import javax.servlet.http.HttpSessionListener;
 /**
  * Created by epoitras on 3/13/15.
  */
-public class HttpStandardScopeComponent implements Component {
-
-    private final Binder config;
+public class HttpStandardScopeComponent implements ServiceConfigurator {
 
     @Inject
-    public HttpStandardScopeComponent(Binder config) {
-        this.config = config;
+    public HttpStandardScopeComponent(BindingStack handler) {
+        handler.push( ( binder ) -> {
+            ServletFilterDef scopeFilter = ServletFilterDef.of( "/*", StandardScopeFilter.class );
+
+            binder.bind( ServletFilterDef.class )
+                  .to( ServletFilterDef.class )
+                  .providedBy( scopeFilter )
+                  .qualifiedBy( SystemConfiguration.class );
+
+            binder.bind( StandardScopeSessionListener.class )
+                  .to( HttpSessionListener.class )
+                  .qualifiedBy( SystemConfiguration.class );
+
+        } );
     }
 
-    @Override
-    public void complete() {
-
-        ServletFilterDef scopeFilter = ServletFilterDef.of( "/*", StandardScopeFilter.class );
-
-        config.bind( ServletFilterDef.class )
-              .to( ServletFilterDef.class )
-              .providedBy( scopeFilter )
-              .qualifiedBy( SystemConfiguration.class )
-              .complete();
-
-        config.bind( StandardScopeSessionListener.class )
-              .to( HttpSessionListener.class )
-              .qualifiedBy( SystemConfiguration.class )
-              .complete();
-
-    }
 
 }

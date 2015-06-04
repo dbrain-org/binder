@@ -16,10 +16,10 @@
 
 package org.dbrain.binder.http;
 
-import org.dbrain.binder.App;
-import org.dbrain.binder.conf.Binder;
+import org.dbrain.binder.app.App;
 import org.dbrain.binder.http.server.defs.ConnectorDef;
 import org.dbrain.binder.http.server.defs.HttpServerDef;
+import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.system.jetty.JettyConnectors;
 import org.dbrain.binder.system.jetty.JettyServerBuilder;
 import org.eclipse.jetty.server.Handler;
@@ -31,7 +31,7 @@ import javax.inject.Singleton;
 /**
  * Register a Jetty Http Server.
  *
- * Provider services:
+ * Provided services:
  * Server   : The jetty server.
  */
 public class JettyServerComponent extends AbstractHttpServerComponent<JettyServerComponent> {
@@ -39,9 +39,16 @@ public class JettyServerComponent extends AbstractHttpServerComponent<JettyServe
     private final App app;
 
     @Inject
-    public JettyServerComponent(App app, Binder config) {
-        super( config );
+    public JettyServerComponent( App app, BindingStack hook ) {
         this.app = app;
+        hook.push( ( binder ) -> {
+            binder.bind( Server.class )
+                  .providedBy( build( getHttpServerConfig() ) )
+                  .disposedBy( ( server ) -> server.stop() )
+                  .qualifiedBy( getQualifiers() )
+                  .to( Server.class )
+                  .in( Singleton.class );
+        } );
     }
 
     @Override
@@ -67,19 +74,6 @@ public class JettyServerComponent extends AbstractHttpServerComponent<JettyServe
         }
 
         return server;
-    }
-
-
-    @Override
-    public void complete() {
-        getConfig().bind( Server.class )
-                   .providedBy( build( getHttpServerConfig() ) )
-                   .disposedBy( ( server ) -> server.stop() )
-                   .qualifiedBy( getQualifiers() )
-                   .to( Server.class )
-                   .in( Singleton.class )
-                   .complete();
-
     }
 
 }

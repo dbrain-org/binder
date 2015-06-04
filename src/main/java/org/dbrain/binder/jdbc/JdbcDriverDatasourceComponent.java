@@ -16,9 +16,9 @@
 
 package org.dbrain.binder.jdbc;
 
-import org.dbrain.binder.conf.Binder;
 import org.dbrain.binder.lifecycle.TransactionScoped;
 import org.dbrain.binder.system.app.QualifiedComponent;
+import org.dbrain.binder.app.BindingStack;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -30,13 +30,18 @@ import java.sql.Connection;
  */
 public class JdbcDriverDatasourceComponent extends QualifiedComponent<JdbcDriverDatasourceComponent> {
 
-    private final Binder config;
-
     private Provider<Connection> connectionProvider;
 
     @Inject
-    public JdbcDriverDatasourceComponent(Binder config) {
-        this.config = config;
+    public JdbcDriverDatasourceComponent(BindingStack hook) {
+        super();
+        hook.push( ( binder ) -> {
+            binder.bind( Connection.class ) //
+                    .to( Connection.class ) //
+                    .providedBy( connectionProvider::get ) //
+                    .qualifiedBy( getQualifiers() ) //
+                    .in( TransactionScoped.class );
+        } );
     }
 
     @Override
@@ -47,18 +52,6 @@ public class JdbcDriverDatasourceComponent extends QualifiedComponent<JdbcDriver
     public JdbcDriverDatasourceComponent withProvider( Provider<Connection> connectionProvider ) {
         this.connectionProvider = connectionProvider;
         return this;
-    }
-
-    @Override
-    public void complete() {
-
-        config.bind( Connection.class ) //
-                .to( Connection.class ) //
-                .providedBy( connectionProvider::get ) //
-                .qualifiedBy( getQualifiers() ) //
-                .in( TransactionScoped.class ) //
-                .complete();
-
     }
 
 }

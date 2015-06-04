@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.http;
 
-import org.dbrain.binder.App;
+import org.dbrain.binder.app.App;
 import org.dbrain.binder.http.artifacts.CrippledHttpsClient;
 import org.dbrain.binder.http.artifacts.SampleServlet;
 import org.dbrain.binder.http.server.HttpsConnectorBuilder;
@@ -47,10 +47,9 @@ public class JettyHttpsServer_Test {
                                                                       "password",
                                                                       "password" )
                                                            .build();
-            binder.bindComponent(JettyServerComponent.class) //
+            binder.service( JettyServerComponent.class ) //
                     .listen( https ) //
-                    .serve( servletContext.build() ) //
-                    .complete();
+                    .serve( servletContext.build() );
 
         } );
 

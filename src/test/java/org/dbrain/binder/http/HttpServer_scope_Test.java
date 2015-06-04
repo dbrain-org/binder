@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.http;
 
-import org.dbrain.binder.App;
+import org.dbrain.binder.app.App;
 import org.dbrain.binder.http.artifacts.CookieClientFilter;
 import org.dbrain.binder.http.artifacts.resources.GuidService;
 import org.dbrain.binder.http.artifacts.resources.SampleResource;
@@ -48,25 +48,21 @@ public class HttpServer_scope_Test {
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
             servletContext.serve( ServletDef.of( "/*", webApp.build() ) );
 
-            binder.bindComponent(JettyServerComponent.class) //
+            binder.service( JettyServerComponent.class ) //
                     .listen( 40001 )              //
-                    .serve( servletContext.build() ) //
-                    .complete();
+                    .serve( servletContext.build() );
 
             binder.bind( GuidService.class )
                   .to( GuidService.class )
                   .in( RequestScoped.class )
                   .named( "request" )
-                  .useProxy()
-                  .complete();
+                  .useProxy();
 
             binder.bind( GuidService.class )
                   .to( GuidService.class )
                   .in( SessionScoped.class )
                   .named( "session" )
-                  .useProxy()
-                  .complete();
-
+                  .useProxy();
 
         } );
 

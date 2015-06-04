@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.directory;
 
-import org.dbrain.binder.App;
+import org.dbrain.binder.app.App;
 import org.dbrain.binder.lifecycle.SessionScoped;
 import org.junit.Test;
 

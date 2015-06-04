@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.lifecycle;
 
-import org.dbrain.binder.App;
+import org.dbrain.binder.app.App;
 import org.dbrain.binder.system.scope.RequestScopeContext;
 import org.junit.Test;
 
@@ -32,8 +32,7 @@ public class RequestScopeContext_Test {
         App app = App.create();
         app.configure( ( c ) -> c.bind( TestService.class )
                                  .to( TestService.class )
-                                 .in( RequestScoped.class )
-                                 .complete() );
+                                 .in( RequestScoped.class ) );
         return app;
     }
 

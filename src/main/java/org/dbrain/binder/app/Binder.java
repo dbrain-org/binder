@@ -14,17 +14,26 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.conf;
-
+package org.dbrain.binder.app;
 
 /**
- * A component is a set of services that works together.
+ * Defines methods to bind services into an application.
  */
-public interface Component {
+public interface Binder {
 
     /**
-     * Complete the setup of the feature and validate all the previous parameters entered.
+     * Start binging a service from the specific implementation class.
      */
-    void complete();
+    <T> BindingConfigurator<T> bind( Class<T> implementationClass );
+
+    /**
+     * Start binging a service from the specific implementation instance.
+     */
+    <T> BindingConfigurator<T> bind( T implementation );
+
+    /**
+     * Start binding a component (Collection of services).
+     */
+    <T extends ServiceConfigurator> T service( Class<T> serviceClass );
 
 }

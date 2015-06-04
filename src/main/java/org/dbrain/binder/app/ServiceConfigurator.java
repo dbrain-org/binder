@@ -14,19 +14,11 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.conf;
+package org.dbrain.binder.app;
+
 
 /**
- * A provider that can fail miserably by throwing an exception.
+ * Configure a higher level of service.
  */
-@FunctionalInterface
-public interface ServiceProvider<T> {
-
-    /**
-     * @return An instance of the service.
-     *
-     * @throws Exception If the creation failed.
-     */
-    T get() throws Exception;
-
+public interface ServiceConfigurator {
 }
