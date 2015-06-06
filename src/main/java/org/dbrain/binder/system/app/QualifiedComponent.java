@@ -16,8 +16,7 @@
 
 package org.dbrain.binder.system.app;
 
-import org.dbrain.binder.app.Binder;
-import org.dbrain.binder.app.ServiceConfigurator;
+import org.dbrain.binder.app.ComponentConfigurator;
 import org.dbrain.binder.system.util.AnnotationBuilder;
 
 import javax.inject.Named;
@@ -28,7 +27,7 @@ import java.util.List;
 /**
  * Created by epoitras on 3/6/15.
  */
-public abstract class QualifiedComponent<T extends QualifiedComponent> implements ServiceConfigurator {
+public abstract class QualifiedComponent<T extends QualifiedComponent> implements ComponentConfigurator {
 
     private List<Annotation> qualifiers = new ArrayList<>();
 

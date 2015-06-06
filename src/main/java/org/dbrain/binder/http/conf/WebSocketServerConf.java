@@ -14,31 +14,26 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server.defs;
+package org.dbrain.binder.http.conf;
 
 /**
- * Created by epoitras on 17/09/14.
+ * Define a websocket.
  */
-public class HttpConnectorDef implements ConnectorDef {
+public interface WebSocketServerConf {
 
-    private Integer port;
 
-    private String host;
+    void accept( Visitor v ) throws Exception;
 
-    public Integer getPort() {
-        return port;
-    }
 
-    public void setPort( Integer port ) {
-        this.port = port;
-    }
+    /**
+     * Visitor for configuration.
+     */
+    interface Visitor {
 
-    public String getHost() {
-        return host;
-    }
+        void visit( WebSocketServiceServerConf endpointClassWebSocketConf ) throws Exception;
 
-    public void setHost( String host ) {
-        this.host = host;
+        void visit( WebSocketConfiguredServerConf websocketServerEndpointConfig ) throws Exception;
+
     }
 
 }

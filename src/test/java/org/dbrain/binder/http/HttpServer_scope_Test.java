@@ -20,9 +20,7 @@ import org.dbrain.binder.app.App;
 import org.dbrain.binder.http.artifacts.CookieClientFilter;
 import org.dbrain.binder.http.artifacts.resources.GuidService;
 import org.dbrain.binder.http.artifacts.resources.SampleResource;
-import org.dbrain.binder.http.server.ServletContextBuilder;
-import org.dbrain.binder.http.server.WebApplicationBuilder;
-import org.dbrain.binder.http.server.defs.ServletDef;
+import org.dbrain.binder.http.conf.ServletConf;
 import org.dbrain.binder.lifecycle.RequestScoped;
 import org.dbrain.binder.lifecycle.SessionScoped;
 import org.eclipse.jetty.server.Server;
@@ -46,9 +44,9 @@ public class HttpServer_scope_Test {
             webApp.add( new SampleResource() );
 
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
-            servletContext.serve( ServletDef.of( "/*", webApp.build() ) );
+            servletContext.serve( ServletConf.of( "/*", webApp.build() ) );
 
-            binder.service( JettyServerComponent.class ) //
+            binder.component( JettyServerComponent.class ) //
                     .listen( 40001 )              //
                     .serve( servletContext.build() );
 

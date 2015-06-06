@@ -14,9 +14,9 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server;
+package org.dbrain.binder.http;
 
-import org.dbrain.binder.http.server.defs.HttpConnectorDef;
+import org.dbrain.binder.http.conf.HttpConnectorConf;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,7 +27,7 @@ import org.dbrain.binder.http.server.defs.HttpConnectorDef;
  */
 public class HttpConnectorBuilder extends AbstractHttpConnectorBuilder<HttpConnectorBuilder> {
 
-    public static HttpConnectorDef of( Integer port ) {
+    public static HttpConnectorConf of( Integer port ) {
         return new HttpConnectorBuilder().port( port ).build();
     }
 
@@ -35,17 +35,17 @@ public class HttpConnectorBuilder extends AbstractHttpConnectorBuilder<HttpConne
     }
 
     @Override
-    public HttpConnectorBuilder self() {
+    protected HttpConnectorBuilder self() {
         return this;
     }
 
-    public HttpConnectorDef build() {
+    public HttpConnectorConf build() {
         Integer finalPort = getPort();
 
         // What is the final port ?
         finalPort = finalPort != null ? finalPort : 80;
 
-        HttpConnectorDef result = new HttpConnectorDef();
+        HttpConnectorConf result = new HttpConnectorConf();
         result.setPort( finalPort );
         return result;
     }

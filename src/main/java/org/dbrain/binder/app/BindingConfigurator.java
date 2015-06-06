@@ -22,7 +22,7 @@ import java.lang.reflect.Type;
 /**
  * Configure a single service description.
  */
-public interface BindingConfigurator<T> extends ServiceConfigurator {
+public interface BindingConfigurator<T> extends ComponentConfigurator {
 
     BindingConfigurator<T> providedBy( T instance );
 

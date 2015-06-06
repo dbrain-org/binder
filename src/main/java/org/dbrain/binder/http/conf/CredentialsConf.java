@@ -14,26 +14,32 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server.defs;
+package org.dbrain.binder.http.conf;
 
 /**
  * @author kilantzis
  */
-public class FormLocationDef {
+public class CredentialsConf {
 
-    private final String url;
-    private final String errorURL;
+    private final String realm;
+    private final String singleRole;
+    private final String file;
 
-    public FormLocationDef( String url, String errorURL ) {
-        this.url = url;
-        this.errorURL = errorURL;
+    public CredentialsConf( String realm, String singleRole, String file ) {
+        this.realm = realm;
+        this.singleRole = singleRole;
+        this.file = file;
     }
 
-    public String getUrl() {
-        return url;
+    public String getRealm() {
+        return realm;
     }
 
-    public String getErrorURL() {
-        return errorURL;
+    public String getSingleRole() {
+        return singleRole;
+    }
+
+    public String getFile() {
+        return file;
     }
 }

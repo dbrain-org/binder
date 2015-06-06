@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server;
+package org.dbrain.binder.http;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
@@ -29,7 +29,6 @@ import java.util.List;
 public class WebApplicationBuilder {
 
     private List<Object> resources = new ArrayList<>();
-
 
     public WebApplicationBuilder add( Object resource ) {
         resources.add( resource );

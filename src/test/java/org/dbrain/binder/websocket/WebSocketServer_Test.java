@@ -18,9 +18,9 @@ package org.dbrain.binder.websocket;
 
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.http.JettyServerComponent;
+import org.dbrain.binder.http.WebSocketServerBuilder;
 import org.dbrain.binder.http.artifacts.resources.GuidService;
-import org.dbrain.binder.http.server.ServletContextBuilder;
-import org.dbrain.binder.http.server.defs.WebSocketDef;
+import org.dbrain.binder.http.ServletContextBuilder;
 import org.dbrain.binder.lifecycle.RequestScoped;
 import org.dbrain.binder.lifecycle.SessionScoped;
 import org.dbrain.binder.websocket.artifacts.WsPingClient;
@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertNotNull;
 
-public class JettyWebSocketServer_Test {
+public class WebSocketServer_Test {
 
     private App buildApp() throws Exception {
         App app = App.create();
@@ -45,9 +45,10 @@ public class JettyWebSocketServer_Test {
         app.configure( ( binder ) -> {
 
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
-            servletContext.serve( WebSocketDef.of( WsPingServer.class ) );
+            servletContext.serve( WebSocketServerBuilder.of( WsPingServer.class ) );
+            servletContext.serve( WebSocketServerBuilder.from( WsPingServer.class, "/ws2" ).build() );
 
-            binder.service( JettyServerComponent.class ) //
+            binder.component( JettyServerComponent.class ) //
                     .listen( 40001 ) //
                     .serve( servletContext.build() );
 
@@ -66,36 +67,43 @@ public class JettyWebSocketServer_Test {
         return app;
     }
 
+    private void testPingServer( URI address ) throws Exception {
+
+        CountDownLatch completeSignal = new CountDownLatch( 1 );
+        StringBuilder sb = new StringBuilder();
+
+        WsPingClient client = new WsPingClient( address );
+
+        client.addMessageHandler( ( s ) -> {
+            sb.append( s );
+            completeSignal.countDown();
+        } );
+
+        // Send message and await response
+        client.sendMessage( "hello" );
+        completeSignal.await( 10, TimeUnit.SECONDS );
+
+        // close the client
+        client.close();
+
+        Assert.assertEquals( "hello", sb.toString() );
+
+    }
 
     @Test
     public void testWebSocket() throws Exception {
 
         try ( App app = buildApp() ) {
-
-            CountDownLatch completeSignal = new CountDownLatch( 1 );
-
-            StringBuilder sb = new StringBuilder();
-
             Server server = app.getInstance( Server.class );
 
             assertNotNull( server );
             server.start();
 
-            WsPingClient client = new WsPingClient( URI.create( "ws://localhost:40001/ws" ) );
+            // Test server registered with annotation
+            testPingServer( URI.create( "ws://localhost:40001/ws" ) );
 
-            client.addMessageHandler( ( s ) -> {
-                sb.append( s );
-                completeSignal.countDown();
-            } );
-
-            // Send message and await response
-            client.sendMessage( "hello" );
-            completeSignal.await( 10, TimeUnit.SECONDS );
-
-            // close the client
-            client.close();
-
-            Assert.assertEquals( "hello", sb.toString() );
+            // Test server registered with builder.
+            testPingServer( URI.create( "ws://localhost:40001/ws2" ) );
         }
 
     }

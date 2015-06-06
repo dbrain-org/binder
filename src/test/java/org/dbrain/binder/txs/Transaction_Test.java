@@ -40,10 +40,10 @@ public class Transaction_Test {
 
         PrintWriter pw = new PrintWriter( writer );
         app.configure( ( Binder binder ) -> {
-            binder.service( TestMemberComponent.class ).named( "MemberA" ).printWriter( pw );
-            binder.service( TestMemberComponent.class ).named( "MemberB" ).printWriter( pw );
-            binder.service( TestMemberComponent.class ).named( "MemberC" ).printWriter( pw ).failOnFlush();
-            binder.service( TestMemberComponent.class ).named( "MemberD" ).printWriter( pw ).failOnCommit();
+            binder.component( TestMemberComponent.class ).named( "MemberA" ).printWriter( pw );
+            binder.component( TestMemberComponent.class ).named( "MemberB" ).printWriter( pw );
+            binder.component( TestMemberComponent.class ).named( "MemberC" ).printWriter( pw ).failOnFlush();
+            binder.component( TestMemberComponent.class ).named( "MemberD" ).printWriter( pw ).failOnCommit();
         } );
 
         return app;

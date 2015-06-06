@@ -14,14 +14,14 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server.defs;
+package org.dbrain.binder.http.conf;
 
 import java.net.URI;
 
 /**
  * Created by epoitras on 17/09/14.
  */
-public class HttpsConnectorDef extends HttpConnectorDef implements ConnectorDef {
+public class HttpsConnectorConf extends HttpConnectorConf implements ConnectorConf {
 
     private URI keyStore;
 

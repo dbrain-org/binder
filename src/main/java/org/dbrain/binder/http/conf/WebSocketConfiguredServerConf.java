@@ -14,32 +14,27 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server.defs;
+package org.dbrain.binder.http.conf;
+
+import javax.websocket.server.ServerEndpointConfig;
 
 /**
- * @author kilantzis
+ * Created by epoitras on 6/4/15.
  */
-public class CredentialsDef {
+public class WebSocketConfiguredServerConf implements WebSocketServerConf {
 
-    private final String realm;
-    private final String singleRole;
-    private final String file;
+    private final ServerEndpointConfig config;
 
-    public CredentialsDef( String realm, String singleRole, String file ) {
-        this.realm = realm;
-        this.singleRole = singleRole;
-        this.file = file;
+    public WebSocketConfiguredServerConf( ServerEndpointConfig config ) {
+        this.config = config;
     }
 
-    public String getRealm() {
-        return realm;
+    public ServerEndpointConfig getConfig() {
+        return config;
     }
 
-    public String getSingleRole() {
-        return singleRole;
-    }
-
-    public String getFile() {
-        return file;
+    @Override
+    public void accept( Visitor v ) throws Exception {
+        v.visit( this );
     }
 }

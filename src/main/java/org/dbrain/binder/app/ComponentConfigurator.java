@@ -16,24 +16,9 @@
 
 package org.dbrain.binder.app;
 
+
 /**
- * Defines methods to bind services into an application.
+ * Configure a higher level of service.
  */
-public interface Binder {
-
-    /**
-     * Start binging a service from the specific implementation class.
-     */
-    <T> BindingConfigurator<T> bind( Class<T> implementationClass );
-
-    /**
-     * Start binging a service from the specific implementation instance.
-     */
-    <T> BindingConfigurator<T> bind( T implementation );
-
-    /**
-     * Start binding a component (Collection of services).
-     */
-    <T extends ComponentConfigurator> T component( Class<T> componentClass );
-
+public interface ComponentConfigurator {
 }

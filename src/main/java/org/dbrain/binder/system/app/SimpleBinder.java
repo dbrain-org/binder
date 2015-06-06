@@ -19,10 +19,9 @@ package org.dbrain.binder.system.app;
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.app.BindingConfigurator;
-import org.dbrain.binder.app.ServiceConfigurator;
+import org.dbrain.binder.app.ComponentConfigurator;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.DynamicConfigurationService;
-import org.glassfish.hk2.api.ServiceLocator;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -55,8 +54,8 @@ public class SimpleBinder implements Binder {
     }
 
     @Override
-    public <T extends ServiceConfigurator> T service( Class<T> serviceClass ) {
-        return app.getOrCreateInstance( serviceClass );
+    public <T extends ComponentConfigurator> T component( Class<T> componentClass ) {
+        return app.getOrCreateInstance( componentClass );
     }
 
     /**

@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server.defs;
+package org.dbrain.binder.http.conf;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,23 +27,23 @@ import java.util.List;
  * Time: 10:15 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ServletContextDef {
+public class ServletContextConf {
 
     private final String contextPath;
 
-    private final List<ServletDef> servlets;
+    private final List<ServletConf> servlets;
 
-    private final List<ServletFilterDef> filters;
+    private final List<ServletFilterConf> filters;
 
-    private final List<WebSocketDef> webSockets;
+    private final List<WebSocketServerConf> webSockets;
 
-    private final ServletAppSecurityDef security;
+    private final ServletAppSecurityConf security;
 
-    public ServletContextDef( String contextPath,
-                              List<ServletDef> servlets,
-                              List<ServletFilterDef> filters,
-                              List<WebSocketDef> webSockets,
-                              ServletAppSecurityDef security ) {
+    public ServletContextConf( String contextPath,
+                               List<ServletConf> servlets,
+                               List<ServletFilterConf> filters,
+                               List<WebSocketServerConf> webSockets,
+                               ServletAppSecurityConf security ) {
         this.contextPath = contextPath;
         this.webSockets = webSockets;
         this.servlets = Collections.unmodifiableList( new ArrayList<>( servlets ) );
@@ -55,19 +55,19 @@ public class ServletContextDef {
         return contextPath;
     }
 
-    public List<ServletDef> getServlets() {
+    public List<ServletConf> getServlets() {
         return servlets;
     }
 
-    public List<ServletFilterDef> getFilters() {
+    public List<ServletFilterConf> getFilters() {
         return filters;
     }
 
-    public List<WebSocketDef> getWebSockets() {
+    public List<WebSocketServerConf> getWebSockets() {
         return webSockets;
     }
 
-    public ServletAppSecurityDef getSecurity() {
+    public ServletAppSecurityConf getSecurity() {
         return security;
     }
 }

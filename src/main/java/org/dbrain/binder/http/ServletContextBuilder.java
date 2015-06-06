@@ -14,13 +14,13 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server;
+package org.dbrain.binder.http;
 
-import org.dbrain.binder.http.server.defs.ServletAppSecurityDef;
-import org.dbrain.binder.http.server.defs.ServletContextDef;
-import org.dbrain.binder.http.server.defs.ServletDef;
-import org.dbrain.binder.http.server.defs.ServletFilterDef;
-import org.dbrain.binder.http.server.defs.WebSocketDef;
+import org.dbrain.binder.http.conf.ServletAppSecurityConf;
+import org.dbrain.binder.http.conf.ServletContextConf;
+import org.dbrain.binder.http.conf.ServletConf;
+import org.dbrain.binder.http.conf.ServletFilterConf;
+import org.dbrain.binder.http.conf.WebSocketServerConf;
 
 import javax.servlet.Filter;
 import java.util.ArrayList;
@@ -37,13 +37,13 @@ public class ServletContextBuilder {
 
     protected String contextPath;
 
-    protected List<ServletDef> servlets = new ArrayList<>();
+    protected List<ServletConf> servlets = new ArrayList<>();
 
-    protected List<WebSocketDef> webSockets = new ArrayList<>();
+    protected List<WebSocketServerConf> webSockets = new ArrayList<>();
 
-    protected List<ServletFilterDef> filters = new ArrayList<>();
+    protected List<ServletFilterConf> filters = new ArrayList<>();
 
-    protected ServletAppSecurityDef security;
+    protected ServletAppSecurityConf security;
 
     public ServletContextBuilder( String contextPath ) {
         contextPath( contextPath );
@@ -57,14 +57,14 @@ public class ServletContextBuilder {
         return this;
     }
 
-    public ServletContextBuilder serve( ServletDef servletDef ) {
+    public ServletContextBuilder serve( ServletConf servletDef ) {
         if ( servletDef != null ) {
             servlets.add( servletDef );
         }
         return this;
     }
 
-    public ServletContextBuilder serve( WebSocketDef wsd ) {
+    public ServletContextBuilder serve( WebSocketServerConf wsd ) {
         if ( wsd != null ) {
             webSockets.add( wsd );
         }
@@ -72,16 +72,16 @@ public class ServletContextBuilder {
     }
 
     public ServletContextBuilder filter( String pathSpec, Filter filter ) {
-        filters.add( ServletFilterDef.of( pathSpec, filter ) );
+        filters.add( ServletFilterConf.of( pathSpec, filter ) );
         return this;
     }
 
-    public void security( ServletAppSecurityDef security ) {
+    public void security( ServletAppSecurityConf security ) {
         this.security = security;
     }
 
-    public ServletContextDef build() {
-        return new ServletContextDef( contextPath, servlets, filters, webSockets, security );
+    public ServletContextConf build() {
+        return new ServletContextConf( contextPath, servlets, filters, webSockets, security );
     }
 
 }

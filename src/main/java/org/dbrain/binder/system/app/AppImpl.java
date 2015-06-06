@@ -17,7 +17,6 @@
 package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.app.App;
-import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.directory.ServiceKey;
 import org.dbrain.binder.system.http.server.HttpStandardScopeComponent;
@@ -71,13 +70,13 @@ public class AppImpl implements App {
         ServiceLocatorUtilities.enablePerThreadScope( delegate );
 
         binder = startConfiguration();
-        binder.service( TransactionComponent.class );
-        binder.service( StandardScopeComponent.class );
+        binder.component( TransactionComponent.class );
+        binder.component( StandardScopeComponent.class );
         binder.commit();
 
         binder = startConfiguration();
-        binder.service( HttpStandardScopeComponent.class );
-        binder.service( WebAppComponent.class );
+        binder.component( HttpStandardScopeComponent.class );
+        binder.component( WebAppComponent.class );
         binder.commit();
 
     }

@@ -18,8 +18,7 @@ package org.dbrain.binder.http;
 
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.http.artifacts.SampleServlet;
-import org.dbrain.binder.http.server.ServletContextBuilder;
-import org.dbrain.binder.http.server.defs.ServletDef;
+import org.dbrain.binder.http.conf.ServletConf;
 import org.eclipse.jetty.server.Server;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,9 +37,9 @@ public class JettyHttpServer_Test {
         app.configure( binder -> {
 
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
-            servletContext.serve( ServletDef.of( "/*", new SampleServlet() ) );
+            servletContext.serve( ServletConf.of( "/*", new SampleServlet() ) );
 
-            binder.service( JettyServerComponent.class ) //
+            binder.component( JettyServerComponent.class ) //
                     .listen( 40001 )              //
                     .serve( servletContext.build() );
 

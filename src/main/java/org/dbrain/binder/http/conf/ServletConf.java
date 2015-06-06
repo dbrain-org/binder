@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server.defs;
+package org.dbrain.binder.http.conf;
 
 import javax.servlet.Servlet;
 
@@ -25,9 +25,9 @@ import javax.servlet.Servlet;
  * Time: 10:25 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface ServletDef {
+public interface ServletConf {
 
-    static ServletDef of( String pathSpec, Servlet instance ) {
+    static ServletConf of( String pathSpec, Servlet instance ) {
         return new InstanceServletDef( pathSpec, instance );
     }
 
@@ -37,7 +37,7 @@ public interface ServletDef {
         void visit( InstanceServletDef servletDef );
     }
 
-    class InstanceServletDef implements ServletDef {
+    class InstanceServletDef implements ServletConf {
 
         private final Servlet instance;
 

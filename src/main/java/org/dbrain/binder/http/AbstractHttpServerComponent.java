@@ -16,38 +16,37 @@
 
 package org.dbrain.binder.http;
 
-import org.dbrain.binder.http.server.HttpConnectorBuilder;
-import org.dbrain.binder.http.server.defs.ConnectorDef;
-import org.dbrain.binder.http.server.defs.HttpConnectorDef;
-import org.dbrain.binder.http.server.defs.HttpServerDef;
-import org.dbrain.binder.http.server.defs.ServletContextDef;
+import org.dbrain.binder.http.conf.ConnectorConf;
+import org.dbrain.binder.http.conf.HttpConnectorConf;
+import org.dbrain.binder.http.conf.HttpServerConf;
+import org.dbrain.binder.http.conf.ServletContextConf;
 import org.dbrain.binder.system.app.QualifiedComponent;
 
 public abstract class AbstractHttpServerComponent<T extends AbstractHttpServerComponent> extends QualifiedComponent<T> {
 
-    private HttpServerDef building = new HttpServerDef();
+    private HttpServerConf building = new HttpServerConf();
 
     public T listen( Integer port ) {
         return listen( HttpConnectorBuilder.of( port ) );
     }
 
-    public T listen( ConnectorDef config ) {
+    public T listen( ConnectorConf config ) {
         if ( config != null ) {
             building.getEndPoints().add( config );
         }
         return self();
     }
 
-    public T serve( ServletContextDef servletContext ) {
+    public T serve( ServletContextConf servletContext ) {
         if ( servletContext != null ) {
             building.getServletContexts().add( servletContext );
         }
         return self();
     }
 
-    protected HttpServerDef getHttpServerConfig() {
+    protected HttpServerConf getHttpServerConfig() {
         if ( building.getEndPoints().size() == 0 ) {
-            building.getEndPoints().add( new HttpConnectorDef() );
+            building.getEndPoints().add( new HttpConnectorConf() );
         }
         return building;
     }

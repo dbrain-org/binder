@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server.defs;
+package org.dbrain.binder.http.conf;
 
 import javax.servlet.Filter;
 
@@ -25,13 +25,13 @@ import javax.servlet.Filter;
  * Time: 10:25 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface ServletFilterDef {
+public interface ServletFilterConf {
 
-    static ServletFilterDef of( String pathSpec, Filter instance ) {
+    static ServletFilterConf of( String pathSpec, Filter instance ) {
         return new ServletFilterInstanceDef( pathSpec, instance );
     }
 
-    static ServletFilterDef of( String pathSpec, Class<? extends Filter> filterClass ) {
+    static ServletFilterConf of( String pathSpec, Class<? extends Filter> filterClass ) {
         return new ServletFilterClassDef( pathSpec, filterClass );
     }
 
@@ -44,7 +44,7 @@ public interface ServletFilterDef {
         void visit( ServletFilterClassDef servletDef );
     }
 
-    class ServletFilterClassDef implements ServletFilterDef {
+    class ServletFilterClassDef implements ServletFilterConf {
 
         private final String pathSpec;
 
@@ -70,7 +70,7 @@ public interface ServletFilterDef {
 
     }
 
-    class ServletFilterInstanceDef implements ServletFilterDef {
+    class ServletFilterInstanceDef implements ServletFilterConf {
 
         private final String pathSpec;
 

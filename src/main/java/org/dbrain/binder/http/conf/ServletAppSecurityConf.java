@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server.defs;
+package org.dbrain.binder.http.conf;
 
 /**
  * Servlet application should reply to authenticated requests.
@@ -22,14 +22,16 @@ package org.dbrain.binder.http.server.defs;
  *
  * @author kilantzis
  */
-public class ServletAppSecurityDef {
+public class ServletAppSecurityConf {
 
     private final String pathSpec;
 
-    private final FormLocationDef formLocationDef;
-    private final CredentialsDef  credentialsDef;
+    private final FormLocationConf formLocationDef;
+    private final CredentialsConf  credentialsDef;
 
-    public ServletAppSecurityDef( String contextPath, FormLocationDef formLocationDef, CredentialsDef credentialsDef ) {
+    public ServletAppSecurityConf( String contextPath,
+                                   FormLocationConf formLocationDef,
+                                   CredentialsConf credentialsDef ) {
         this.pathSpec = contextPath;
         this.formLocationDef = formLocationDef;
         this.credentialsDef = credentialsDef;
@@ -39,11 +41,11 @@ public class ServletAppSecurityDef {
         return pathSpec;
     }
 
-    public FormLocationDef getFormLocationDef() {
+    public FormLocationConf getFormLocationDef() {
         return formLocationDef;
     }
 
-    public CredentialsDef getCredentialsDef() {
+    public CredentialsConf getCredentialsDef() {
         return credentialsDef;
     }
 }

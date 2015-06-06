@@ -14,11 +14,31 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.app;
-
+package org.dbrain.binder.http.conf;
 
 /**
- * Configure a higher level of service.
+ * Created by epoitras on 17/09/14.
  */
-public interface ServiceConfigurator {
+public class HttpConnectorConf implements ConnectorConf {
+
+    private Integer port;
+
+    private String host;
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort( Integer port ) {
+        this.port = port;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost( String host ) {
+        this.host = host;
+    }
+
 }

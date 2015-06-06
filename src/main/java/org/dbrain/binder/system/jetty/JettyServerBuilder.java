@@ -18,13 +18,15 @@ package org.dbrain.binder.system.jetty;
 
 import org.dbrain.binder.directory.ServiceDirectory;
 import org.dbrain.binder.directory.ServiceKey;
-import org.dbrain.binder.http.server.defs.CredentialsDef;
-import org.dbrain.binder.http.server.defs.FormLocationDef;
-import org.dbrain.binder.http.server.defs.ServletAppSecurityDef;
-import org.dbrain.binder.http.server.defs.ServletContextDef;
-import org.dbrain.binder.http.server.defs.ServletDef;
-import org.dbrain.binder.http.server.defs.ServletFilterDef;
-import org.dbrain.binder.http.server.defs.WebSocketDef;
+import org.dbrain.binder.http.conf.CredentialsConf;
+import org.dbrain.binder.http.conf.FormLocationConf;
+import org.dbrain.binder.http.conf.ServletAppSecurityConf;
+import org.dbrain.binder.http.conf.ServletContextConf;
+import org.dbrain.binder.http.conf.ServletConf;
+import org.dbrain.binder.http.conf.ServletFilterConf;
+import org.dbrain.binder.http.conf.WebSocketServerConf;
+import org.dbrain.binder.http.conf.WebSocketConfiguredServerConf;
+import org.dbrain.binder.http.conf.WebSocketServiceServerConf;
 import org.dbrain.binder.system.app.SystemConfiguration;
 import org.dbrain.binder.system.jetty.websocket.JsrScopedSessionFactory;
 import org.dbrain.binder.system.jetty.websocket.WebSocketInjectorConfigurator;
@@ -68,18 +70,18 @@ public class JettyServerBuilder {
         this.locator = locator;
     }
 
-    public void configureFilter( ServletContextHandler result, ServletFilterDef def ) {
-        def.accept( new ServletFilterDef.Visitor() {
+    public void configureFilter( ServletContextHandler result, ServletFilterConf def ) {
+        def.accept( new ServletFilterConf.Visitor() {
 
             @Override
-            public void visit( ServletFilterDef.ServletFilterInstanceDef servletDef ) {
+            public void visit( ServletFilterConf.ServletFilterInstanceDef servletDef ) {
                 result.addFilter( new FilterHolder( servletDef.getInstance() ),
                                   servletDef.getPathSpec(),
                                   EnumSet.of( DispatcherType.REQUEST ) );
             }
 
             @Override
-            public void visit( ServletFilterDef.ServletFilterClassDef servletDef ) {
+            public void visit( ServletFilterConf.ServletFilterClassDef servletDef ) {
                 Filter instance = locator.getOrCreateInstance( servletDef.getFilterClass() );
                 result.addFilter( new FilterHolder( instance ),
                                   servletDef.getPathSpec(),
@@ -89,10 +91,10 @@ public class JettyServerBuilder {
         } );
     }
 
-    public void configureServlet( ServletContextHandler result, ServletDef def ) {
-        def.accept( new ServletDef.Visitor() {
+    public void configureServlet( ServletContextHandler result, ServletConf def ) {
+        def.accept( new ServletConf.Visitor() {
             @Override
-            public void visit( ServletDef.InstanceServletDef servletDef ) {
+            public void visit( ServletConf.InstanceServletDef servletDef ) {
                 ServletHolder servletHolder = new ServletHolder( servletDef.getInstance() );
                 //servletHolder.setInitParameter(  );
                 result.addServlet( servletHolder, servletDef.getPathSpec() );
@@ -100,17 +102,17 @@ public class JettyServerBuilder {
         } );
     }
 
-    public FormAuthenticator createFormAuthenticator( FormLocationDef def ) {
+    public FormAuthenticator createFormAuthenticator( FormLocationConf def ) {
         return new FormAuthenticator( def.getUrl(),
                                       def.getErrorURL(),
                                       false /* no, do not dispatch but redirect (302, 301?) to the error url */ );
     }
 
-    public HashLoginService createHashLoginService( CredentialsDef def ) {
+    public HashLoginService createHashLoginService( CredentialsConf def ) {
         return new HashLoginService( def.getRealm(), def.getFile() );
     }
 
-    public ConstraintSecurityHandler createConstraintSecurityHandler( ServletAppSecurityDef def ) {
+    public ConstraintSecurityHandler createConstraintSecurityHandler( ServletAppSecurityConf def ) {
 
         ConstraintMapping cm = new ConstraintMapping();
         cm.setPathSpec( def.getPathSpec() );
@@ -133,9 +135,9 @@ public class JettyServerBuilder {
     /**
      * Configure web socket definitions into the server container.
      */
-    public void configureWebSocket( ServerContainer serverContainer, WebSocketDef webSocketDef ) throws Exception {
+    public void configureWebSocket( ServerContainer serverContainer, WebSocketServerConf webSocketDef ) throws Exception {
 
-        webSocketDef.accept( new WebSocketDef.Visitor() {
+        webSocketDef.accept( new WebSocketServerConf.Visitor() {
 
             private void configureServerEndpointConfig( ServerEndpointConfig config,
                                                         ServiceKey<?> serviceKey ) throws Exception {
@@ -153,21 +155,21 @@ public class JettyServerBuilder {
             }
 
             @Override
-            public void visit( WebSocketDef.EndpointClassWebSocketDef endpointClassWebSocketDef ) throws Exception {
+            public void visit( WebSocketServiceServerConf endpointClassWebSocketConf ) throws Exception {
                 ServerEndpointConfig config = serverContainer //
-                        .getServerEndpointMetadata( endpointClassWebSocketDef.getEndpointService().getServiceClass(),
+                        .getServerEndpointMetadata( endpointClassWebSocketConf.getEndpointService().getServiceClass(),
                                                     null ) //
                         .getConfig();
 
                 // Configure the endpoint
-                configureServerEndpointConfig( config, endpointClassWebSocketDef.getEndpointService() );
+                configureServerEndpointConfig( config, endpointClassWebSocketConf.getEndpointService() );
             }
 
             @Override
-            public void visit( WebSocketDef.ServerEndpointConfigWebSocketDef serverEndpointConfig ) throws Exception {
+            public void visit( WebSocketConfiguredServerConf websocketServerEndpointConfig ) throws Exception {
                 // Configure the endpoint
-                configureServerEndpointConfig( serverEndpointConfig.getConfig(),
-                                               ServiceKey.of( serverEndpointConfig.getConfig().getEndpointClass() ) );
+                configureServerEndpointConfig( websocketServerEndpointConfig.getConfig(),
+                                               ServiceKey.of( websocketServerEndpointConfig.getConfig().getEndpointClass() ) );
             }
         } );
 
@@ -205,7 +207,7 @@ public class JettyServerBuilder {
     }
 
 
-    public Handler configureServletContextHandler( Server server, ServletContextDef config ) {
+    public Handler configureServletContextHandler( Server server, ServletContextConf config ) {
 
         ServletContextHandler servletContextHandler = new ServletContextHandler( ( config.getSecurity() != null ) ? ServletContextHandler.SESSIONS : ServletContextHandler.NO_SESSIONS );
         servletContextHandler.setContextPath( config.getContextPath() );
@@ -217,7 +219,7 @@ public class JettyServerBuilder {
                 ServerContainer wscontainer = //
                         configureContext( servletContextHandler );
 
-                for ( WebSocketDef wsd : config.getWebSockets() ) {
+                for ( WebSocketServerConf wsd : config.getWebSockets() ) {
                     configureWebSocket( wscontainer, wsd );
                 }
 
@@ -249,24 +251,24 @@ public class JettyServerBuilder {
 
 
         // Add system configuration filters, if any.
-        for ( ServletFilterDef filterDef : locator.listServices( ServletFilterDef.class, SystemConfiguration.class ) ) {
+        for ( ServletFilterConf filterDef : locator.listServices( ServletFilterConf.class, SystemConfiguration.class ) ) {
             configureFilter( servletContextHandler, filterDef );
         }
 
 
         // Add user filters, if any.
-        for ( ServletFilterDef filterDef : config.getFilters() ) {
+        for ( ServletFilterConf filterDef : config.getFilters() ) {
             configureFilter( servletContextHandler, filterDef );
         }
 
-        for ( ServletDef servletDef : config.getServlets() ) {
+        for ( ServletConf servletDef : config.getServlets() ) {
             configureServlet( servletContextHandler, servletDef );
         }
 
         return servletContextHandler;
     }
 
-    public Handler configureServletContextsHandler( Server server, List<ServletContextDef> defs ) {
+    public Handler configureServletContextsHandler( Server server, List<ServletContextConf> defs ) {
         if ( defs == null || defs.size() == 0 ) {
             return null;
         } else if ( defs.size() == 1 ) {
@@ -274,7 +276,7 @@ public class JettyServerBuilder {
         } else {
             HandlerList result = new HandlerList();
             result.setServer( server );
-            for ( ServletContextDef def : defs ) {
+            for ( ServletContextConf def : defs ) {
                 result.addHandler( configureServletContextHandler( server, def ) );
             }
             return result;

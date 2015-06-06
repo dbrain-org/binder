@@ -38,7 +38,7 @@ public class TransactionControl_Test {
         App app = App.create();
 
         app.configure( ( Binder binder ) -> {
-            binder.service( TestMemberComponent.class ) //
+            binder.component( TestMemberComponent.class ) //
                     .named( "Test" ) //
                     .printWriter( new PrintWriter( System.out ) );
         } );

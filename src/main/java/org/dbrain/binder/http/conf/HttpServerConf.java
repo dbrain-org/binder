@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server.defs;
+package org.dbrain.binder.http.conf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,25 +22,25 @@ import java.util.List;
 /**
  * Definition of an Http Server.
  */
-public class HttpServerDef {
+public class HttpServerConf {
 
-    private List<ConnectorDef> endPoints = new ArrayList<>( 1 );
+    private List<ConnectorConf> endPoints = new ArrayList<>( 1 );
 
-    private List<ServletContextDef> servletContexts = new ArrayList<>( 1 );
+    private List<ServletContextConf> servletContexts = new ArrayList<>( 1 );
 
-    public List<ConnectorDef> getEndPoints() {
+    public List<ConnectorConf> getEndPoints() {
         return endPoints;
     }
 
-    public void setEndPoints( List<ConnectorDef> endPoints ) {
+    public void setEndPoints( List<ConnectorConf> endPoints ) {
         this.endPoints = endPoints;
     }
 
-    public List<ServletContextDef> getServletContexts() {
+    public List<ServletContextConf> getServletContexts() {
         return servletContexts;
     }
 
-    public void setServletContexts( List<ServletContextDef> servletContexts ) {
+    public void setServletContexts( List<ServletContextConf> servletContexts ) {
         this.servletContexts = servletContexts;
     }
 }

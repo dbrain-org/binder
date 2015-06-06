@@ -16,9 +16,9 @@
 
 package org.dbrain.binder.system.jetty;
 
-import org.dbrain.binder.http.server.defs.ConnectorDef;
-import org.dbrain.binder.http.server.defs.HttpConnectorDef;
-import org.dbrain.binder.http.server.defs.HttpsConnectorDef;
+import org.dbrain.binder.http.conf.ConnectorConf;
+import org.dbrain.binder.http.conf.HttpConnectorConf;
+import org.dbrain.binder.http.conf.HttpsConnectorConf;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -34,7 +34,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
  */
 public class JettyConnectors {
 
-    private static HttpConfiguration getStandardConfiguration( HttpConnectorDef config ) {
+    private static HttpConfiguration getStandardConfiguration( HttpConnectorConf config ) {
         HttpConfiguration httpConfiguration = new HttpConfiguration();
         httpConfiguration.setSendServerVersion( false );
         httpConfiguration.setSendXPoweredBy( false );
@@ -45,13 +45,13 @@ public class JettyConnectors {
     }
 
 
-    private static void configureCommonFields( ServerConnector connector, HttpConnectorDef config ) {
+    private static void configureCommonFields( ServerConnector connector, HttpConnectorConf config ) {
         if ( config.getHost() != null ) {
             connector.setHost( config.getHost() );
         }
     }
 
-    public static void configureConnector( Server server, HttpConnectorDef config ) {
+    public static void configureConnector( Server server, HttpConnectorConf config ) {
 
         // Build Http Configuration
         HttpConfiguration httpConfiguration = getStandardConfiguration( config );
@@ -67,7 +67,7 @@ public class JettyConnectors {
 
     }
 
-    public static void configureConnector( Server server, HttpsConnectorDef config ) {
+    public static void configureConnector( Server server, HttpsConnectorConf config ) {
 
         Resource keyStoreResource = new FileResource( config.getKeyStore() );
 
@@ -94,11 +94,11 @@ public class JettyConnectors {
 
     }
 
-    public static void configureConnector( Server server, ConnectorDef connector ) {
-        if ( connector instanceof HttpsConnectorDef ) {
-            configureConnector( server, (HttpsConnectorDef) connector );
-        } else if ( connector instanceof HttpConnectorDef ) {
-            configureConnector( server, (HttpConnectorDef) connector );
+    public static void configureConnector( Server server, ConnectorConf connector ) {
+        if ( connector instanceof HttpsConnectorConf ) {
+            configureConnector( server, (HttpsConnectorConf) connector );
+        } else if ( connector instanceof HttpConnectorConf ) {
+            configureConnector( server, (HttpConnectorConf) connector );
         } else {
             throw new IllegalArgumentException();
         }

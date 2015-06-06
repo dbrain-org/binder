@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.system.txs;
 
-import org.dbrain.binder.app.ServiceConfigurator;
+import org.dbrain.binder.app.ComponentConfigurator;
 import org.dbrain.binder.lifecycle.TransactionScoped;
 import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.system.txs.jdbc.JdbcConnectionWrapper;
@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class TransactionComponent implements ServiceConfigurator {
+public class TransactionComponent implements ComponentConfigurator {
 
     @Inject
     public TransactionComponent( BindingStack hook ) {

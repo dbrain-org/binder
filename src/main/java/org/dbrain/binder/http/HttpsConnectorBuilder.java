@@ -14,9 +14,9 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server;
+package org.dbrain.binder.http;
 
-import org.dbrain.binder.http.server.defs.HttpsConnectorDef;
+import org.dbrain.binder.http.conf.HttpsConnectorConf;
 
 import java.net.URI;
 
@@ -38,7 +38,7 @@ public class HttpsConnectorBuilder extends AbstractHttpConnectorBuilder<HttpsCon
     private String keyManagerPassord;
 
     @Override
-    public HttpsConnectorBuilder self() {
+    protected HttpsConnectorBuilder self() {
         return this;
     }
 
@@ -88,11 +88,11 @@ public class HttpsConnectorBuilder extends AbstractHttpConnectorBuilder<HttpsCon
         return self();
     }
 
-    public HttpsConnectorDef build() {
+    public HttpsConnectorConf build() {
         Integer finalPort = getPort();
         finalPort = finalPort != null ? finalPort : 443;
 
-        HttpsConnectorDef result = new HttpsConnectorDef();
+        HttpsConnectorConf result = new HttpsConnectorConf();
         result.setPort( finalPort );
         result.setHost( host );
         result.setKeyStore( keyStore );

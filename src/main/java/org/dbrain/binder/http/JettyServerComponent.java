@@ -17,8 +17,8 @@
 package org.dbrain.binder.http;
 
 import org.dbrain.binder.app.App;
-import org.dbrain.binder.http.server.defs.ConnectorDef;
-import org.dbrain.binder.http.server.defs.HttpServerDef;
+import org.dbrain.binder.http.conf.ConnectorConf;
+import org.dbrain.binder.http.conf.HttpServerConf;
 import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.system.jetty.JettyConnectors;
 import org.dbrain.binder.system.jetty.JettyServerBuilder;
@@ -56,13 +56,13 @@ public class JettyServerComponent extends AbstractHttpServerComponent<JettyServe
         return this;
     }
 
-    protected Server build( HttpServerDef def ) {
+    protected Server build( HttpServerConf def ) {
 
         // Build the server first.
         Server server = new Server();
 
         // Configure the connectors
-        for ( ConnectorDef connector : def.getEndPoints() ) {
+        for ( ConnectorConf connector : def.getEndPoints() ) {
             JettyConnectors.configureConnector( server, connector );
         }
 

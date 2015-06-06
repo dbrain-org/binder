@@ -14,6 +14,27 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server.defs;
+package org.dbrain.binder.http.conf;
 
-public interface ConnectorDef {}
+import org.dbrain.binder.directory.ServiceKey;
+
+/**
+ * Created by epoitras on 6/4/15.
+ */
+public class WebSocketServiceServerConf implements WebSocketServerConf {
+
+    private final ServiceKey<?> endpointService;
+
+    public WebSocketServiceServerConf( ServiceKey<?> endpointService ) {
+        this.endpointService = endpointService;
+    }
+
+    public ServiceKey<?> getEndpointService() {
+        return endpointService;
+    }
+
+    @Override
+    public void accept( Visitor v ) throws Exception {
+        v.visit( this );
+    }
+}

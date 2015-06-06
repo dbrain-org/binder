@@ -14,33 +14,26 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.http.server;
+package org.dbrain.binder.http.conf;
 
 /**
- * Created with IntelliJ IDEA.
- * User: epoitras
- * Date: 15/07/13
- * Time: 9:01 PM
- * To change this template use File | Settings | File Templates.
+ * @author kilantzis
  */
-public abstract class AbstractHttpConnectorBuilder<BUILDER extends AbstractHttpConnectorBuilder<BUILDER>> {
+public class FormLocationConf {
 
-    private Integer port;
+    private final String url;
+    private final String errorURL;
 
-    public abstract BUILDER self();
-
-    public Integer getPort() {
-        return port;
+    public FormLocationConf( String url, String errorURL ) {
+        this.url = url;
+        this.errorURL = errorURL;
     }
 
-    public BUILDER port( int port ) {
-        if ( port >= 0 && port < 65536 ) {
-            this.port = port;
-        } else {
-            throw new IllegalArgumentException();
-        }
-        return self();
+    public String getUrl() {
+        return url;
     }
 
-
+    public String getErrorURL() {
+        return errorURL;
+    }
 }

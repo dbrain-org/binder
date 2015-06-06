@@ -19,10 +19,8 @@ package org.dbrain.binder.http;
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.http.artifacts.CrippledHttpsClient;
 import org.dbrain.binder.http.artifacts.SampleServlet;
-import org.dbrain.binder.http.server.HttpsConnectorBuilder;
-import org.dbrain.binder.http.server.ServletContextBuilder;
-import org.dbrain.binder.http.server.defs.HttpsConnectorDef;
-import org.dbrain.binder.http.server.defs.ServletDef;
+import org.dbrain.binder.http.conf.HttpsConnectorConf;
+import org.dbrain.binder.http.conf.ServletConf;
 import org.eclipse.jetty.server.Server;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,14 +38,14 @@ public class JettyHttpsServer_Test {
         app.configure( ( binder ) -> {
 
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
-            servletContext.serve( ServletDef.of( "/*", new SampleServlet() ) );
+            servletContext.serve( ServletConf.of( "/*", new SampleServlet() ) );
 
-            HttpsConnectorDef https = HttpsConnectorBuilder.from( "https://localhost:8443" )
+            HttpsConnectorConf https = HttpsConnectorBuilder.from( "https://localhost:8443" )
                                                            .keystore( getClass().getResource( "/keystore.jks" ).toURI(),
                                                                       "password",
                                                                       "password" )
                                                            .build();
-            binder.service( JettyServerComponent.class ) //
+            binder.component( JettyServerComponent.class ) //
                     .listen( https ) //
                     .serve( servletContext.build() );
 

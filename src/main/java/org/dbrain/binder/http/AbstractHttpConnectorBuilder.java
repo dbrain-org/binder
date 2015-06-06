@@ -14,26 +14,33 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.app;
+package org.dbrain.binder.http;
 
 /**
- * Defines methods to bind services into an application.
+ * Created with IntelliJ IDEA.
+ * User: epoitras
+ * Date: 15/07/13
+ * Time: 9:01 PM
+ * To change this template use File | Settings | File Templates.
  */
-public interface Binder {
+public abstract class AbstractHttpConnectorBuilder<BUILDER extends AbstractHttpConnectorBuilder<BUILDER>> {
 
-    /**
-     * Start binging a service from the specific implementation class.
-     */
-    <T> BindingConfigurator<T> bind( Class<T> implementationClass );
+    private Integer port;
 
-    /**
-     * Start binging a service from the specific implementation instance.
-     */
-    <T> BindingConfigurator<T> bind( T implementation );
+    protected abstract BUILDER self();
 
-    /**
-     * Start binding a component (Collection of services).
-     */
-    <T extends ComponentConfigurator> T component( Class<T> componentClass );
+    public Integer getPort() {
+        return port;
+    }
+
+    public BUILDER port( int port ) {
+        if ( port >= 0 && port < 65536 ) {
+            this.port = port;
+        } else {
+            throw new IllegalArgumentException();
+        }
+        return self();
+    }
+
 
 }
