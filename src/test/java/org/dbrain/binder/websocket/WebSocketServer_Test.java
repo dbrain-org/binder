@@ -48,16 +48,16 @@ public class WebSocketServer_Test {
             servletContext.serve( WebSocketServerBuilder.of( WsPingServer.class ) );
             servletContext.serve( WebSocketServerBuilder.from( WsPingServer.class, "/ws2" ).build() );
 
-            binder.component( JettyServerComponent.class ) //
+            binder.bindComponent( JettyServerComponent.class ) //
                     .listen( 40001 ) //
                     .serve( servletContext.build() );
 
-            binder.bind( GuidService.class )
+            binder.bindService( GuidService.class )
                   .in( RequestScoped.class )
                   .named( "request" )
                   .useProxy();
 
-            binder.bind( GuidService.class )
+            binder.bindService( GuidService.class )
                   .in( SessionScoped.class )
                   .named( "session" )
                   .useProxy();

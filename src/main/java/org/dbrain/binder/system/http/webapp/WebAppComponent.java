@@ -35,7 +35,7 @@ public class WebAppComponent implements ComponentConfigurator {
     public WebAppComponent(BindingStack hook, ServiceLocator serviceLocator) {
         this.serviceLocator = serviceLocator;
         hook.push( ( binder ) -> {
-            binder.bind( ServletContextListener.class )
+            binder.bindService( ServletContextListener.class )
                   .to( ServletContextListener.class )
                   .providedBy( new WebAppConfigServletContextListener( serviceLocator ) )
                   .qualifiedBy( SystemConfiguration.class );

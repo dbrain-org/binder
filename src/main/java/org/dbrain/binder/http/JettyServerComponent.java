@@ -42,7 +42,7 @@ public class JettyServerComponent extends AbstractHttpServerComponent<JettyServe
     public JettyServerComponent( App app, BindingStack hook ) {
         this.app = app;
         hook.push( ( binder ) -> {
-            binder.bind( Server.class )
+            binder.bindService( Server.class )
                   .providedBy( build( getHttpServerConfig() ) )
                   .disposedBy( ( server ) -> server.stop() )
                   .qualifiedBy( getQualifiers() )

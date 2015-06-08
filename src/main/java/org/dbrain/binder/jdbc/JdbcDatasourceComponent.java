@@ -36,13 +36,13 @@ public class JdbcDatasourceComponent extends QualifiedComponent<JdbcDatasourceCo
     @Inject
     public JdbcDatasourceComponent( BindingStack binderHook ) {
         binderHook.push( ( binder ) -> {
-            binder.bind( DataSource.class ) //
+            binder.bindService( DataSource.class ) //
                     .to( DataSource.class ) //
                     .providedBy( () -> dataSource ) //
                     .qualifiedBy( getQualifiers() ) //
                     .in( Singleton.class );
 
-            binder.bind( Connection.class ) //
+            binder.bindService( Connection.class ) //
                     .to( Connection.class ) //
                     .providedBy( () -> dataSource.getConnection() )//
                     .qualifiedBy( getQualifiers() ) //

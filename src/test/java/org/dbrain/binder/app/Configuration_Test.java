@@ -34,7 +34,7 @@ public class Configuration_Test {
     public void testPerLookup() throws Exception {
         try ( App app = App.create() ) {
 
-            app.configure( session -> session.bind( TestService1.class ).to( TestService1.class ) );
+            app.configure( session -> session.bindService( TestService1.class ).to( TestService1.class ) );
 
             TestService1 ts1_1 = app.getInstance( TestService1.class );
             TestService1 ts1_2 = app.getInstance( TestService1.class );
@@ -46,7 +46,7 @@ public class Configuration_Test {
     @Test
     public void testSingletonScoped() throws Exception {
         try ( App app = App.create() ) {
-            app.configure( session -> session.bind( TestService1.class ) //
+            app.configure( session -> session.bindService( TestService1.class ) //
                     .to( TestService1.class ) //
                     .in( Singleton.class ) );
 
@@ -61,7 +61,7 @@ public class Configuration_Test {
     public void testServeInstance() throws Exception {
         TestService1 instance = new TestService1();
         try ( App app = App.create() ) {
-            app.configure( session -> session.bind( instance ).to( TestService1.class ) );
+            app.configure( session -> session.bindService( instance ).to( TestService1.class ) );
             TestService1 ts1_1 = app.getInstance( TestService1.class );
             TestService1 ts1_2 = app.getInstance( TestService1.class );
             assertEquals( instance, ts1_1 );
@@ -79,7 +79,7 @@ public class Configuration_Test {
 
         Set<TestService1> comparable = new HashSet<>( sources );
         try ( App app = App.create() ) {
-            app.configure( binder -> binder.bind( TestService1.class ) //
+            app.configure( binder -> binder.bindService( TestService1.class ) //
                     .providedBy( () -> sources.pop() ) //
                     .disposedBy( ( e ) -> disposed.add( e ) ) //
                     .to( TestService1.class ) //
@@ -102,7 +102,7 @@ public class Configuration_Test {
         Set<TestService1> provided = new HashSet<>();
         Set<TestService1> disposed = new HashSet<>();
         try ( App app = App.create() ) {
-            app.configure( session -> session.bind( TestService1.class ) //
+            app.configure( session -> session.bindService( TestService1.class ) //
                     .disposedBy( ( e ) -> disposed.add( e ) ) //
                     .to( TestService1.class ) //
                     .named( "test" ) //

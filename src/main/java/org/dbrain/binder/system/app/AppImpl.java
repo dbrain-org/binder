@@ -61,7 +61,7 @@ public class AppImpl implements App {
         ServiceLocatorUtilities.addOneConstant( delegate, this );
 
         SimpleBinder binder = startConfiguration();
-        binder.bind( SimpleBindingStack.class ) //
+        binder.bindService( SimpleBindingStack.class ) //
                 .to( BindingStack.class ) //
                 .to( SimpleBindingStack.class ) //
                 .providedBy( simpleBindingStack );
@@ -70,13 +70,13 @@ public class AppImpl implements App {
         ServiceLocatorUtilities.enablePerThreadScope( delegate );
 
         binder = startConfiguration();
-        binder.component( TransactionComponent.class );
-        binder.component( StandardScopeComponent.class );
+        binder.bindComponent( TransactionComponent.class );
+        binder.bindComponent( StandardScopeComponent.class );
         binder.commit();
 
         binder = startConfiguration();
-        binder.component( HttpStandardScopeComponent.class );
-        binder.component( WebAppComponent.class );
+        binder.bindComponent( HttpStandardScopeComponent.class );
+        binder.bindComponent( WebAppComponent.class );
         binder.commit();
 
     }

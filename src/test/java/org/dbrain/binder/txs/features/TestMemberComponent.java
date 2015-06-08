@@ -41,7 +41,7 @@ public class TestMemberComponent extends QualifiedComponent<TestMemberComponent>
     public TestMemberComponent( BindingStack hook ) {
         super();
         hook.push( ( binder ) -> {
-            binder.bind( TestMember.class ) //
+            binder.bindService( TestMember.class ) //
                     .qualifiedBy( getQualifiers() ) //
                     .providedBy( () -> new TestMember( pw, name, failOnFlush, failOncommit ) ) //
                     .to( TestMember.class ) //

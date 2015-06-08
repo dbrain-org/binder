@@ -35,13 +35,13 @@ public class StandardScopeComponent implements ComponentConfigurator {
     public StandardScopeComponent( BindingStack hook ) {
         hook.push( ( binder ) -> {
             // Define the request scope
-            binder.bind( RequestScopeContext.class ) //
+            binder.bindService( RequestScopeContext.class ) //
                     .to( new TypeLiteral<Context<RequestScoped>>() {}.getType() ) //
                     .to( RequestScopeContext.class ) //
                     .in( Singleton.class );
 
             // Define the session scope
-            binder.bind( SessionScopeContext.class ) //
+            binder.bindService( SessionScopeContext.class ) //
                     .to( new TypeLiteral<Context<SessionScoped>>() {}.getType() ) //
                     .to( SessionScopeContext.class ) //
                     .in( Singleton.class );

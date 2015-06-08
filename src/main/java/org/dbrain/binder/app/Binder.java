@@ -24,16 +24,16 @@ public interface Binder {
     /**
      * Start binging a service from the specific implementation class.
      */
-    <T> BindingConfigurator<T> bind( Class<T> implementationClass );
+    <T> BindingConfigurator<T> bindService( Class<T> implementationClass );
 
     /**
      * Start binging a service from the specific implementation instance.
      */
-    <T> BindingConfigurator<T> bind( T implementation );
+    <T> BindingConfigurator<T> bindService( T implementation );
 
     /**
      * Start binding a component (Collection of services).
      */
-    <T extends ComponentConfigurator> T component( Class<T> componentClass );
+    <T extends ComponentConfigurator> T bindComponent( Class<T> componentClass );
 
 }

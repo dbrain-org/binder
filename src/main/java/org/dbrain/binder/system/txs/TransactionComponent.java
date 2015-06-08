@@ -35,12 +35,12 @@ public class TransactionComponent implements ComponentConfigurator {
     @Inject
     public TransactionComponent( BindingStack hook ) {
         hook.push( ( binder ) -> {
-            binder.bind( TransactionManager.class )
+            binder.bindService( TransactionManager.class )
                   .to( TransactionControl.class )
                   .to( new TypeLiteral<Context<TransactionScoped>>() {}.getType() )
                   .in( Singleton.class );
 
-            binder.bind( JdbcConnectionWrapper.class ).to( TransactionMember.Wrapper.class ).in( Singleton.class );
+            binder.bindService( JdbcConnectionWrapper.class ).to( TransactionMember.Wrapper.class ).in( Singleton.class );
         } );
     }
 

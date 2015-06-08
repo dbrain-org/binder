@@ -43,7 +43,7 @@ public class Transaction_JDBCConnectionMember_Test {
         App app = App.create();
         app.configure( ( Binder binder ) -> {
 
-            binder.component( JdbcDriverDatasourceComponent.class ) //
+            binder.bindComponent( JdbcDriverDatasourceComponent.class ) //
                     .named( "prov1" ) //
                     .withProvider( () -> {
                         try {
@@ -53,7 +53,7 @@ public class Transaction_JDBCConnectionMember_Test {
                         }
                     } );
 
-            binder.component( JdbcDriverDatasourceComponent.class ) //
+            binder.bindComponent( JdbcDriverDatasourceComponent.class ) //
                     .named( "prov2" ) //
                     .withProvider( () -> {
                         try {
@@ -63,7 +63,7 @@ public class Transaction_JDBCConnectionMember_Test {
                         }
                     } );
 
-            binder.component( JdbcDatasourceComponent.class ) //
+            binder.bindComponent( JdbcDatasourceComponent.class ) //
                     .named( "prov3" )//
                     .dataSource( JdbcConnectionPool.create( "jdbc:h2:mem:prov3", "sa", "sa" ) );
 

@@ -34,12 +34,12 @@ public class HttpStandardScopeComponent implements ComponentConfigurator {
         handler.push( ( binder ) -> {
             ServletFilterConf scopeFilter = ServletFilterConf.of( "/*", StandardScopeFilter.class );
 
-            binder.bind( ServletFilterConf.class )
+            binder.bindService( ServletFilterConf.class )
                   .to( ServletFilterConf.class )
                   .providedBy( scopeFilter )
                   .qualifiedBy( SystemConfiguration.class );
 
-            binder.bind( StandardScopeSessionListener.class )
+            binder.bindService( StandardScopeSessionListener.class )
                   .to( HttpSessionListener.class )
                   .qualifiedBy( SystemConfiguration.class );
 

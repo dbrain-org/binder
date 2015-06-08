@@ -46,17 +46,17 @@ public class HttpServer_scope_Test {
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
             servletContext.serve( ServletConf.of( "/*", webApp.build() ) );
 
-            binder.component( JettyServerComponent.class ) //
+            binder.bindComponent( JettyServerComponent.class ) //
                     .listen( 40001 )              //
                     .serve( servletContext.build() );
 
-            binder.bind( GuidService.class )
+            binder.bindService( GuidService.class )
                   .to( GuidService.class )
                   .in( RequestScoped.class )
                   .named( "request" )
                   .useProxy();
 
-            binder.bind( GuidService.class )
+            binder.bindService( GuidService.class )
                   .to( GuidService.class )
                   .in( SessionScoped.class )
                   .named( "session" )

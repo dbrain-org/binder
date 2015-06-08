@@ -36,7 +36,7 @@ public class JdbcDriverDatasourceComponent extends QualifiedComponent<JdbcDriver
     public JdbcDriverDatasourceComponent(BindingStack hook) {
         super();
         hook.push( ( binder ) -> {
-            binder.bind( Connection.class ) //
+            binder.bindService( Connection.class ) //
                     .to( Connection.class ) //
                     .providedBy( connectionProvider::get ) //
                     .qualifiedBy( getQualifiers() ) //

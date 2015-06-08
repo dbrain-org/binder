@@ -45,7 +45,7 @@ public class JettyHttpsServer_Test {
                                                                       "password",
                                                                       "password" )
                                                            .build();
-            binder.component( JettyServerComponent.class ) //
+            binder.bindComponent( JettyServerComponent.class ) //
                     .listen( https ) //
                     .serve( servletContext.build() );
 
