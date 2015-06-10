@@ -43,7 +43,7 @@ public interface ServiceDirectory {
      *
      * @return A service or null if none is found.
      */
-    <T> T locate( Class<T> serviceClass, Class<? extends Annotation> qualifiers );
+    <T> T locate( Class<T> serviceClass, Class<? extends Annotation> qualifier );
 
     /**
      * Locate a service identified by the key.
@@ -52,14 +52,23 @@ public interface ServiceDirectory {
      */
     <T> T locate( ServiceKey<T> serviceKey );
 
+    /**
+     * Locate a qualified service of the specified class.
+     *
+     * @return A service or null if none is found.
+     */
+    <T> T locate( Class<T> serviceClass, Qualifiers qualifiers );
+
+
     <T> T getInstance( Class<T> serviceClass );
 
     <T> T getInstance( Class<T> serviceClass, String name );
 
-    <T> T getInstance( Class<T> serviceClass, Class<? extends Annotation> qualifiers );
+    <T> T getInstance( Class<T> serviceClass, Class<? extends Annotation> qualifier );
 
     <T> T getInstance( ServiceKey<T> serviceKey );
 
+    <T> T getInstance( Class<T> serviceClass, Qualifiers qualifiers );
     /**
      * @return Query registry for the specified service. If not found, attempt to
      * create a new unmanaged instance.
@@ -77,5 +86,7 @@ public interface ServiceDirectory {
     <T> List<T> listServices( Class<T> serviceClass, String name );
 
     <T> List<T> listServices( Class<T> serviceClass, Class<? extends Annotation> qualifier );
+
+    <T> List<T> listServices( Class<T> serviceClass, Qualifiers qualifiers );
 
 }

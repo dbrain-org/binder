@@ -19,23 +19,25 @@ package org.dbrain.binder.directory;
 import org.dbrain.binder.system.directory.QualifiersBuilderImpl;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 
 /**
  * Describe qualifiers.
  */
 public interface Qualifiers extends Iterable<Annotation> {
 
+    static Builder newBuilder() {
+        return new QualifiersBuilderImpl();
+    }
     static Builder from( String name ) {
         return new QualifiersBuilderImpl().named( name );
     }
 
     static Builder from( Class<? extends Annotation> quality ) {
-        return new QualifiersBuilderImpl().qualifiedBy( quality );
+        return new QualifiersBuilderImpl().qualifiedWith( quality );
     }
 
     static Builder from( Annotation quality ) {
-        return new QualifiersBuilderImpl().qualifiedBy( quality );
+        return new QualifiersBuilderImpl().qualifiedWith( quality );
     }
 
     /**
@@ -44,20 +46,20 @@ public interface Qualifiers extends Iterable<Annotation> {
     int size();
 
     /**
-     * @return The qualifiers into the array or in a new array if the one provided is not large enough.
+     * @return The qualifiers into an array.
      */
-    <T> T[] toArray( T[] a );
+    Annotation[] toArray();
 
     /**
      * Builder for service key.
      */
     interface Builder {
 
-        Builder qualifiedBy( Annotation quality );
+        Builder qualifiedWith( Annotation quality );
 
-        Builder qualifiedBy( Class<? extends Annotation> quality );
+        Builder qualifiedWith( Class<? extends Annotation> quality );
 
-        Builder qualifiedBy( Iterable<Annotation> quality );
+        Builder qualifiedWith( Iterable<Annotation> quality );
 
         Builder named( String name );
 

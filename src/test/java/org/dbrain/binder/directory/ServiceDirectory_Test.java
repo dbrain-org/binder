@@ -75,6 +75,8 @@ public class ServiceDirectory_Test {
                                                      .qualifiedBy( SomeQualifier.class ) //
                                                      .build() //
                                            );
+            SimpleService s2i4 = app.getInstance( SimpleService.class, Qualifiers.from( SomeQualifier.class).build() );
+
             // Got no string registered
             String s3 = app.locate( String.class );
 
@@ -84,6 +86,7 @@ public class ServiceDirectory_Test {
             assertNotNull( s2i3 );
             assertEquals( s2i1, s2i2 );
             assertEquals( s2i1, s2i3 );
+            assertEquals( s2i1, s2i4 );
             assertNull( s3 );
 
         }
@@ -103,12 +106,15 @@ public class ServiceDirectory_Test {
                                                           .qualifiedBy( SomeQualifier.class ) //
                                                           .build() //
                                                 );
+            SimpleService s2i4 = app.getInstance( SimpleService.class, Qualifiers.from( SomeQualifier.class).build() );
+
             assertNotNull( s1i1 );
             assertNotNull( s2i1 );
             assertNotNull( s2i2 );
             assertNotNull( s2i3 );
             assertEquals( s2i1, s2i2 );
             assertEquals( s2i1, s2i3 );
+            assertEquals( s2i1, s2i4 );
 
         }
 
@@ -171,6 +177,15 @@ public class ServiceDirectory_Test {
 
             List<SimpleService> l3 = app.listServices( SimpleService.class );
             assertEquals( 3, l3.size() );
+
+            List<SimpleService> l4 = app.listServices( SimpleService.class, Qualifiers.from( SomeQualifier.class ).build() );
+            assertEquals( 1, l4.size() );
+
+            List<SimpleService> l5 = app.listServices( SimpleService.class, Qualifiers.from( "toto" ).build() );
+            assertEquals( 2, l5.size() );
+
+            List<SimpleService> l6 = app.listServices( SimpleService.class, Qualifiers.newBuilder().build() );
+            assertEquals( 3, l6.size() );
 
         }
     }

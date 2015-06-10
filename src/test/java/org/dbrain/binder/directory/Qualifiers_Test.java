@@ -36,7 +36,8 @@ public class Qualifiers_Test {
         assertEquals( Qualifiers.from( "test" ).build(), Qualifiers.from( AnnotationBuilder.of( Named.class, "test" ) ).build() );
         assertEquals( 1, Qualifiers.from( "test" ).build().size() );
         assertEquals( Named.class, Qualifiers.from( "test" ).build().iterator().next().annotationType() );
-        assertEquals( SomeQualifier.class, Qualifiers.from( SomeQualifier.class ).build().iterator().next().annotationType() );
+        assertEquals( SomeQualifier.class,
+                      Qualifiers.from( SomeQualifier.class ).build().iterator().next().annotationType() );
     }
 
     @Test
@@ -47,14 +48,14 @@ public class Qualifiers_Test {
 
     @Test
     public void testMultipleQualifier() throws Exception {
-        assertEquals( Qualifiers.from( "test" ).qualifiedBy( SomeQualifier.class ).build(), Qualifiers.from( SomeQualifier.class ).named(
+        assertEquals( Qualifiers.from( "test" ).qualifiedWith( SomeQualifier.class ).build(), Qualifiers.from( SomeQualifier.class ).named(
                 "test" ).build() );
-        assertEquals( 2, Qualifiers.from( "test" ).qualifiedBy( SomeQualifier.class ).build().size() );
+        assertEquals( 2, Qualifiers.from( "test" ).qualifiedWith( SomeQualifier.class ).build().size() );
     }
 
     @Test
     public void testNotEqualsMultipleQualifier() throws Exception {
-        assertNotEquals( Qualifiers.from( "test1" ).qualifiedBy( SomeQualifier.class ).build(),
+        assertNotEquals( Qualifiers.from( "test1" ).qualifiedWith( SomeQualifier.class ).build(),
                          Qualifiers.from( SomeQualifier.class ).named( "test2" ).build() );
     }
 

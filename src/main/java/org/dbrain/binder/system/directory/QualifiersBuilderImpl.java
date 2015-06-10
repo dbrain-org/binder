@@ -32,7 +32,7 @@ public class QualifiersBuilderImpl implements Qualifiers.Builder {
     private final Set<Annotation> qualifiers = new HashSet<>();
 
     @Override
-    public QualifiersBuilderImpl qualifiedBy( Annotation quality ) {
+    public QualifiersBuilderImpl qualifiedWith( Annotation quality ) {
         if ( quality != null ) {
             qualifiers.add( quality );
         }
@@ -40,19 +40,19 @@ public class QualifiersBuilderImpl implements Qualifiers.Builder {
     }
 
     @Override
-    public QualifiersBuilderImpl qualifiedBy( Class<? extends Annotation> quality ) {
+    public QualifiersBuilderImpl qualifiedWith( Class<? extends Annotation> quality ) {
         if ( quality != null ) {
-            return qualifiedBy( AnnotationBuilder.of( quality ) );
+            return qualifiedWith( AnnotationBuilder.of( quality ) );
         } else {
             return this;
         }
     }
 
     @Override
-    public QualifiersBuilderImpl qualifiedBy( Iterable<Annotation> quality ) {
+    public QualifiersBuilderImpl qualifiedWith( Iterable<Annotation> quality ) {
         if ( quality != null ) {
             for ( Annotation a : quality ) {
-                qualifiedBy( a );
+                qualifiedWith( a );
             }
         }
         return this;
@@ -61,7 +61,7 @@ public class QualifiersBuilderImpl implements Qualifiers.Builder {
     @Override
     public QualifiersBuilderImpl named( String name ) {
         if ( name != null ) {
-            return qualifiedBy( AnnotationBuilder.of( Named.class, name ) );
+            return qualifiedWith( AnnotationBuilder.of( Named.class, name ) );
         } else {
             return this;
         }

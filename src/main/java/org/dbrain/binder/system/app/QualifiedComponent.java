@@ -17,37 +17,36 @@
 package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.app.ComponentConfigurator;
-import org.dbrain.binder.system.util.AnnotationBuilder;
+import org.dbrain.binder.directory.Qualifiers;
 
-import javax.inject.Named;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by epoitras on 3/6/15.
  */
 public abstract class QualifiedComponent<T extends QualifiedComponent> implements ComponentConfigurator {
 
-    private List<Annotation> qualifiers = new ArrayList<>();
+    private Qualifiers.Builder qualifiers = Qualifiers.newBuilder();
 
     abstract protected T self();
 
-    protected List<Annotation> getQualifiers() {
-        return qualifiers;
+    protected Qualifiers buildQualifiers() {
+        return qualifiers.build();
     }
 
     public T qualifiedWith( Annotation a ) {
-        qualifiers.add( a );
+        qualifiers.qualifiedWith( a );
         return self();
     }
 
     public T qualifiedWith( Class<Annotation> annotationClass ) {
-        return qualifiedWith( AnnotationBuilder.of( annotationClass ) );
+        qualifiers.qualifiedWith( annotationClass );
+        return self();
     }
 
     public T named( String name ) {
-        return qualifiedWith( AnnotationBuilder.of( Named.class, name ) );
+        qualifiers.named( name );
+        return self();
     }
 
 

@@ -119,8 +119,8 @@ public class AppImpl implements App {
     }
 
     @Override
-    public <T> T locate( Class<T> serviceClass, Class<? extends Annotation> qualifiers ) {
-        return delegate.getService( serviceClass, AnnotationBuilder.of( qualifiers ) );
+    public <T> T locate( Class<T> serviceClass, Class<? extends Annotation> qualifier ) {
+        return delegate.getService( serviceClass, AnnotationBuilder.of( qualifier ) );
     }
 
     @Override
@@ -129,13 +129,24 @@ public class AppImpl implements App {
         T result;
         if ( qualifiers.size() > 0 ) {
             result = delegate.getService( serviceKey.getServiceType(),
-                                          qualifiers.toArray( new Annotation[qualifiers.size()] ) );
+                                          qualifiers.toArray() );
         } else {
             result = delegate.getService( serviceKey.getServiceType() );
         }
         return result;
     }
 
+    @Override
+    public <T> T locate( Class<T> serviceClass, Qualifiers qualifiers ) {
+        T result;
+        if ( qualifiers.size() > 0 ) {
+            result = delegate.getService( serviceClass,
+                                          qualifiers.toArray() );
+        } else {
+            result = delegate.getService( serviceClass );
+        }
+        return result;
+    }
 
     @Override
     public <T> T getInstance( Class<T> serviceClass ) {
@@ -154,8 +165,8 @@ public class AppImpl implements App {
     }
 
     @Override
-    public <T> T getInstance( Class<T> serviceClass, Class<? extends Annotation> qualifiers ) {
-        T result = locate( serviceClass, qualifiers );
+    public <T> T getInstance( Class<T> serviceClass, Class<? extends Annotation> qualifier ) {
+        T result = locate( serviceClass, qualifier );
         Objects.requireNonNull( result,
                                 "Service of class " + serviceClass.getName() + " is not found in application " + getName() + "." );
         return result;
@@ -166,6 +177,14 @@ public class AppImpl implements App {
         T result = locate( serviceKey );
         Objects.requireNonNull( result,
                                 "Service of class " + serviceKey.getServiceType() + " is not found in application " + getName() + "." );
+        return result;
+    }
+
+    @Override
+    public <T> T getInstance( Class<T> serviceClass, Qualifiers qualifiers ) {
+        T result = locate( serviceClass, qualifiers );
+        Objects.requireNonNull( result,
+                                "Service of class " + serviceClass + " is not found in application " + getName() + "." );
         return result;
     }
 
@@ -201,6 +220,11 @@ public class AppImpl implements App {
     @Override
     public <T> List<T> listServices( Class<T> serviceClass, Class<? extends Annotation> qualifier ) {
         return delegate.getAllServices( serviceClass, AnnotationBuilder.of( qualifier ) );
+    }
+
+    @Override
+    public <T> List<T> listServices( Class<T> serviceClass, Qualifiers qualifiers ) {
+        return delegate.getAllServices( serviceClass, qualifiers.toArray() );
     }
 
     @Override

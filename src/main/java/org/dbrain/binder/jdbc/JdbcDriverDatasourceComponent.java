@@ -16,6 +16,7 @@
 
 package org.dbrain.binder.jdbc;
 
+import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.lifecycle.TransactionScoped;
 import org.dbrain.binder.system.app.QualifiedComponent;
 import org.dbrain.binder.app.BindingStack;
@@ -36,10 +37,11 @@ public class JdbcDriverDatasourceComponent extends QualifiedComponent<JdbcDriver
     public JdbcDriverDatasourceComponent(BindingStack hook) {
         super();
         hook.push( ( binder ) -> {
+            Qualifiers qualifiers = buildQualifiers();
             binder.bindService( Connection.class ) //
                     .to( Connection.class ) //
                     .providedBy( connectionProvider::get ) //
-                    .qualifiedBy( getQualifiers() ) //
+                    .qualifiedBy( qualifiers ) //
                     .in( TransactionScoped.class );
         } );
     }

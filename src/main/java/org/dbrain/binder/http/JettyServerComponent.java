@@ -45,7 +45,7 @@ public class JettyServerComponent extends AbstractHttpServerComponent<JettyServe
             binder.bindService( Server.class )
                   .providedBy( build( getHttpServerConfig() ) )
                   .disposedBy( ( server ) -> server.stop() )
-                  .qualifiedBy( getQualifiers() )
+                  .qualifiedBy( buildQualifiers() )
                   .to( Server.class )
                   .in( Singleton.class );
         } );

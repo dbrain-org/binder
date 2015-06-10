@@ -47,8 +47,8 @@ public class QualifiersImpl implements Qualifiers {
     }
 
     @Override
-    public <T> T[] toArray( T[] a ) {
-        return delegate.toArray( a );
+    public Annotation[] toArray() {
+        return delegate.toArray( new Annotation[size()] );
     }
 
     @Override
