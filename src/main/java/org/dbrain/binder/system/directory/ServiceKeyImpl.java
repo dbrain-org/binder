@@ -16,28 +16,26 @@
 
 package org.dbrain.binder.system.directory;
 
+import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.directory.ServiceKey;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by epoitras on 3/15/15.
  */
 public class ServiceKeyImpl<T> implements ServiceKey<T> {
 
-    private final Type            serviceType;
-    private final Class<T>        serviceClass;
-    private final Set<Annotation> qualifiers;
+    private final Type       serviceType;
+    private final Class<T>   serviceClass;
+    private final Qualifiers qualifiers;
 
     public ServiceKeyImpl( Type serviceType, Class<T> serviceClass, Collection<Annotation> qualifiers ) {
         this.serviceType = serviceType;
         this.serviceClass = serviceClass;
-        this.qualifiers = Collections.unmodifiableSet( new HashSet<>( qualifiers ) );
+        this.qualifiers = new QualifiersImpl( qualifiers );
     }
 
     @Override
@@ -51,7 +49,7 @@ public class ServiceKeyImpl<T> implements ServiceKey<T> {
     }
 
     @Override
-    public Set<Annotation> getQualifiers() {
+    public Qualifiers getQualifiers() {
         return qualifiers;
     }
 

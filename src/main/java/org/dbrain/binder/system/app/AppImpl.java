@@ -18,6 +18,7 @@ package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.BindingStack;
+import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.directory.ServiceKey;
 import org.dbrain.binder.system.http.server.HttpStandardScopeComponent;
 import org.dbrain.binder.system.http.webapp.WebAppComponent;
@@ -124,7 +125,7 @@ public class AppImpl implements App {
 
     @Override
     public <T> T locate( ServiceKey<T> serviceKey ) {
-        Set<Annotation> qualifiers = serviceKey.getQualifiers();
+        Qualifiers qualifiers = serviceKey.getQualifiers();
         T result;
         if ( qualifiers.size() > 0 ) {
             result = delegate.getService( serviceKey.getServiceType(),

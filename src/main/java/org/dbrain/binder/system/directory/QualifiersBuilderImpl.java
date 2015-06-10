@@ -16,31 +16,23 @@
 
 package org.dbrain.binder.system.directory;
 
-import org.dbrain.binder.directory.ServiceKey;
+import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.system.util.AnnotationBuilder;
 
 import javax.inject.Named;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by epoitras on 3/15/15.
  */
-public class ServiceKeyBuilderImpl<T> implements ServiceKey.Builder<T> {
+public class QualifiersBuilderImpl implements Qualifiers.Builder {
 
-    private final Type     serviceType;
-    private final Class<T> serviceClass;
     private final Set<Annotation> qualifiers = new HashSet<>();
 
-    public ServiceKeyBuilderImpl( Type serviceType, Class<T> serviceClass ) {
-        this.serviceType = serviceType;
-        this.serviceClass = serviceClass;
-    }
-
     @Override
-    public ServiceKeyBuilderImpl<T> qualifiedBy( Annotation quality ) {
+    public QualifiersBuilderImpl qualifiedBy( Annotation quality ) {
         if ( quality != null ) {
             qualifiers.add( quality );
         }
@@ -48,7 +40,7 @@ public class ServiceKeyBuilderImpl<T> implements ServiceKey.Builder<T> {
     }
 
     @Override
-    public ServiceKeyBuilderImpl<T> qualifiedBy( Class<? extends Annotation> quality ) {
+    public QualifiersBuilderImpl qualifiedBy( Class<? extends Annotation> quality ) {
         if ( quality != null ) {
             return qualifiedBy( AnnotationBuilder.of( quality ) );
         } else {
@@ -57,7 +49,7 @@ public class ServiceKeyBuilderImpl<T> implements ServiceKey.Builder<T> {
     }
 
     @Override
-    public ServiceKeyBuilderImpl<T> qualifiedBy( Iterable<Annotation> quality ) {
+    public QualifiersBuilderImpl qualifiedBy( Iterable<Annotation> quality ) {
         if ( quality != null ) {
             for ( Annotation a : quality ) {
                 qualifiedBy( a );
@@ -67,7 +59,7 @@ public class ServiceKeyBuilderImpl<T> implements ServiceKey.Builder<T> {
     }
 
     @Override
-    public ServiceKeyBuilderImpl<T> named( String name ) {
+    public QualifiersBuilderImpl named( String name ) {
         if ( name != null ) {
             return qualifiedBy( AnnotationBuilder.of( Named.class, name ) );
         } else {
@@ -76,9 +68,8 @@ public class ServiceKeyBuilderImpl<T> implements ServiceKey.Builder<T> {
     }
 
     @Override
-    public ServiceKey<T> build() {
-        return new ServiceKeyImpl<>( serviceType, serviceClass, qualifiers );
+    public Qualifiers build() {
+        return new QualifiersImpl( qualifiers );
     }
-
 
 }

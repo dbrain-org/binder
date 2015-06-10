@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public interface ServiceKey<T> {
 
-    static <U> ServiceKeyBuilder<U> from( Class<U> clazz ) {
+    static <U> Builder<U> from( Class<U> clazz ) {
         return new ServiceKeyBuilderImpl<>( clazz, clazz );
     }
 
@@ -47,6 +47,22 @@ public interface ServiceKey<T> {
 
     Class<T> getServiceClass();
 
-    Set<Annotation> getQualifiers();
+    Qualifiers getQualifiers();
 
+    /**
+     * Builder for service key.
+     */
+    interface Builder<T> {
+
+        Builder<T> qualifiedBy( Annotation quality );
+
+        Builder<T> qualifiedBy( Class<? extends Annotation> quality );
+
+        Builder<T> qualifiedBy( Iterable<Annotation> quality );
+
+        Builder<T> named( String name );
+
+        ServiceKey<T> build();
+
+    }
 }
