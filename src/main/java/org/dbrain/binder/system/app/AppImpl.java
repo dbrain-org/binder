@@ -17,7 +17,7 @@
 package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.app.App;
-import org.dbrain.binder.app.BindingStack;
+import org.dbrain.binder.app.Component;
 import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.directory.ServiceKey;
 import org.dbrain.binder.system.http.server.HttpStandardScopeComponent;
@@ -34,7 +34,6 @@ import javax.inject.Named;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -63,7 +62,7 @@ public class AppImpl implements App {
 
         SimpleBinder binder = startConfiguration();
         binder.bindService( SimpleBindingStack.class ) //
-                .to( BindingStack.class ) //
+                .to( Component.CreationContext.class ) //
                 .to( SimpleBindingStack.class ) //
                 .providedBy( simpleBindingStack );
         binder.commit();
@@ -128,8 +127,7 @@ public class AppImpl implements App {
         Qualifiers qualifiers = serviceKey.getQualifiers();
         T result;
         if ( qualifiers.size() > 0 ) {
-            result = delegate.getService( serviceKey.getServiceType(),
-                                          qualifiers.toArray() );
+            result = delegate.getService( serviceKey.getServiceType(), qualifiers.toArray() );
         } else {
             result = delegate.getService( serviceKey.getServiceType() );
         }
@@ -140,8 +138,7 @@ public class AppImpl implements App {
     public <T> T locate( Class<T> serviceClass, Qualifiers qualifiers ) {
         T result;
         if ( qualifiers.size() > 0 ) {
-            result = delegate.getService( serviceClass,
-                                          qualifiers.toArray() );
+            result = delegate.getService( serviceClass, qualifiers.toArray() );
         } else {
             result = delegate.getService( serviceClass );
         }

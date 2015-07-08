@@ -17,8 +17,20 @@
 package org.dbrain.binder.app;
 
 
+import java.util.function.Consumer;
+
 /**
- * Configure a higher level of service.
+ * Marker interface for components.
  */
-public interface ComponentConfigurator {
+public interface Component {
+
+
+    /**
+     * Created by epoitras on 6/3/15.
+     */
+    interface CreationContext {
+
+        void bindServices( Consumer<Binder> c );
+
+    }
 }

@@ -18,8 +18,7 @@ package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.Binder;
-import org.dbrain.binder.app.BindingStack;
-import org.dbrain.binder.app.BindingConfigurator;
+import org.dbrain.binder.app.ServiceConfigurator;
 import org.dbrain.binder.system.lifecycle.BaseClassAnalyzer;
 import org.dbrain.binder.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.ClassAnalyzer;
@@ -48,7 +47,7 @@ import java.util.Set;
 /**
  * Service configuration description.
  */
-public class BindingBuilderImpl<T> implements BindingConfigurator<T> {
+public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
 
     private final App app;
 
@@ -68,16 +67,16 @@ public class BindingBuilderImpl<T> implements BindingConfigurator<T> {
 
     private boolean useProxy = false;
 
-    public BindingBuilderImpl( App app, BindingStack stack, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
+    public BindingBuilderImpl( App app, CreationContext cc, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
         Objects.requireNonNull( app );
-        Objects.requireNonNull( stack );
+        Objects.requireNonNull( cc );
         Objects.requireNonNull( dc );
         Objects.requireNonNull( serviceProviderClass );
         this.app = app;
         this.dc = dc;
         this.serviceProviderClass = serviceProviderClass;
 
-        stack.push( ( binder ) -> {
+        cc.bindServices( ( binder ) -> {
             try {
                 // Retrieve an instance of the service locator.
                 ServiceLocator sl = app.getInstance( ServiceLocator.class );
@@ -149,41 +148,41 @@ public class BindingBuilderImpl<T> implements BindingConfigurator<T> {
     }
 
     @Override
-    public BindingConfigurator<T> providedBy( final T instance ) {
+    public ServiceConfigurator<T> providedBy( final T instance ) {
         return providedBy( () -> instance );
     }
 
     @Override
-    public BindingConfigurator<T> providedBy( ServiceProvider<T> provider ) {
+    public ServiceConfigurator<T> providedBy( ServiceProvider<T> provider ) {
         this.provider = provider;
         return this;
     }
 
     @Override
-    public BindingConfigurator<T> disposedBy( ServiceDisposer<T> disposer ) {
+    public ServiceConfigurator<T> disposedBy( ServiceDisposer<T> disposer ) {
         this.disposer = disposer;
         return this;
     }
 
     @Override
-    public BindingConfigurator<T> to( Type type ) {
+    public ServiceConfigurator<T> to( Type type ) {
         services.add( type );
         return this;
     }
 
     @Override
-    public BindingConfigurator<T> qualifiedBy( Annotation quality ) {
+    public ServiceConfigurator<T> qualifiedBy( Annotation quality ) {
         qualifiers.add( quality );
         return this;
     }
 
     @Override
-    public BindingConfigurator<T> qualifiedBy( Class<? extends Annotation> quality ) {
+    public ServiceConfigurator<T> qualifiedBy( Class<? extends Annotation> quality ) {
         return qualifiedBy( AnnotationBuilder.of( quality ) );
     }
 
     @Override
-    public BindingConfigurator<T> qualifiedBy( Iterable<Annotation> qualities ) {
+    public ServiceConfigurator<T> qualifiedBy( Iterable<Annotation> qualities ) {
         for ( Annotation quality : qualities ) {
             qualifiedBy( quality );
         }
@@ -191,24 +190,20 @@ public class BindingBuilderImpl<T> implements BindingConfigurator<T> {
     }
 
     @Override
-    public BindingConfigurator<T> named( String name ) {
+    public ServiceConfigurator<T> named( String name ) {
         return qualifiedBy( AnnotationBuilder.from( Named.class ).value( name ).build() );
     }
 
     @Override
-    public BindingConfigurator<T> in( Class<? extends Annotation> scope ) {
+    public ServiceConfigurator<T> in( Class<? extends Annotation> scope ) {
         this.scope = scope;
         return this;
     }
 
     @Override
-    public BindingConfigurator<T> useProxy() {
+    public ServiceConfigurator<T> useProxy() {
         this.useProxy = true;
         return this;
-    }
-
-    private void complete( Binder binder ) {
-
     }
 
     private static class StandardProvider<T> implements ServiceProvider<T> {

@@ -69,6 +69,7 @@ public interface ServiceDirectory {
     <T> T getInstance( ServiceKey<T> serviceKey );
 
     <T> T getInstance( Class<T> serviceClass, Qualifiers qualifiers );
+
     /**
      * @return Query registry for the specified service. If not found, attempt to
      * create a new unmanaged instance.

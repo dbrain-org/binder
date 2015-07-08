@@ -19,7 +19,6 @@ package org.dbrain.binder.txs.features;
 import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.lifecycle.TransactionScoped;
 import org.dbrain.binder.system.app.QualifiedComponent;
-import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.system.txs.TransactionMember;
 import org.dbrain.binder.txs.impl.TestMember;
 
@@ -39,9 +38,9 @@ public class TestMemberComponent extends QualifiedComponent<TestMemberComponent>
 
 
     @Inject
-    public TestMemberComponent( BindingStack hook ) {
+    public TestMemberComponent( CreationContext cc ) {
         super();
-        hook.push( ( binder ) -> {
+        cc.bindServices( ( binder ) -> {
             Qualifiers qualifiers = buildQualifiers();
             binder.bindService( TestMember.class ) //
                     .qualifiedBy( qualifiers ) //

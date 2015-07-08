@@ -28,6 +28,7 @@ public interface Qualifiers extends Iterable<Annotation> {
     static Builder newBuilder() {
         return new QualifiersBuilderImpl();
     }
+
     static Builder from( String name ) {
         return new QualifiersBuilderImpl().named( name );
     }

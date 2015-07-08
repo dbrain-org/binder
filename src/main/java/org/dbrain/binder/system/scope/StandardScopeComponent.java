@@ -16,10 +16,9 @@
 
 package org.dbrain.binder.system.scope;
 
-import org.dbrain.binder.app.ComponentConfigurator;
+import org.dbrain.binder.app.Component;
 import org.dbrain.binder.lifecycle.RequestScoped;
 import org.dbrain.binder.lifecycle.SessionScoped;
-import org.dbrain.binder.app.BindingStack;
 import org.glassfish.hk2.api.Context;
 import org.glassfish.hk2.api.TypeLiteral;
 
@@ -29,11 +28,11 @@ import javax.inject.Singleton;
 /**
  * This feature defines both the Request and Session scopes.
  */
-public class StandardScopeComponent implements ComponentConfigurator {
+public class StandardScopeComponent implements Component {
 
     @Inject
-    public StandardScopeComponent( BindingStack hook ) {
-        hook.push( ( binder ) -> {
+    public StandardScopeComponent( CreationContext cc ) {
+        cc.bindServices( ( binder ) -> {
             // Define the request scope
             binder.bindService( RequestScopeContext.class ) //
                     .to( new TypeLiteral<Context<RequestScoped>>() {}.getType() ) //

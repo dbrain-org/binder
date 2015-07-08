@@ -19,7 +19,6 @@ package org.dbrain.binder.jdbc;
 import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.lifecycle.TransactionScoped;
 import org.dbrain.binder.system.app.QualifiedComponent;
-import org.dbrain.binder.app.BindingStack;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -34,9 +33,9 @@ public class JdbcDriverDatasourceComponent extends QualifiedComponent<JdbcDriver
     private Provider<Connection> connectionProvider;
 
     @Inject
-    public JdbcDriverDatasourceComponent(BindingStack hook) {
+    public JdbcDriverDatasourceComponent( CreationContext cc ) {
         super();
-        hook.push( ( binder ) -> {
+        cc.bindServices( ( binder ) -> {
             Qualifiers qualifiers = buildQualifiers();
             binder.bindService( Connection.class ) //
                     .to( Connection.class ) //

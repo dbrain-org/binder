@@ -21,11 +21,11 @@ import org.dbrain.binder.directory.ServiceKey;
 import org.dbrain.binder.http.conf.CredentialsConf;
 import org.dbrain.binder.http.conf.FormLocationConf;
 import org.dbrain.binder.http.conf.ServletAppSecurityConf;
-import org.dbrain.binder.http.conf.ServletContextConf;
 import org.dbrain.binder.http.conf.ServletConf;
+import org.dbrain.binder.http.conf.ServletContextConf;
 import org.dbrain.binder.http.conf.ServletFilterConf;
-import org.dbrain.binder.http.conf.WebSocketServerConf;
 import org.dbrain.binder.http.conf.WebSocketConfiguredServerConf;
+import org.dbrain.binder.http.conf.WebSocketServerConf;
 import org.dbrain.binder.http.conf.WebSocketServiceServerConf;
 import org.dbrain.binder.system.app.SystemConfiguration;
 import org.dbrain.binder.system.jetty.websocket.JsrScopedSessionFactory;
@@ -135,7 +135,8 @@ public class JettyServerBuilder {
     /**
      * Configure web socket definitions into the server container.
      */
-    public void configureWebSocket( ServerContainer serverContainer, WebSocketServerConf webSocketDef ) throws Exception {
+    public void configureWebSocket( ServerContainer serverContainer,
+                                    WebSocketServerConf webSocketDef ) throws Exception {
 
         webSocketDef.accept( new WebSocketServerConf.Visitor() {
 
@@ -169,7 +170,8 @@ public class JettyServerBuilder {
             public void visit( WebSocketConfiguredServerConf websocketServerEndpointConfig ) throws Exception {
                 // Configure the endpoint
                 configureServerEndpointConfig( websocketServerEndpointConfig.getConfig(),
-                                               ServiceKey.of( websocketServerEndpointConfig.getConfig().getEndpointClass() ) );
+                                               ServiceKey.of( websocketServerEndpointConfig.getConfig()
+                                                                                           .getEndpointClass() ) );
             }
         } );
 
@@ -251,7 +253,8 @@ public class JettyServerBuilder {
 
 
         // Add system configuration filters, if any.
-        for ( ServletFilterConf filterDef : locator.listServices( ServletFilterConf.class, SystemConfiguration.class ) ) {
+        for ( ServletFilterConf filterDef : locator.listServices( ServletFilterConf.class,
+                                                                  SystemConfiguration.class ) ) {
             configureFilter( servletContextHandler, filterDef );
         }
 

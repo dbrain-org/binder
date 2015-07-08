@@ -17,20 +17,28 @@
 package org.dbrain.binder.txs;
 
 /**
- * Created with IntelliJ IDEA.
- * User: epoitras
- * Date: 16/07/13
- * Time: 8:22 AM
- * To change this template use File | Settings | File Templates.
- */
+ *  Describe the state of a specific transaction.
+ **/
 public enum TransactionState {
 
+    /**
+     * Transaction is active.
+     */
     ACTIVE,
 
+    /**
+     * Transaction is committed.
+     */
     COMMIT,
 
+    /**
+     * Transaction is rolled-back.
+     */
     ROLLBACK,
 
+    /**
+     * Transaction is partially rolled-back ... have a nice day. :)
+     */
     PARTIAL_ROLLBACK
 
 }

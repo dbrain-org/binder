@@ -18,6 +18,8 @@ package org.dbrain.binder.txs;
 
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.Binder;
+import org.dbrain.binder.txs.exceptions.NoTransactionException;
+import org.dbrain.binder.txs.exceptions.TransactionAlreadyStartedException;
 import org.dbrain.binder.txs.features.TestMemberComponent;
 import org.dbrain.binder.txs.impl.TestMember;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -81,4 +83,98 @@ public class TransactionControl_Test {
 
         app.close();
     }
+
+    @Test( expected = TransactionAlreadyStartedException.class )
+    public void testDoubleStart() throws Exception {
+        try ( App app = buildApp() ) {
+            TransactionControl txCtrl = app.getInstance( TransactionControl.class );
+            txCtrl.start();
+            txCtrl.start();
+        }
+    }
+
+
+    @Test( expected = NoTransactionException.class )
+    public void testDoubleCommit() throws Exception {
+        try ( App app = buildApp() ) {
+            TransactionControl txCtrl = app.getInstance( TransactionControl.class );
+            Transaction tx = txCtrl.start();
+            tx.commit();
+            tx.commit();
+        }
+    }
+
+    @Test( expected = NoTransactionException.class )
+    public void testCommitRollback() throws Exception {
+        try ( App app = buildApp() ) {
+            TransactionControl txCtrl = app.getInstance( TransactionControl.class );
+            Transaction tx = txCtrl.start();
+            tx.commit();
+            tx.rollback();
+        }
+    }
+
+
+    @Test( expected = NoTransactionException.class )
+    public void testDoubleRollback() throws Exception {
+        try ( App app = buildApp() ) {
+            TransactionControl txCtrl = app.getInstance( TransactionControl.class );
+            Transaction tx = txCtrl.start();
+            tx.rollback();
+            tx.rollback();
+        }
+    }
+
+    @Test( expected = NoTransactionException.class )
+    public void testRollbackCommit() throws Exception {
+        try ( App app = buildApp() ) {
+            TransactionControl txCtrl = app.getInstance( TransactionControl.class );
+            Transaction tx = txCtrl.start();
+            tx.rollback();
+            tx.commit();
+        }
+    }
+
+    @Test
+    public void testCommitClose() throws Exception {
+        try ( App app = buildApp() ) {
+            TransactionControl txCtrl = app.getInstance( TransactionControl.class );
+            Transaction tx = txCtrl.start();
+            tx.commit();
+            tx.close();
+        }
+    }
+
+    @Test( expected = NoTransactionException.class )
+    public void testCloseCommit() throws Exception {
+        try ( App app = buildApp() ) {
+            TransactionControl txCtrl = app.getInstance( TransactionControl.class );
+            Transaction tx = txCtrl.start();
+            tx.close();
+            tx.commit();
+        }
+    }
+
+
+    @Test
+    public void testRollbackClose() throws Exception {
+        try ( App app = buildApp() ) {
+            TransactionControl txCtrl = app.getInstance( TransactionControl.class );
+            Transaction tx = txCtrl.start();
+            tx.rollback();
+            tx.close();
+        }
+    }
+
+    @Test( expected = NoTransactionException.class )
+    public void testCloseRollback() throws Exception {
+        try ( App app = buildApp() ) {
+            TransactionControl txCtrl = app.getInstance( TransactionControl.class );
+            Transaction tx = txCtrl.start();
+            tx.close();
+            tx.rollback();
+        }
+    }
+
+
 }

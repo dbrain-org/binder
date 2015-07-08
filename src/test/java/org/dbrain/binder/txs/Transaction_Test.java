@@ -21,6 +21,7 @@ import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.txs.exceptions.CommitFailedException;
 import org.dbrain.binder.txs.features.TestMemberComponent;
 import org.dbrain.binder.txs.impl.TestMember;
+import org.glassfish.hk2.api.MultiException;
 import org.junit.Test;
 
 import java.io.PrintWriter;
@@ -49,6 +50,15 @@ public class Transaction_Test {
         return app;
     }
 
+    @Test( expected = MultiException.class )
+    public void testNoTransactionForServiceCreation() throws Exception {
+        StringWriter sw = new StringWriter();
+        App app = buildApp( sw );
+
+        // No Transaction available... Squick !
+        app.getInstance( TestMember.class, "MemberA" );
+
+    }
 
     @Test
     public void testSingleMemberCommit() throws Exception {

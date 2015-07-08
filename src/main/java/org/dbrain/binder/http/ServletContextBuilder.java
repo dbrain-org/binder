@@ -17,8 +17,8 @@
 package org.dbrain.binder.http;
 
 import org.dbrain.binder.http.conf.ServletAppSecurityConf;
-import org.dbrain.binder.http.conf.ServletContextConf;
 import org.dbrain.binder.http.conf.ServletConf;
+import org.dbrain.binder.http.conf.ServletContextConf;
 import org.dbrain.binder.http.conf.ServletFilterConf;
 import org.dbrain.binder.http.conf.WebSocketServerConf;
 

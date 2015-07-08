@@ -16,9 +16,8 @@
 
 package org.dbrain.binder.system.txs;
 
-import org.dbrain.binder.app.ComponentConfigurator;
+import org.dbrain.binder.app.Component;
 import org.dbrain.binder.lifecycle.TransactionScoped;
-import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.system.txs.jdbc.JdbcConnectionWrapper;
 import org.dbrain.binder.txs.TransactionControl;
 import org.glassfish.hk2.api.Context;
@@ -30,17 +29,19 @@ import javax.inject.Singleton;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class TransactionComponent implements ComponentConfigurator {
+public class TransactionComponent implements Component {
 
     @Inject
-    public TransactionComponent( BindingStack hook ) {
-        hook.push( ( binder ) -> {
+    public TransactionComponent( CreationContext cc ) {
+        cc.bindServices( ( binder ) -> {
             binder.bindService( TransactionManager.class )
                   .to( TransactionControl.class )
                   .to( new TypeLiteral<Context<TransactionScoped>>() {}.getType() )
                   .in( Singleton.class );
 
-            binder.bindService( JdbcConnectionWrapper.class ).to( TransactionMember.Wrapper.class ).in( Singleton.class );
+            binder.bindService( JdbcConnectionWrapper.class )
+                  .to( TransactionMember.Wrapper.class )
+                  .in( Singleton.class );
         } );
     }
 
