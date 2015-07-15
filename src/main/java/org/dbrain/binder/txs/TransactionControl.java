@@ -17,7 +17,7 @@
 package org.dbrain.binder.txs;
 
 /**
- * Created by epoitras on 3/3/15.
+ * Control interface for transactions.
  */
 public interface TransactionControl {
 

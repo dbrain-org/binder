@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.system.http.server;
 
-import org.dbrain.binder.app.ComponentConfigurator;
+import org.dbrain.binder.app.Component;
 import org.dbrain.binder.http.conf.ServletFilterConf;
 import org.dbrain.binder.app.BindingStack;
 import org.dbrain.binder.system.app.SystemConfiguration;
@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSessionListener;
 /**
  * Created by epoitras on 3/13/15.
  */
-public class HttpStandardScopeComponent implements ComponentConfigurator {
+public class HttpStandardScopeComponent implements Component {
 
     @Inject
     public HttpStandardScopeComponent(BindingStack handler) {

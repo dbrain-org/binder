@@ -16,15 +16,15 @@
 
 package org.dbrain.binder.system.app;
 
-import org.dbrain.binder.app.ComponentConfigurator;
+import org.dbrain.binder.app.Component;
 import org.dbrain.binder.directory.Qualifiers;
 
 import java.lang.annotation.Annotation;
 
 /**
- * Created by epoitras on 3/6/15.
+ * Basic abstract component interfaces that defines contract to qualify a component being configured.
  */
-public abstract class QualifiedComponent<T extends QualifiedComponent> implements ComponentConfigurator {
+public abstract class QualifiedComponent<T extends QualifiedComponent> implements Component {
 
     private Qualifiers.Builder qualifiers = Qualifiers.newBuilder();
 

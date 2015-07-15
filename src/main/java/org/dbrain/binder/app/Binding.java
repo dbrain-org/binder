@@ -22,27 +22,27 @@ import java.lang.reflect.Type;
 /**
  * Configure a single service description.
  */
-public interface BindingConfigurator<T> extends ComponentConfigurator {
+public interface Binding<T> extends Component {
 
-    BindingConfigurator<T> providedBy( T instance );
+    Binding<T> providedBy( T instance );
 
-    BindingConfigurator<T> providedBy( ServiceProvider<T> provider );
+    Binding<T> providedBy( ServiceProvider<T> provider );
 
-    BindingConfigurator<T> disposedBy( ServiceDisposer<T> disposer );
+    Binding<T> disposedBy( ServiceDisposer<T> disposer );
 
-    BindingConfigurator<T> to( Type type );
+    Binding<T> to( Type type );
 
-    BindingConfigurator<T> qualifiedBy( Annotation quality );
+    Binding<T> qualifiedBy( Annotation quality );
 
-    BindingConfigurator<T> qualifiedBy( Class<? extends Annotation> quality );
+    Binding<T> qualifiedBy( Class<? extends Annotation> quality );
 
-    BindingConfigurator<T> qualifiedBy( Iterable<Annotation> quality );
+    Binding<T> qualifiedBy( Iterable<Annotation> quality );
 
-    BindingConfigurator<T> named( String name );
+    Binding<T> named( String name );
 
-    BindingConfigurator<T> in( Class<? extends Annotation> scope );
+    Binding<T> in( Class<? extends Annotation> scope );
 
-    BindingConfigurator<T> useProxy();
+    Binding<T> useProxy();
 
     /**
      * A disposer that can fail miserably by throwing an exception.

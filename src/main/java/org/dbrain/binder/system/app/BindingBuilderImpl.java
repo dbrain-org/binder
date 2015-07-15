@@ -19,7 +19,7 @@ package org.dbrain.binder.system.app;
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.app.BindingStack;
-import org.dbrain.binder.app.BindingConfigurator;
+import org.dbrain.binder.app.Binding;
 import org.dbrain.binder.system.lifecycle.BaseClassAnalyzer;
 import org.dbrain.binder.system.util.AnnotationBuilder;
 import org.glassfish.hk2.api.ClassAnalyzer;
@@ -48,7 +48,7 @@ import java.util.Set;
 /**
  * Service configuration description.
  */
-public class BindingBuilderImpl<T> implements BindingConfigurator<T> {
+public class BindingBuilderImpl<T> implements Binding<T> {
 
     private final App app;
 
@@ -149,41 +149,41 @@ public class BindingBuilderImpl<T> implements BindingConfigurator<T> {
     }
 
     @Override
-    public BindingConfigurator<T> providedBy( final T instance ) {
+    public Binding<T> providedBy( final T instance ) {
         return providedBy( () -> instance );
     }
 
     @Override
-    public BindingConfigurator<T> providedBy( ServiceProvider<T> provider ) {
+    public Binding<T> providedBy( ServiceProvider<T> provider ) {
         this.provider = provider;
         return this;
     }
 
     @Override
-    public BindingConfigurator<T> disposedBy( ServiceDisposer<T> disposer ) {
+    public Binding<T> disposedBy( ServiceDisposer<T> disposer ) {
         this.disposer = disposer;
         return this;
     }
 
     @Override
-    public BindingConfigurator<T> to( Type type ) {
+    public Binding<T> to( Type type ) {
         services.add( type );
         return this;
     }
 
     @Override
-    public BindingConfigurator<T> qualifiedBy( Annotation quality ) {
+    public Binding<T> qualifiedBy( Annotation quality ) {
         qualifiers.add( quality );
         return this;
     }
 
     @Override
-    public BindingConfigurator<T> qualifiedBy( Class<? extends Annotation> quality ) {
+    public Binding<T> qualifiedBy( Class<? extends Annotation> quality ) {
         return qualifiedBy( AnnotationBuilder.of( quality ) );
     }
 
     @Override
-    public BindingConfigurator<T> qualifiedBy( Iterable<Annotation> qualities ) {
+    public Binding<T> qualifiedBy( Iterable<Annotation> qualities ) {
         for ( Annotation quality : qualities ) {
             qualifiedBy( quality );
         }
@@ -191,18 +191,18 @@ public class BindingBuilderImpl<T> implements BindingConfigurator<T> {
     }
 
     @Override
-    public BindingConfigurator<T> named( String name ) {
+    public Binding<T> named( String name ) {
         return qualifiedBy( AnnotationBuilder.from( Named.class ).value( name ).build() );
     }
 
     @Override
-    public BindingConfigurator<T> in( Class<? extends Annotation> scope ) {
+    public Binding<T> in( Class<? extends Annotation> scope ) {
         this.scope = scope;
         return this;
     }
 
     @Override
-    public BindingConfigurator<T> useProxy() {
+    public Binding<T> useProxy() {
         this.useProxy = true;
         return this;
     }

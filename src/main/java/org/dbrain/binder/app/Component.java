@@ -18,7 +18,7 @@ package org.dbrain.binder.app;
 
 
 /**
- * Configure a higher level of service.
+ * Marker interface for configuration APIs of components.
  */
-public interface ComponentConfigurator {
+public interface Component {
 }

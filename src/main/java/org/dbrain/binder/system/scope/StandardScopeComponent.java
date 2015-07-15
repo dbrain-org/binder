@@ -16,7 +16,7 @@
 
 package org.dbrain.binder.system.scope;
 
-import org.dbrain.binder.app.ComponentConfigurator;
+import org.dbrain.binder.app.Component;
 import org.dbrain.binder.lifecycle.RequestScoped;
 import org.dbrain.binder.lifecycle.SessionScoped;
 import org.dbrain.binder.app.BindingStack;
@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 /**
  * This feature defines both the Request and Session scopes.
  */
-public class StandardScopeComponent implements ComponentConfigurator {
+public class StandardScopeComponent implements Component {
 
     @Inject
     public StandardScopeComponent( BindingStack hook ) {
