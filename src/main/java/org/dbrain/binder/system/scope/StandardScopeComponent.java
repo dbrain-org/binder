@@ -16,6 +16,7 @@
 
 package org.dbrain.binder.system.scope;
 
+import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.app.Component;
 import org.dbrain.binder.lifecycle.RequestScoped;
 import org.dbrain.binder.lifecycle.SessionScoped;
@@ -31,8 +32,8 @@ import javax.inject.Singleton;
 public class StandardScopeComponent implements Component {
 
     @Inject
-    public StandardScopeComponent( CreationContext cc ) {
-        cc.bindServices( ( binder ) -> {
+    public StandardScopeComponent( Binder.BindingContext cc ) {
+        cc.onBind( ( binder ) -> {
             // Define the request scope
             binder.bindService( RequestScopeContext.class ) //
                     .to( new TypeLiteral<Context<RequestScoped>>() {}.getType() ) //

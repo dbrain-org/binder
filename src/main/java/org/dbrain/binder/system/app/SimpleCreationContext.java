@@ -17,7 +17,6 @@
 package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.app.Binder;
-import org.dbrain.binder.app.Component;
 
 import java.util.List;
 import java.util.Stack;
@@ -26,11 +25,11 @@ import java.util.function.Consumer;
 /**
  * Created by epoitras on 6/3/15.
  */
-public class SimpleBindingStack implements Component.CreationContext {
+public class SimpleCreationContext implements Binder.BindingContext {
 
     private ThreadLocal<List<Consumer<Binder>>> tlstack = new ThreadLocal<>();
 
-    public void bindServices( Consumer<Binder> c ) {
+    public void onBind( Consumer<Binder> c ) {
         List<Consumer<Binder>> stack = tlstack.get();
         if ( stack == null ) {
             stack = new Stack<>();

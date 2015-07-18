@@ -16,6 +16,7 @@
 
 package org.dbrain.binder.jdbc;
 
+import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.lifecycle.TransactionScoped;
 import org.dbrain.binder.system.app.QualifiedComponent;
@@ -34,8 +35,8 @@ public class JdbcDatasourceComponent extends QualifiedComponent<JdbcDatasourceCo
     private DataSource dataSource;
 
     @Inject
-    public JdbcDatasourceComponent( CreationContext cc ) {
-        cc.bindServices( ( binder ) -> {
+    public JdbcDatasourceComponent( Binder.BindingContext cc ) {
+        cc.onBind( ( binder ) -> {
             Qualifiers qualifiers = buildQualifiers();
             binder.bindService( DataSource.class ) //
                     .to( DataSource.class ) //

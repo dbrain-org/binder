@@ -16,6 +16,7 @@
 
 package org.dbrain.binder.system.txs;
 
+import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.app.Component;
 import org.dbrain.binder.lifecycle.TransactionScoped;
 import org.dbrain.binder.system.txs.jdbc.JdbcConnectionWrapper;
@@ -32,8 +33,8 @@ import javax.inject.Singleton;
 public class TransactionComponent implements Component {
 
     @Inject
-    public TransactionComponent( CreationContext cc ) {
-        cc.bindServices( ( binder ) -> {
+    public TransactionComponent( Binder.BindingContext cc ) {
+        cc.onBind( ( binder ) -> {
             binder.bindService( TransactionManager.class )
                   .to( TransactionControl.class )
                   .to( new TypeLiteral<Context<TransactionScoped>>() {}.getType() )

@@ -32,12 +32,12 @@ import java.util.function.Consumer;
  */
 public class SimpleBinder implements Binder {
 
-    private final App                  app;
-    private final SimpleBindingStack   bindingStack;
-    private       DynamicConfiguration dc;
+    private final App                   app;
+    private final SimpleCreationContext bindingStack;
+    private       DynamicConfiguration  dc;
 
     @Inject
-    public SimpleBinder( App app, SimpleBindingStack bindingStack ) {
+    public SimpleBinder( App app, SimpleCreationContext bindingStack ) {
         this.app = app;
         this.bindingStack = bindingStack;
         dc = app.getInstance( DynamicConfigurationService.class ).createDynamicConfiguration();
@@ -56,6 +56,10 @@ public class SimpleBinder implements Binder {
     @Override
     public <T extends Component> T bindComponent( Class<T> componentClass ) {
         return app.getOrCreateInstance( componentClass );
+    }
+
+    public SimpleCreationContext getBindingContext() {
+        return bindingStack;
     }
 
     /**

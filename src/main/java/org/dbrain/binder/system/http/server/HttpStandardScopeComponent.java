@@ -16,6 +16,7 @@
 
 package org.dbrain.binder.system.http.server;
 
+import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.app.Component;
 import org.dbrain.binder.http.conf.ServletFilterConf;
 import org.dbrain.binder.system.app.SystemConfiguration;
@@ -29,8 +30,8 @@ import javax.servlet.http.HttpSessionListener;
 public class HttpStandardScopeComponent implements Component {
 
     @Inject
-    public HttpStandardScopeComponent( CreationContext cc ) {
-        cc.bindServices( ( binder ) -> {
+    public HttpStandardScopeComponent( Binder.BindingContext cc ) {
+        cc.onBind( ( binder ) -> {
             ServletFilterConf scopeFilter = ServletFilterConf.of( "/*", StandardScopeFilter.class );
 
             binder.bindService( ServletFilterConf.class )

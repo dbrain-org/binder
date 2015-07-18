@@ -17,7 +17,7 @@
 package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.app.App;
-import org.dbrain.binder.app.Component;
+import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.directory.ServiceKey;
 import org.dbrain.binder.system.http.server.HttpStandardScopeComponent;
@@ -45,7 +45,7 @@ public class AppImpl implements App {
 
     private final String                               name;
     private final org.glassfish.hk2.api.ServiceLocator delegate;
-    private final SimpleBindingStack simpleBindingStack = new SimpleBindingStack();
+    private final ThreadLocal<SimpleBinder> currentBinder = new ThreadLocal<>();
 
     public AppImpl() {
         this( UUID.randomUUID().toString() );
@@ -60,24 +60,22 @@ public class AppImpl implements App {
         delegate.setDefaultClassAnalyzerName( BaseClassAnalyzer.YAW_ANALYZER_NAME );
         ServiceLocatorUtilities.addOneConstant( delegate, this );
 
-        SimpleBinder binder = startConfiguration();
-        binder.bindService( SimpleBindingStack.class ) //
-                .to( Component.CreationContext.class ) //
-                .to( SimpleBindingStack.class ) //
-                .providedBy( simpleBindingStack );
-        binder.commit();
+        configure( binder -> binder.bindService( SimpleCreationContext.class ) //
+                           .to( Binder.BindingContext.class ) //
+                           .to( SimpleCreationContext.class ) //
+                           .providedBy( () -> currentBinder.get().getBindingContext() ) );
 
         ServiceLocatorUtilities.enablePerThreadScope( delegate );
 
-        binder = startConfiguration();
-        binder.bindComponent( TransactionComponent.class );
-        binder.bindComponent( StandardScopeComponent.class );
-        binder.commit();
+        configure( binder -> {
+            binder.bindComponent( TransactionComponent.class );
+            binder.bindComponent( StandardScopeComponent.class );
+        } );
 
-        binder = startConfiguration();
-        binder.bindComponent( HttpStandardScopeComponent.class );
-        binder.bindComponent( WebAppComponent.class );
-        binder.commit();
+        configure( binder -> {
+            binder.bindComponent( HttpStandardScopeComponent.class );
+            binder.bindComponent( WebAppComponent.class );
+        } );
 
     }
 
@@ -94,7 +92,7 @@ public class AppImpl implements App {
         try {
             SimpleBinder binder = startConfiguration();
             configurator.accept( binder );
-            binder.commit();
+            commitConfiguration();
         } catch ( Exception e ) {
             throw new MultiException( e );
         }
@@ -103,8 +101,23 @@ public class AppImpl implements App {
     /**
      * @return Start a new session of configuration.
      */
-    public SimpleBinder startConfiguration() {
-        return new SimpleBinder( this, simpleBindingStack );
+    private SimpleBinder startConfiguration() {
+        if ( currentBinder.get() != null ) {
+            throw new IllegalStateException( "Cannot configure twice on the same thread at the same time." );
+        }
+        currentBinder.set( new SimpleBinder( this, new SimpleCreationContext() ) );
+        return currentBinder.get();
+    }
+
+    private void commitConfiguration() {
+        if ( currentBinder.get() == null ) {
+            throw new IllegalStateException( "No configuration to commit." );
+        }
+        try {
+            currentBinder.get().commit();
+        } finally {
+            currentBinder.set( null );
+        }
     }
 
     @Override

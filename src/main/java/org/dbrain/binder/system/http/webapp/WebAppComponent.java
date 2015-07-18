@@ -16,6 +16,7 @@
 
 package org.dbrain.binder.system.http.webapp;
 
+import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.app.Component;
 import org.dbrain.binder.system.app.SystemConfiguration;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -31,9 +32,9 @@ public class WebAppComponent implements Component {
     private final ServiceLocator serviceLocator;
 
     @Inject
-    public WebAppComponent( CreationContext cc, ServiceLocator serviceLocator ) {
+    public WebAppComponent( Binder.BindingContext cc, ServiceLocator serviceLocator ) {
         this.serviceLocator = serviceLocator;
-        cc.bindServices( ( binder ) -> {
+        cc.onBind( ( binder ) -> {
             binder.bindService( ServletContextListener.class )
                   .to( ServletContextListener.class )
                   .providedBy( new WebAppConfigServletContextListener( serviceLocator ) )

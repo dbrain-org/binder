@@ -49,12 +49,6 @@ import java.util.Set;
  */
 public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
 
-    private final App app;
-
-    private final DynamicConfiguration dc;
-
-    private final Class<T> serviceProviderClass;
-
     private ServiceProvider<T> provider;
 
     private ServiceDisposer<T> disposer;
@@ -67,16 +61,13 @@ public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
 
     private boolean useProxy = false;
 
-    public BindingBuilderImpl( App app, CreationContext cc, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
+    public BindingBuilderImpl( App app, Binder.BindingContext cc, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
         Objects.requireNonNull( app );
         Objects.requireNonNull( cc );
         Objects.requireNonNull( dc );
         Objects.requireNonNull( serviceProviderClass );
-        this.app = app;
-        this.dc = dc;
-        this.serviceProviderClass = serviceProviderClass;
 
-        cc.bindServices( ( binder ) -> {
+        cc.onBind( ( binder ) -> {
             try {
                 // Retrieve an instance of the service locator.
                 ServiceLocator sl = app.getInstance( ServiceLocator.class );

@@ -16,21 +16,9 @@
 
 package org.dbrain.binder.app;
 
-
-import java.util.function.Consumer;
-
 /**
  * Marker interface for components.
  */
 public interface Component {
 
-
-    /**
-     * Created by epoitras on 6/3/15.
-     */
-    interface CreationContext {
-
-        void bindServices( Consumer<Binder> c );
-
-    }
 }

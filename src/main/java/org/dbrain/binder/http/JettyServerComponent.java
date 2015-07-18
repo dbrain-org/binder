@@ -17,6 +17,7 @@
 package org.dbrain.binder.http;
 
 import org.dbrain.binder.app.App;
+import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.http.conf.ConnectorConf;
 import org.dbrain.binder.http.conf.HttpServerConf;
 import org.dbrain.binder.system.jetty.JettyConnectors;
@@ -38,9 +39,9 @@ public class JettyServerComponent extends AbstractHttpServerComponent<JettyServe
     private final App app;
 
     @Inject
-    public JettyServerComponent( App app, CreationContext cc ) {
+    public JettyServerComponent( App app, Binder.BindingContext cc ) {
         this.app = app;
-        cc.bindServices( ( binder ) -> {
+        cc.onBind( ( binder ) -> {
             binder.bindService( Server.class )
                   .providedBy( build( getHttpServerConfig() ) )
                   .disposedBy( ( server ) -> server.stop() )
