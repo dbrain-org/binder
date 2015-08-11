@@ -226,7 +226,7 @@ public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
         @Override
         public void dispose( T t ) {
             if ( t != null ) {
-                ClassAnalyzer analyzer = app.getInstance( ClassAnalyzer.class, BaseClassAnalyzer.YAW_ANALYZER_NAME );
+                ClassAnalyzer analyzer = app.getInstance( ClassAnalyzer.class, BaseClassAnalyzer.BINDER_ANALYZER_NAME );
                 Method disposeMethod = analyzer.getPreDestroyMethod( implClass );
                 try {
                     if ( disposeMethod != null ) {

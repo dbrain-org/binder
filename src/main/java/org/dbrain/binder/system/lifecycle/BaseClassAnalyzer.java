@@ -31,10 +31,10 @@ import java.util.Set;
  * Created by epoitras on 3/6/15.
  */
 @Singleton
-@Named( BaseClassAnalyzer.YAW_ANALYZER_NAME )
+@Named( BaseClassAnalyzer.BINDER_ANALYZER_NAME )
 public class BaseClassAnalyzer implements ClassAnalyzer {
 
-    public static final String YAW_ANALYZER_NAME = "YAW-ANALYZER";
+    public static final String BINDER_ANALYZER_NAME = "BINDER_ANALYZER_NAME";
 
     private ClassAnalyzer defaultAnalyzer;
 

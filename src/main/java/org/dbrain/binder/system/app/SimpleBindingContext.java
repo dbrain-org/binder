@@ -23,26 +23,22 @@ import java.util.Stack;
 import java.util.function.Consumer;
 
 /**
- * Created by epoitras on 6/3/15.
+ * Implementation of the BindingContext interface. Not ThreadSafe.
  */
-public class SimpleCreationContext implements Binder.BindingContext {
+public class SimpleBindingContext implements Binder.BindingContext {
 
-    private ThreadLocal<List<Consumer<Binder>>> tlstack = new ThreadLocal<>();
+    private List<Consumer<Binder>> stack;
 
     public void onBind( Consumer<Binder> c ) {
-        List<Consumer<Binder>> stack = tlstack.get();
         if ( stack == null ) {
             stack = new Stack<>();
-            tlstack.set( stack );
         }
         stack.add( c );
     }
 
     public List<Consumer<Binder>> empty() {
-        List<Consumer<Binder>> result = tlstack.get();
-        if ( result != null ) {
-            tlstack.set( null );
-        }
+        List<Consumer<Binder>> result = stack;
+        stack = null;
         return result;
     }
 

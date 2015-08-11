@@ -57,12 +57,12 @@ public class AppImpl implements App {
         this.delegate = serviceLocatorFactory.create( name );
 
         ServiceLocatorUtilities.addClasses( delegate, BaseClassAnalyzer.class );
-        delegate.setDefaultClassAnalyzerName( BaseClassAnalyzer.YAW_ANALYZER_NAME );
+        delegate.setDefaultClassAnalyzerName( BaseClassAnalyzer.BINDER_ANALYZER_NAME );
         ServiceLocatorUtilities.addOneConstant( delegate, this );
 
-        configure( binder -> binder.bindService( SimpleCreationContext.class ) //
+        configure( binder -> binder.bindService( SimpleBindingContext.class ) //
                            .to( Binder.BindingContext.class ) //
-                           .to( SimpleCreationContext.class ) //
+                           .to( SimpleBindingContext.class ) //
                            .providedBy( () -> currentBinder.get().getBindingContext() ) );
 
         ServiceLocatorUtilities.enablePerThreadScope( delegate );
@@ -105,7 +105,7 @@ public class AppImpl implements App {
         if ( currentBinder.get() != null ) {
             throw new IllegalStateException( "Cannot configure twice on the same thread at the same time." );
         }
-        currentBinder.set( new SimpleBinder( this, new SimpleCreationContext() ) );
+        currentBinder.set( new SimpleBinder( this, new SimpleBindingContext() ) );
         return currentBinder.get();
     }
 
