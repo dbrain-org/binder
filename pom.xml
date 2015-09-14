@@ -21,7 +21,7 @@
 	<groupId>org.dbrain</groupId>
 	<artifactId>dbrain-binder</artifactId>
 	<name>dbrain-binder</name>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.3</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<platform-version>1</platform-version>
@@ -186,7 +186,7 @@
 		<connection>scm:git:git@github.com:dbrain-org/dbrain-binder.git</connection>
 		<developerConnection>scm:git:git@github.com:dbrain-org/dbrain-binder.git</developerConnection>
 		<url>https://github.com/dbrain-org/dbrain-binder</url>
-		<tag>dbrain-binder-0.2</tag>
+		<tag>dbrain-binder-0.3</tag>
 	</scm>
 
 
