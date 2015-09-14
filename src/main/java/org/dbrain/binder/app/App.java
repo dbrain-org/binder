@@ -61,21 +61,12 @@ public interface App extends AutoCloseable, ServiceDirectory {
     /**
      * Allows to configure services in the application.
      */
-    void configure( AppConfigurator session );
+    void configure( Module module );
 
     /**
-     * Internal functional interface to used to configure an application.
-     *
-     * Would have used Consumer if java not have checked exceptions.
+     * Allows to configure services in the application.
      */
-    @FunctionalInterface
-    interface AppConfigurator {
+    void configure( Class<? extends Module> ... moduleClass );
 
-        /**
-         * Accept a configuration, allowing to configure the App.
-         */
-        void accept( Binder binder ) throws Exception;
-
-    }
 
 }

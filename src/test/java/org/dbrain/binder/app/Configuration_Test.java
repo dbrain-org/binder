@@ -18,6 +18,8 @@ package org.dbrain.binder.app;
 
 import org.junit.Test;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.HashSet;
 import java.util.Set;
@@ -115,5 +117,37 @@ public class Configuration_Test {
 
     }
 
+    @Test
+    public void testBindingModuleClasses() throws Exception {
+
+        try ( App app = App.create() ) {
+            app.configure( Module1.class, Module2.class );
+            assertEquals( app.getInstance( String.class, "String1" ), "test" );
+            assertEquals( app.getInstance( String.class, "String2" ), "test+test2" );
+        }
+
+
+
+    }
+
+    public static class Module1 implements Module {
+
+        @Override
+        public void configure( Binder binder ) throws Exception {
+            binder.bindService( String.class ).named( "String1" ).providedBy( "test" ).in( Singleton.class );
+        }
+    }
+
+    public static class Module2 implements Module {
+
+        @Inject
+        @Named( "String1" )
+        String name;
+
+        @Override
+        public void configure( Binder binder ) throws Exception {
+            binder.bindService( String.class ).named( "String2" ).providedBy( name + "+test2" ).in( Singleton.class );
+        }
+    }
 
 }

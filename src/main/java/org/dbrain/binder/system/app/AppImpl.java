@@ -18,6 +18,7 @@ package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.Binder;
+import org.dbrain.binder.app.Module;
 import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.directory.ServiceKey;
 import org.dbrain.binder.system.http.server.HttpStandardScopeComponent;
@@ -88,13 +89,20 @@ public class AppImpl implements App {
     }
 
     @Override
-    public void configure( AppConfigurator configurator ) {
+    public void configure( Module configurator ) {
         try {
             SimpleBinder binder = startConfiguration();
-            configurator.accept( binder );
+            configurator.configure( binder );
             commitConfiguration();
         } catch ( Exception e ) {
             throw new MultiException( e );
+        }
+    }
+
+    @Override
+    public void configure( Class<? extends Module> ... modules ) {
+        for ( Class<? extends Module> module: modules ) {
+            configure( getOrCreateInstance( module ) );
         }
     }
 

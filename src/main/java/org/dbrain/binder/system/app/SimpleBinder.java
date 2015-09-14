@@ -18,8 +18,8 @@ package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.Binder;
-import org.dbrain.binder.app.ServiceConfigurator;
 import org.dbrain.binder.app.Component;
+import org.dbrain.binder.app.ServiceConfigurator;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.DynamicConfigurationService;
 
