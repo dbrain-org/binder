@@ -181,11 +181,10 @@
 		</dependency>
 
 	</dependencies>
-
 	<scm>
-		<connection>scm:git:git@github.com:dbrain-org/dbrain-binder.git</connection>
-		<developerConnection>scm:git:git@github.com:dbrain-org/dbrain-binder.git</developerConnection>
-		<url>https://github.com/dbrain-org/dbrain-binder</url>
+		<connection>scm:git:git@github.com:dbrain-org/binder.git</connection>
+		<developerConnection>scm:git:git@github.com:dbrain-org/binder.git</developerConnection>
+		<url>https://github.com/dbrain-org/binder</url>
 		<tag>dbrain-binder-0.4</tag>
 	</scm>
 
