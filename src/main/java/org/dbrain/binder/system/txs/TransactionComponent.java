@@ -35,12 +35,12 @@ public class TransactionComponent implements Component {
     @Inject
     public TransactionComponent( Binder.BindingContext cc ) {
         cc.onBind( ( binder ) -> {
-            binder.bindService( TransactionManager.class )
+            binder.bind( TransactionManager.class )
                   .to( TransactionControl.class )
                   .to( new TypeLiteral<Context<TransactionScoped>>() {}.getType() )
                   .in( Singleton.class );
 
-            binder.bindService( JdbcConnectionWrapper.class )
+            binder.bind( JdbcConnectionWrapper.class )
                   .to( TransactionMember.Wrapper.class )
                   .in( Singleton.class );
         } );

@@ -34,12 +34,12 @@ public class HttpStandardScopeComponent implements Component {
         cc.onBind( ( binder ) -> {
             ServletFilterConf scopeFilter = ServletFilterConf.of( "/*", StandardScopeFilter.class );
 
-            binder.bindService( ServletFilterConf.class )
+            binder.bind( ServletFilterConf.class )
                   .to( ServletFilterConf.class )
-                  .providedBy( scopeFilter )
+                  .toInstance( scopeFilter )
                   .qualifiedBy( SystemConfiguration.class );
 
-            binder.bindService( StandardScopeSessionListener.class )
+            binder.bind( StandardScopeSessionListener.class )
                   .to( HttpSessionListener.class )
                   .qualifiedBy( SystemConfiguration.class );
 

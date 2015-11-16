@@ -139,7 +139,7 @@ public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
     }
 
     @Override
-    public ServiceConfigurator<T> providedBy( final T instance ) {
+    public ServiceConfigurator<T> toInstance( final T instance ) {
         return providedBy( () -> instance );
     }
 

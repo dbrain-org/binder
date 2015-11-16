@@ -35,13 +35,13 @@ public class StandardScopeComponent implements Component {
     public StandardScopeComponent( Binder.BindingContext cc ) {
         cc.onBind( ( binder ) -> {
             // Define the request scope
-            binder.bindService( RequestScopeContext.class ) //
+            binder.bind( RequestScopeContext.class ) //
                     .to( new TypeLiteral<Context<RequestScoped>>() {}.getType() ) //
                     .to( RequestScopeContext.class ) //
                     .in( Singleton.class );
 
             // Define the session scope
-            binder.bindService( SessionScopeContext.class ) //
+            binder.bind( SessionScopeContext.class ) //
                     .to( new TypeLiteral<Context<SessionScoped>>() {}.getType() ) //
                     .to( SessionScopeContext.class ) //
                     .in( Singleton.class );

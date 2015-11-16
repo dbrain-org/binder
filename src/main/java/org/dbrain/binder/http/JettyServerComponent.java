@@ -42,8 +42,8 @@ public class JettyServerComponent extends AbstractHttpServerComponent<JettyServe
     public JettyServerComponent( App app, Binder.BindingContext cc ) {
         this.app = app;
         cc.onBind( ( binder ) -> {
-            binder.bindService( Server.class )
-                  .providedBy( build( getHttpServerConfig() ) )
+            binder.bind( Server.class )
+                  .toInstance( build( getHttpServerConfig() ) )
                   .disposedBy( ( server ) -> server.stop() )
                   .qualifiedBy( buildQualifiers() )
                   .to( Server.class )

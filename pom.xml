@@ -185,7 +185,7 @@
 		<connection>scm:git:git@github.com:dbrain-org/binder.git</connection>
 		<developerConnection>scm:git:git@github.com:dbrain-org/binder.git</developerConnection>
 		<url>https://github.com/dbrain-org/binder</url>
-		<tag>dbrain-binder-0.4</tag>
+		<tag>dbrain-binder-0.6</tag>
 	</scm>
 
 

@@ -35,9 +35,9 @@ public class WebAppComponent implements Component {
     public WebAppComponent( Binder.BindingContext cc, ServiceLocator serviceLocator ) {
         this.serviceLocator = serviceLocator;
         cc.onBind( ( binder ) -> {
-            binder.bindService( ServletContextListener.class )
+            binder.bind( ServletContextListener.class )
                   .to( ServletContextListener.class )
-                  .providedBy( new WebAppConfigServletContextListener( serviceLocator ) )
+                  .toInstance( new WebAppConfigServletContextListener( serviceLocator ) )
                   .qualifiedBy( SystemConfiguration.class );
         } );
     }

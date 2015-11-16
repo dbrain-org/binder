@@ -16,8 +16,8 @@
 
 package org.dbrain.binder.system.txs.http;
 
-import org.dbrain.binder.system.txs.TransactionManager;
 import org.dbrain.binder.txs.Transaction;
+import org.dbrain.binder.txs.TransactionControl;
 import org.dbrain.binder.txs.TransactionState;
 
 import javax.inject.Provider;
@@ -38,10 +38,10 @@ import java.io.IOException;
  */
 public class TransactionFilter implements Filter {
 
-    private final Provider<TransactionManager> transactionManager;
+    private final Provider<TransactionControl> ctrl;
 
-    public TransactionFilter( Provider<TransactionManager> transactionManager ) {
-        this.transactionManager = transactionManager;
+    public TransactionFilter( Provider<TransactionControl> ctrl ) {
+        this.ctrl = ctrl;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TransactionFilter implements Filter {
                           ServletResponse servletResponse,
                           FilterChain filterChain ) throws IOException, ServletException {
 
-        TransactionManager c = transactionManager.get();
+        TransactionControl c = ctrl.get();
         try ( Transaction tx = c.start() ) {
 
             // Filter.

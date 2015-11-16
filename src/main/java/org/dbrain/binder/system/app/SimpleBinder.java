@@ -44,13 +44,13 @@ public class SimpleBinder implements Binder {
     }
 
     @Override
-    public <T> ServiceConfigurator<T> bindService( Class<T> implementationClass ) {
+    public <T> ServiceConfigurator<T> bind( Class<T> implementationClass ) {
         return new BindingBuilderImpl<>( app, bindingStack, dc, implementationClass );
     }
 
     @Override
-    public <T> ServiceConfigurator<T> bindService( T implementation ) {
-        return bindService( (Class<T>) implementation.getClass() ).providedBy( implementation );
+    public <T> ServiceConfigurator<T> bind( T implementation ) {
+        return bind( (Class<T>) implementation.getClass() ).toInstance( implementation );
     }
 
     @Override

@@ -38,7 +38,7 @@ public class JdbcDriverDatasourceComponent extends QualifiedComponent<JdbcDriver
         super();
         cc.onBind( ( binder ) -> {
             Qualifiers qualifiers = buildQualifiers();
-            binder.bindService( Connection.class ) //
+            binder.bind( Connection.class ) //
                     .to( Connection.class ) //
                     .providedBy( connectionProvider::get ) //
                     .qualifiedBy( qualifiers ) //

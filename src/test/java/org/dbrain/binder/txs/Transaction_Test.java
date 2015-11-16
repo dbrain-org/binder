@@ -136,7 +136,7 @@ public class Transaction_Test {
             TestMember testMember = injector.getInstance( TestMember.class, "MemberA" );
             assertEquals( TransactionState.ACTIVE, tx.getStatus() );
 
-            // Commit transaction.
+            // rollback transaction.
             tx.rollback();
             assertEquals( TransactionState.ROLLBACK, tx.getStatus() );
 

@@ -61,7 +61,7 @@ public class AppImpl implements App {
         delegate.setDefaultClassAnalyzerName( BaseClassAnalyzer.BINDER_ANALYZER_NAME );
         ServiceLocatorUtilities.addOneConstant( delegate, this );
 
-        configure( binder -> binder.bindService( SimpleBindingContext.class ) //
+        configure( binder -> binder.bind( SimpleBindingContext.class ) //
                            .to( Binder.BindingContext.class ) //
                            .to( SimpleBindingContext.class ) //
                            .providedBy( () -> currentBinder.get().getBindingContext() ) );

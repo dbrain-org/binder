@@ -28,7 +28,9 @@ import java.sql.Connection;
 
 
 /**
- * Created by epoitras on 3/5/15.
+ * This component will bind the following services:
+ * Datasource: singleton
+ * Connection: transaction scoped
  */
 public class JdbcDatasourceComponent extends QualifiedComponent<JdbcDatasourceComponent> {
 
@@ -38,13 +40,13 @@ public class JdbcDatasourceComponent extends QualifiedComponent<JdbcDatasourceCo
     public JdbcDatasourceComponent( Binder.BindingContext cc ) {
         cc.onBind( ( binder ) -> {
             Qualifiers qualifiers = buildQualifiers();
-            binder.bindService( DataSource.class ) //
+            binder.bind( DataSource.class ) //
                     .to( DataSource.class ) //
                     .providedBy( () -> dataSource ) //
                     .qualifiedBy( qualifiers ) //
                     .in( Singleton.class );
 
-            binder.bindService( Connection.class ) //
+            binder.bind( Connection.class ) //
                     .to( Connection.class ) //
                     .providedBy( () -> dataSource.getConnection() )//
                     .qualifiedBy( qualifiers ) //

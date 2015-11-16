@@ -43,7 +43,7 @@ public class TestMemberComponent extends QualifiedComponent<TestMemberComponent>
         super();
         cc.onBind( ( binder ) -> {
             Qualifiers qualifiers = buildQualifiers();
-            binder.bindService( TestMember.class ) //
+            binder.bind( TestMember.class ) //
                     .qualifiedBy( qualifiers ) //
                     .providedBy( () -> new TestMember( pw, name, failOnFlush, failOncommit ) ) //
                     .to( TestMember.class ) //

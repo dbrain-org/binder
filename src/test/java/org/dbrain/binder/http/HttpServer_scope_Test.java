@@ -50,13 +50,13 @@ public class HttpServer_scope_Test {
                     .listen( 40001 )              //
                     .serve( servletContext.build() );
 
-            binder.bindService( GuidService.class )
+            binder.bind( GuidService.class )
                   .to( GuidService.class )
                   .in( RequestScoped.class )
                   .named( "request" )
                   .useProxy();
 
-            binder.bindService( GuidService.class )
+            binder.bind( GuidService.class )
                   .to( GuidService.class )
                   .in( SessionScoped.class )
                   .named( "session" )

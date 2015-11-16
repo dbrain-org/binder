@@ -24,7 +24,7 @@ import java.lang.reflect.Type;
  */
 public interface ServiceConfigurator<T> extends Component {
 
-    ServiceConfigurator<T> providedBy( T instance );
+    ServiceConfigurator<T> toInstance( T instance );
 
     ServiceConfigurator<T> providedBy( ServiceProvider<T> provider );
 

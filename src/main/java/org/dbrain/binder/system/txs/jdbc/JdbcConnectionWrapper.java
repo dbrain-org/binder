@@ -46,6 +46,11 @@ public class JdbcConnectionWrapper implements TransactionMember.Wrapper<Connecti
 
         public ConnectionToMemberAdapter( Connection connection ) {
             this.connection = connection;
+            try {
+                connection.setAutoCommit( false );
+            } catch ( SQLException e ) {
+                throw new IllegalStateException( e );
+            }
         }
 
         @Override

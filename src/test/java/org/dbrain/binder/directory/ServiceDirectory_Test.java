@@ -39,21 +39,21 @@ public class ServiceDirectory_Test {
         App app = App.create();
         app.configure( ( binder ) -> {
 
-            binder.bindService( SimpleService.class ) //
+            binder.bind( SimpleService.class ) //
                     .named( "toto" ) //
                     .to( SimpleService.class );
 
-            binder.bindService( SimpleService.class ) //
+            binder.bind( SimpleService.class ) //
                     .named( "toto" ) //
                     .qualifiedBy( SomeQualifier.class ) //
                     .to( SimpleService.class ) //
                     .in( Singleton.class );
 
-            binder.bindService( SimpleService.class ) //
+            binder.bind( SimpleService.class ) //
                     .to( SimpleService.class ) //
                     .in( Singleton.class );
 
-            binder.bindService( InjectedBean.class ) //
+            binder.bind( InjectedBean.class ) //
                     .to( InjectedBean.class );
 
         } );

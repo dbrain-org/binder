@@ -34,12 +34,12 @@ public abstract class QualifiedComponent<T extends QualifiedComponent> implement
         return qualifiers.build();
     }
 
-    public T qualifiedWith( Annotation a ) {
+    public T qualifiedBy( Annotation a ) {
         qualifiers.qualifiedWith( a );
         return self();
     }
 
-    public T qualifiedWith( Class<Annotation> annotationClass ) {
+    public T qualifiedBy( Class<? extends Annotation> annotationClass ) {
         qualifiers.qualifiedWith( annotationClass );
         return self();
     }

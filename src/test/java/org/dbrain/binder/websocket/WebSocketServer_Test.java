@@ -52,12 +52,12 @@ public class WebSocketServer_Test {
                     .listen( 40001 ) //
                     .serve( servletContext.build() );
 
-            binder.bindService( GuidService.class )
+            binder.bind( GuidService.class )
                   .in( RequestScoped.class )
                   .named( "request" )
                   .useProxy();
 
-            binder.bindService( GuidService.class )
+            binder.bind( GuidService.class )
                   .in( SessionScoped.class )
                   .named( "session" )
                   .useProxy();
