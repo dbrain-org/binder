@@ -16,9 +16,9 @@
 
 package org.dbrain.binder.http;
 
-import org.dbrain.binder.http.conf.ServletAppSecurityConf;
 import org.dbrain.binder.http.conf.ServletConf;
 import org.dbrain.binder.http.conf.ServletContextConf;
+import org.dbrain.binder.http.conf.ServletContextSecurityConf;
 import org.dbrain.binder.http.conf.ServletFilterConf;
 import org.dbrain.binder.http.conf.WebSocketServerConf;
 
@@ -35,6 +35,8 @@ import java.util.List;
  */
 public class ServletContextBuilder {
 
+    protected Boolean session;
+
     protected String contextPath;
 
     protected List<ServletConf> servlets = new ArrayList<>();
@@ -43,10 +45,20 @@ public class ServletContextBuilder {
 
     protected List<ServletFilterConf> filters = new ArrayList<>();
 
-    protected ServletAppSecurityConf security;
+    protected ServletContextSecurityConf security;
 
     public ServletContextBuilder( String contextPath ) {
         contextPath( contextPath );
+    }
+
+    /**
+     * Enable session support.
+     * @param session
+     * @return
+     */
+    public ServletContextBuilder withSession( Boolean session ) {
+        this.session = session;
+        return this;
     }
 
     /**
@@ -76,12 +88,12 @@ public class ServletContextBuilder {
         return this;
     }
 
-    public void security( ServletAppSecurityConf security ) {
+    public void security( ServletContextSecurityConf security ) {
         this.security = security;
     }
 
     public ServletContextConf build() {
-        return new ServletContextConf( contextPath, servlets, filters, webSockets, security );
+        return new ServletContextConf( contextPath, servlets, filters, webSockets, session, security );
     }
 
 }

@@ -29,6 +29,8 @@ import java.util.List;
  */
 public class ServletContextConf {
 
+    private final Boolean session;
+
     private final String contextPath;
 
     private final List<ServletConf> servlets;
@@ -37,15 +39,15 @@ public class ServletContextConf {
 
     private final List<WebSocketServerConf> webSockets;
 
-    private final ServletAppSecurityConf security;
+    private final ServletContextSecurityConf security;
 
     public ServletContextConf( String contextPath,
                                List<ServletConf> servlets,
                                List<ServletFilterConf> filters,
-                               List<WebSocketServerConf> webSockets,
-                               ServletAppSecurityConf security ) {
+                               List<WebSocketServerConf> webSockets, Boolean session, ServletContextSecurityConf security ) {
         this.contextPath = contextPath;
         this.webSockets = webSockets;
+        this.session = session;
         this.servlets = Collections.unmodifiableList( new ArrayList<>( servlets ) );
         this.filters = Collections.unmodifiableList( new ArrayList<>( filters ) );
         this.security = security;
@@ -67,7 +69,11 @@ public class ServletContextConf {
         return webSockets;
     }
 
-    public ServletAppSecurityConf getSecurity() {
+    public Boolean getSession() {
+        return session;
+    }
+
+    public ServletContextSecurityConf getSecurity() {
         return security;
     }
 }

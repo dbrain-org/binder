@@ -16,30 +16,20 @@
 
 package org.dbrain.binder.http.conf;
 
+import org.eclipse.jetty.security.SecurityHandler;
+
 /**
- * @author kilantzis
+ * Self-made jetty security handler.
  */
-public class CredentialsConf {
+public class JettyServletContextSecurityConf implements ServletContextSecurityConf {
 
-    private final String realm;
-    private final String singleRole;
-    private final String file;
+    private final SecurityHandler securityHandler;
 
-    public CredentialsConf( String realm, String singleRole, String file ) {
-        this.realm = realm;
-        this.singleRole = singleRole;
-        this.file = file;
+    public JettyServletContextSecurityConf( SecurityHandler securityHandler ) {
+        this.securityHandler = securityHandler;
     }
 
-    public String getRealm() {
-        return realm;
-    }
-
-    public String getSingleRole() {
-        return singleRole;
-    }
-
-    public String getFile() {
-        return file;
+    public SecurityHandler getSecurityHandler() {
+        return securityHandler;
     }
 }

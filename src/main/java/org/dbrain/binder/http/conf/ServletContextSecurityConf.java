@@ -17,23 +17,6 @@
 package org.dbrain.binder.http.conf;
 
 /**
- * @author kilantzis
+ * Marker interface class for all seurity-related configuration.
  */
-public class FormLocationConf {
-
-    private final String url;
-    private final String errorURL;
-
-    public FormLocationConf( String url, String errorURL ) {
-        this.url = url;
-        this.errorURL = errorURL;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getErrorURL() {
-        return errorURL;
-    }
-}
+public interface ServletContextSecurityConf {}

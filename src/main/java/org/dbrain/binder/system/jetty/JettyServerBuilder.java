@@ -18,11 +18,10 @@ package org.dbrain.binder.system.jetty;
 
 import org.dbrain.binder.directory.ServiceDirectory;
 import org.dbrain.binder.directory.ServiceKey;
-import org.dbrain.binder.http.conf.CredentialsConf;
-import org.dbrain.binder.http.conf.FormLocationConf;
-import org.dbrain.binder.http.conf.ServletAppSecurityConf;
+import org.dbrain.binder.http.conf.JettyServletContextSecurityConf;
 import org.dbrain.binder.http.conf.ServletConf;
 import org.dbrain.binder.http.conf.ServletContextConf;
+import org.dbrain.binder.http.conf.ServletContextSecurityConf;
 import org.dbrain.binder.http.conf.ServletFilterConf;
 import org.dbrain.binder.http.conf.WebSocketConfiguredServerConf;
 import org.dbrain.binder.http.conf.WebSocketServerConf;
@@ -30,10 +29,7 @@ import org.dbrain.binder.http.conf.WebSocketServiceServerConf;
 import org.dbrain.binder.system.app.SystemConfiguration;
 import org.dbrain.binder.system.jetty.websocket.JsrScopedSessionFactory;
 import org.dbrain.binder.system.jetty.websocket.WebSocketInjectorConfigurator;
-import org.eclipse.jetty.security.ConstraintMapping;
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
-import org.eclipse.jetty.security.HashLoginService;
-import org.eclipse.jetty.security.authentication.FormAuthenticator;
+import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -41,7 +37,6 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;
 import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
 
@@ -51,7 +46,6 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSessionListener;
 import javax.websocket.server.ServerEndpointConfig;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -101,35 +95,14 @@ public class JettyServerBuilder {
             }
         } );
     }
+    public SecurityHandler createConstraintSecurityHandler( ServletContextSecurityConf def ) {
 
-    public FormAuthenticator createFormAuthenticator( FormLocationConf def ) {
-        return new FormAuthenticator( def.getUrl(),
-                                      def.getErrorURL(),
-                                      false /* no, do not dispatch but redirect (302, 301?) to the error url */ );
-    }
+        if ( def instanceof JettyServletContextSecurityConf ) {
+            return ( (JettyServletContextSecurityConf) def ).getSecurityHandler();
+        } else {
+            throw new UnsupportedOperationException( "Unsupported security conf:" + def );
+        }
 
-    public HashLoginService createHashLoginService( CredentialsConf def ) {
-        return new HashLoginService( def.getRealm(), def.getFile() );
-    }
-
-    public ConstraintSecurityHandler createConstraintSecurityHandler( ServletAppSecurityConf def ) {
-
-        ConstraintMapping cm = new ConstraintMapping();
-        cm.setPathSpec( def.getPathSpec() );
-        cm.setConstraint( ConstraintSecurityHandler.createConstraint( Constraint.__FORM_AUTH,
-                                                                      true, /* yes, must authenticate */
-                                                                      new String[]{
-                                                                              def.getCredentialsDef().getSingleRole()
-                                                                      },
-                                                                      Constraint.DC_NONE ) );
-
-        ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
-        sh.setRealmName( def.getCredentialsDef().getRealm() );
-        sh.setAuthenticator( createFormAuthenticator( def.getFormLocationDef() ) );
-        sh.setLoginService( createHashLoginService( def.getCredentialsDef() ) );
-        sh.setConstraintMappings( Arrays.asList( cm ) );
-
-        return sh;
     }
 
     /**
@@ -211,7 +184,10 @@ public class JettyServerBuilder {
 
     public Handler configureServletContextHandler( Server server, ServletContextConf config ) {
 
-        ServletContextHandler servletContextHandler = new ServletContextHandler( ( config.getSecurity() != null ) ? ServletContextHandler.SESSIONS : ServletContextHandler.NO_SESSIONS );
+        // Do we need to support session ?
+        Boolean supportSession = config.getSession() != null ? config.getSession() : ( config.getSecurity() != null );
+
+        ServletContextHandler servletContextHandler = new ServletContextHandler( supportSession ? ServletContextHandler.SESSIONS : ServletContextHandler.NO_SESSIONS );
         servletContextHandler.setContextPath( config.getContextPath() );
         servletContextHandler.setServer( server );
 
@@ -230,10 +206,12 @@ public class JettyServerBuilder {
             }
         }
 
-        if ( config.getSecurity() != null ) {
-            // no url rewritting to put session id in the path
-            // TODO kilantzis - put the line below somewhere else?
+        // Deactivate SESSIONID url parameter.
+        if ( supportSession ) {
             servletContextHandler.setInitParameter( "org.eclipse.jetty.servlet.SessionIdPathParameterName", "none" );
+        }
+
+        if ( config.getSecurity() != null ) {
             servletContextHandler.setSecurityHandler( createConstraintSecurityHandler( config.getSecurity() ) );
         }
 
