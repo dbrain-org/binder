@@ -44,7 +44,7 @@ public class ResourceSandbox {
 
         // Relative uri is not in the scope of the root Uri.
         if ( relativeUri.isAbsolute() ) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException( resourceUri.toString() + " not relative to " + rootUri );
         }
         return resourceUri;
     }
