@@ -23,12 +23,21 @@ import java.net.URI;
  */
 public class ResourceSandbox {
 
-    private final URI sandbox = URI.create("http://sandbox.com/a/");
+    private String prefix = null;
+    private final URI sandbox = URI.create( "http://sandbox.com/a/" );
     private final URI rootUri;
 
     public ResourceSandbox( URI rootUri ) {
         if ( rootUri == null || !rootUri.isAbsolute() ) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException( rootUri.toString() );
+        }
+        if ( rootUri.isOpaque() ) {
+            if ( rootUri.getScheme().equalsIgnoreCase( "jar" ) ) {
+                rootUri = URI.create( rootUri.getRawSchemeSpecificPart() );
+                prefix = "jar";
+            } else {
+                throw new IllegalArgumentException( "Unsupported opaque URI: " + rootUri );
+            }
         }
         this.rootUri = rootUri;
     }
@@ -40,10 +49,12 @@ public class ResourceSandbox {
         if ( trailingUri == null || trailingUri.isAbsolute() || trailingUri.isOpaque() ) {
             throw new IllegalArgumentException( trailingUri.toString() );
         }
-        if (!sandbox.resolve( trailingUri ).normalize().getPath().startsWith( sandbox.getPath() ) ) {
+        if ( !sandbox.resolve( trailingUri ).normalize().getPath().startsWith( sandbox.getPath() ) ) {
             throw new IllegalArgumentException( trailingUri.toString() );
         }
-        return rootUri.resolve( trailingUri ).normalize();
+        URI result = URI.create( rootUri.toString() ).resolve( trailingUri ).normalize();
+
+        return prefix != null ? URI.create( prefix + ":" + result.toString() ) : result;
     }
 
     /**

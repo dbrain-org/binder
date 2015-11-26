@@ -27,17 +27,37 @@ import static org.junit.Assert.assertEquals;
  */
 public class ResourceSandbox_Test {
 
-    ResourceSandbox sandbox = new ResourceSandbox( URI.create( "http:/www.toto.com/res/" ) );
 
     @Test
     public void testSimple() throws Exception {
+        ResourceSandbox sandbox = new ResourceSandbox( URI.create( "http:/www.toto.com/res/" ) );
         URI uri = sandbox.getResource( "test.json" );
         assertEquals( uri, URI.create( "http:/www.toto.com/res/test.json"  ) );
     }
 
+    @Test
+    public void testSimpleOpaque() throws Exception {
+        ResourceSandbox sandbox = new ResourceSandbox( URI.create( "jar:file:/test/" ) );
+        URI uri = sandbox.getResource( "test.json" );
+        assertEquals( uri, URI.create( "jar:file:/test/test.json"  ) );
+    }
+
+
     @Test( expected = IllegalArgumentException.class )
     public void testEscapeAtempt() throws Exception {
+        ResourceSandbox sandbox = new ResourceSandbox( URI.create( "http:/www.toto.com/res/" ) );
         sandbox.getResource( "a/../../secret.json" );
+    }
+
+    @Test( expected = IllegalArgumentException.class )
+    public void testEscapeOpacity() throws Exception {
+        ResourceSandbox sandbox = new ResourceSandbox( URI.create( "jar:file:/test/" ) );
+        sandbox.getResource( "../test.json" );
+    }
+
+    @Test( expected = IllegalArgumentException.class )
+    public void testUnknownOpacity() throws Exception {
+        new ResourceSandbox( URI.create( "jarjar:file:/test/" ) );
     }
 
 }
