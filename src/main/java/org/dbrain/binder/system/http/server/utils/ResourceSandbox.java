@@ -23,10 +23,11 @@ import java.net.URI;
  */
 public class ResourceSandbox {
 
+    private final URI sandbox = URI.create("http://sandbox.com/a/");
     private final URI rootUri;
 
     public ResourceSandbox( URI rootUri ) {
-        if ( rootUri == null || !rootUri.isAbsolute() || rootUri.isOpaque() ) {
+        if ( rootUri == null || !rootUri.isAbsolute() ) {
             throw new IllegalArgumentException();
         }
         this.rootUri = rootUri;
@@ -37,16 +38,12 @@ public class ResourceSandbox {
      */
     public URI getResource( URI trailingUri ) {
         if ( trailingUri == null || trailingUri.isAbsolute() || trailingUri.isOpaque() ) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException( trailingUri.toString() );
         }
-        URI resourceUri = rootUri.resolve( trailingUri ).normalize();
-        URI relativeUri = rootUri.relativize( resourceUri );
-
-        // Relative uri is not in the scope of the root Uri.
-        if ( relativeUri.isAbsolute() ) {
-            throw new IllegalArgumentException( resourceUri.toString() + " not relative to " + rootUri );
+        if (!sandbox.resolve( trailingUri ).normalize().getPath().startsWith( sandbox.getPath() ) ) {
+            throw new IllegalArgumentException( trailingUri.toString() );
         }
-        return resourceUri;
+        return rootUri.resolve( trailingUri ).normalize();
     }
 
     /**
