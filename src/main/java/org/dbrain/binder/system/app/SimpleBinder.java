@@ -19,6 +19,7 @@ package org.dbrain.binder.system.app;
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.app.Component;
+import org.dbrain.binder.app.Module;
 import org.dbrain.binder.app.ServiceConfigurator;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.DynamicConfigurationService;
@@ -57,6 +58,20 @@ public class SimpleBinder implements Binder {
     public <T extends Component> T bindComponent( Class<T> componentClass ) {
         return app.getOrCreateInstance( componentClass );
     }
+
+    @Override
+    public <T extends Module> T bindModule( Class<T> componentClass ) {
+        T module = app.getOrCreateInstance( componentClass );
+        bindingStack.onBind( b -> {
+            try {
+                module.configure( b );
+            } catch (Exception e ) {
+                throw new RuntimeException( e );
+            }
+        } );
+        return module;
+    }
+
 
     public SimpleBindingContext getBindingContext() {
         return bindingStack;

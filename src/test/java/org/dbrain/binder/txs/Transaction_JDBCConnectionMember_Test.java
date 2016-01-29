@@ -19,6 +19,7 @@ package org.dbrain.binder.txs;
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.jdbc.JdbcDatasourceComponent;
+import org.dbrain.binder.jdbc.JdbcDatasourceModule;
 import org.dbrain.binder.jdbc.JdbcDriverDatasourceComponent;
 import org.glassfish.hk2.api.ServiceHandle;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -67,6 +68,10 @@ public class Transaction_JDBCConnectionMember_Test {
                     .named( "prov3" )//
                     .dataSource( JdbcConnectionPool.create( "jdbc:h2:mem:prov3", "sa", "sa" ) );
 
+            binder.bindModule( JdbcDatasourceModule.class ) //
+                    .named( "prov4" )
+                    .dataSource( JdbcConnectionPool.create( "jdbc:h2:mem:prov4", "sa", "sa" ) );
+
         } );
 
         TransactionControl txCtrl = app.getInstance( TransactionControl.class );
@@ -78,6 +83,7 @@ public class Transaction_JDBCConnectionMember_Test {
             Connection connection1_2 = app.getInstance( Connection.class, "prov1" );
             Connection connection2_1 = app.getInstance( Connection.class, "prov2" );
             Connection connection3_1 = app.getInstance( Connection.class, "prov3" );
+            Connection connection4_1 = app.getInstance( Connection.class, "prov4" );
 
             ServiceHandle sh = app.getInstance( ServiceLocator.class ).getServiceHandle( Connection.class, "prov1" );
 

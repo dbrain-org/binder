@@ -39,6 +39,11 @@ public interface Binder {
     <T extends Component> T bindComponent( Class<T> componentClass );
 
     /**
+     * Start binding a new module.
+     */
+    <T extends Module> T bindModule( Class<T> componentClass );
+
+    /**
      * Context to register required bindings for a component.
      * Injectable within Component's constructor.
      */
