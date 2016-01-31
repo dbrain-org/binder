@@ -18,9 +18,8 @@ package org.dbrain.binder.txs;
 
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.Binder;
-import org.dbrain.binder.jdbc.JdbcDatasourceComponent;
 import org.dbrain.binder.jdbc.JdbcDatasourceModule;
-import org.dbrain.binder.jdbc.JdbcDriverDatasourceComponent;
+import org.dbrain.binder.jdbc.JdbcDriverDatasourceModule;
 import org.glassfish.hk2.api.ServiceHandle;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.h2.jdbcx.JdbcConnectionPool;
@@ -44,9 +43,9 @@ public class Transaction_JDBCConnectionMember_Test {
         App app = App.create();
         app.configure( ( Binder binder ) -> {
 
-            binder.bindComponent( JdbcDriverDatasourceComponent.class ) //
-                    .named( "prov1" ) //
-                    .withProvider( () -> {
+            binder.bindModule( JdbcDriverDatasourceModule.class ) //
+                  .named( "prov1" ) //
+                  .withProvider( () -> {
                         try {
                             return DriverManager.getConnection( "jdbc:h2:mem:prov1", "", "" );
                         } catch ( Exception e ) {
@@ -54,9 +53,9 @@ public class Transaction_JDBCConnectionMember_Test {
                         }
                     } );
 
-            binder.bindComponent( JdbcDriverDatasourceComponent.class ) //
-                    .named( "prov2" ) //
-                    .withProvider( () -> {
+            binder.bindModule( JdbcDriverDatasourceModule.class ) //
+                  .named( "prov2" ) //
+                  .withProvider( () -> {
                         try {
                             return DriverManager.getConnection( "jdbc:h2:mem:prov2", "", "" );
                         } catch ( Exception e ) {
@@ -64,9 +63,9 @@ public class Transaction_JDBCConnectionMember_Test {
                         }
                     } );
 
-            binder.bindComponent( JdbcDatasourceComponent.class ) //
-                    .named( "prov3" )//
-                    .dataSource( JdbcConnectionPool.create( "jdbc:h2:mem:prov3", "sa", "sa" ) );
+            binder.bindModule( JdbcDatasourceModule.class ) //
+                  .named( "prov3" )//
+                  .dataSource( JdbcConnectionPool.create( "jdbc:h2:mem:prov3", "sa", "sa" ) );
 
             binder.bindModule( JdbcDatasourceModule.class ) //
                     .named( "prov4" )

@@ -1,5 +1,5 @@
 /*
- * Copyright [2016] [Eric Poitras]
+ * Copyright [2015] [Eric Poitras]
  *
  *     Licensed under the Apache License, Version 2.0 (the "License");
  *     you may not use this file except in compliance with the License.
@@ -20,9 +20,7 @@ import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.app.QualifiedModule;
 import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.lifecycle.TransactionScoped;
-import org.dbrain.binder.system.app.QualifiedComponent;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -37,11 +35,6 @@ public class JdbcDatasourceModule extends QualifiedModule<JdbcDatasourceModule> 
 
     private DataSource dataSource;
 
-    @Override
-    protected JdbcDatasourceModule self() {
-        return this;
-    }
-
     public JdbcDatasourceModule dataSource( DataSource dataSource ) {
         this.dataSource = dataSource;
         return this;
@@ -49,17 +42,17 @@ public class JdbcDatasourceModule extends QualifiedModule<JdbcDatasourceModule> 
 
     @Override
     public void configure( Binder binder ) throws Exception {
-        Qualifiers qualifiers = getQualifiers();
+        Qualifiers qualifiers = buildQualifiers();
         binder.bind( DataSource.class ) //
-                .to( DataSource.class ) //
-                .providedBy( () -> dataSource ) //
-                .qualifiedBy( qualifiers ) //
-                .in( Singleton.class );
+              .to( DataSource.class ) //
+              .providedBy( () -> dataSource ) //
+              .qualifiedBy( qualifiers ) //
+              .in( Singleton.class );
 
         binder.bind( Connection.class ) //
-                .to( Connection.class ) //
-                .providedBy( () -> dataSource.getConnection() )//
-                .qualifiedBy( qualifiers ) //
-                .in( TransactionScoped.class );
+              .to( Connection.class ) //
+              .providedBy( () -> dataSource.getConnection() )//
+              .qualifiedBy( qualifiers ) //
+              .in( TransactionScoped.class );
     }
 }

@@ -14,32 +14,31 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.system.http.webapp;
+package org.dbrain.binder.system.http.server;
 
 import org.dbrain.binder.app.Binder;
-import org.dbrain.binder.app.Component;
+import org.dbrain.binder.app.Module;
+import org.dbrain.binder.http.conf.ServletFilterConf;
 import org.dbrain.binder.system.app.SystemConfiguration;
-import org.glassfish.hk2.api.ServiceLocator;
 
-import javax.inject.Inject;
-import javax.servlet.ServletContextListener;
+import javax.servlet.http.HttpSessionListener;
 
 /**
  * Created by epoitras on 3/13/15.
  */
-public class WebAppComponent implements Component {
+public class HttpStandardScopeModule implements Module {
 
-    private final ServiceLocator serviceLocator;
+    @Override
+    public void configure( Binder binder ) throws Exception {
+        ServletFilterConf scopeFilter = ServletFilterConf.of( "/*", StandardScopeFilter.class );
 
-    @Inject
-    public WebAppComponent( Binder.BindingContext cc, ServiceLocator serviceLocator ) {
-        this.serviceLocator = serviceLocator;
-        cc.onBind( ( binder ) -> {
-            binder.bind( ServletContextListener.class )
-                  .to( ServletContextListener.class )
-                  .toInstance( new WebAppConfigServletContextListener( serviceLocator ) )
-                  .qualifiedBy( SystemConfiguration.class );
-        } );
+        binder.bind( ServletFilterConf.class )
+              .to( ServletFilterConf.class )
+              .toInstance( scopeFilter )
+              .qualifiedBy( SystemConfiguration.class );
+
+        binder.bind( StandardScopeSessionListener.class )
+              .to( HttpSessionListener.class )
+              .qualifiedBy( SystemConfiguration.class );
     }
-
 }

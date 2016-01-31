@@ -17,6 +17,7 @@
 package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.app.Binder;
+import org.dbrain.binder.app.Module;
 
 import java.util.List;
 import java.util.Stack;
@@ -25,19 +26,19 @@ import java.util.function.Consumer;
 /**
  * Implementation of the BindingContext interface. Not ThreadSafe.
  */
-public class SimpleBindingContext implements Binder.BindingContext {
+public class BindingStack {
 
-    private List<Consumer<Binder>> stack;
+    private List<Module> stack;
 
-    public void onBind( Consumer<Binder> c ) {
+    public void pushModule( Module c ) {
         if ( stack == null ) {
             stack = new Stack<>();
         }
         stack.add( c );
     }
 
-    public List<Consumer<Binder>> empty() {
-        List<Consumer<Binder>> result = stack;
+    public List<Module> empty() {
+        List<Module> result = stack;
         stack = null;
         return result;
     }

@@ -39,9 +39,9 @@ public class JettyHttpServer_Test {
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
             servletContext.serve( ServletConf.of( "/*", new SampleServlet() ) );
 
-            binder.bindComponent( JettyServerComponent.class ) //
-                    .listen( 40001 )              //
-                    .serve( servletContext.build() );
+            binder.bindModule( JettyServerModule.class ) //
+                  .listen( 40001 )              //
+                  .serve( servletContext.build() );
 
         } );
 

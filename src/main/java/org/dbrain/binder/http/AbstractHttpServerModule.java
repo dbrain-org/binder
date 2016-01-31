@@ -16,13 +16,13 @@
 
 package org.dbrain.binder.http;
 
+import org.dbrain.binder.app.QualifiedModule;
 import org.dbrain.binder.http.conf.ConnectorConf;
 import org.dbrain.binder.http.conf.HttpConnectorConf;
 import org.dbrain.binder.http.conf.HttpServerConf;
 import org.dbrain.binder.http.conf.ServletContextConf;
-import org.dbrain.binder.system.app.QualifiedComponent;
 
-public abstract class AbstractHttpServerComponent<T extends AbstractHttpServerComponent> extends QualifiedComponent<T> {
+public abstract class AbstractHttpServerModule<T extends AbstractHttpServerModule> extends QualifiedModule<T> {
 
     private HttpServerConf building = new HttpServerConf();
 

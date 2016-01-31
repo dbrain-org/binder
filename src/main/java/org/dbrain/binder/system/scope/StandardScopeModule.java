@@ -17,35 +17,31 @@
 package org.dbrain.binder.system.scope;
 
 import org.dbrain.binder.app.Binder;
-import org.dbrain.binder.app.Component;
+import org.dbrain.binder.app.Module;
 import org.dbrain.binder.lifecycle.RequestScoped;
 import org.dbrain.binder.lifecycle.SessionScoped;
 import org.glassfish.hk2.api.Context;
 import org.glassfish.hk2.api.TypeLiteral;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
  * This feature defines both the Request and Session scopes.
  */
-public class StandardScopeComponent implements Component {
+public class StandardScopeModule implements Module {
 
-    @Inject
-    public StandardScopeComponent( Binder.BindingContext cc ) {
-        cc.onBind( ( binder ) -> {
-            // Define the request scope
-            binder.bind( RequestScopeContext.class ) //
-                    .to( new TypeLiteral<Context<RequestScoped>>() {}.getType() ) //
-                    .to( RequestScopeContext.class ) //
-                    .in( Singleton.class );
+    @Override
+    public void configure( Binder binder ) throws Exception {
+        // Define the request scope
+        binder.bind( RequestScopeContext.class ) //
+              .to( new TypeLiteral<Context<RequestScoped>>() {}.getType() ) //
+              .to( RequestScopeContext.class ) //
+              .in( Singleton.class );
 
-            // Define the session scope
-            binder.bind( SessionScopeContext.class ) //
-                    .to( new TypeLiteral<Context<SessionScoped>>() {}.getType() ) //
-                    .to( SessionScopeContext.class ) //
-                    .in( Singleton.class );
-        } );
+        // Define the session scope
+        binder.bind( SessionScopeContext.class ) //
+              .to( new TypeLiteral<Context<SessionScoped>>() {}.getType() ) //
+              .to( SessionScopeContext.class ) //
+              .in( Singleton.class );
     }
-
 }

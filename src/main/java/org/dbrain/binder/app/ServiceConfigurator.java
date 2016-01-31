@@ -22,7 +22,7 @@ import java.lang.reflect.Type;
 /**
  * Configure a single service description.
  */
-public interface ServiceConfigurator<T> extends Component {
+public interface ServiceConfigurator<T> {
 
     ServiceConfigurator<T> toInstance( T instance );
 

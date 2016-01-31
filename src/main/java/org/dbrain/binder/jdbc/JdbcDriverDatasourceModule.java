@@ -19,9 +19,8 @@ package org.dbrain.binder.jdbc;
 import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.lifecycle.TransactionScoped;
-import org.dbrain.binder.system.app.QualifiedComponent;
+import org.dbrain.binder.app.QualifiedModule;
 
-import javax.inject.Inject;
 import javax.inject.Provider;
 import java.sql.Connection;
 
@@ -29,31 +28,22 @@ import java.sql.Connection;
 /**
  * Created by epoitras on 3/5/15.
  */
-public class JdbcDriverDatasourceComponent extends QualifiedComponent<JdbcDriverDatasourceComponent> {
+public class JdbcDriverDatasourceModule extends QualifiedModule<JdbcDriverDatasourceModule> {
 
     private Provider<Connection> connectionProvider;
 
-    @Inject
-    public JdbcDriverDatasourceComponent( Binder.BindingContext cc ) {
-        super();
-        cc.onBind( ( binder ) -> {
-            Qualifiers qualifiers = buildQualifiers();
-            binder.bind( Connection.class ) //
-                    .to( Connection.class ) //
-                    .providedBy( connectionProvider::get ) //
-                    .qualifiedBy( qualifiers ) //
-                    .in( TransactionScoped.class );
-        } );
-    }
-
-    @Override
-    protected JdbcDriverDatasourceComponent self() {
-        return this;
-    }
-
-    public JdbcDriverDatasourceComponent withProvider( Provider<Connection> connectionProvider ) {
+    public JdbcDriverDatasourceModule withProvider( Provider<Connection> connectionProvider ) {
         this.connectionProvider = connectionProvider;
         return this;
     }
 
+    @Override
+    public void configure( Binder binder ) throws Exception {
+        Qualifiers qualifiers = buildQualifiers();
+        binder.bind( Connection.class ) //
+              .to( Connection.class ) //
+              .providedBy( connectionProvider::get ) //
+              .qualifiedBy( qualifiers ) //
+              .in( TransactionScoped.class );
+    }
 }

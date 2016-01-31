@@ -17,33 +17,29 @@
 package org.dbrain.binder.system.txs;
 
 import org.dbrain.binder.app.Binder;
-import org.dbrain.binder.app.Component;
+import org.dbrain.binder.app.Module;
 import org.dbrain.binder.lifecycle.TransactionScoped;
 import org.dbrain.binder.system.txs.jdbc.JdbcConnectionWrapper;
 import org.dbrain.binder.txs.TransactionControl;
 import org.glassfish.hk2.api.Context;
 import org.glassfish.hk2.api.TypeLiteral;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
  * Created by epoitras on 3/5/15.
  */
-public class TransactionComponent implements Component {
+public class TransactionModule implements Module {
 
-    @Inject
-    public TransactionComponent( Binder.BindingContext cc ) {
-        cc.onBind( ( binder ) -> {
-            binder.bind( TransactionManager.class )
-                  .to( TransactionControl.class )
-                  .to( new TypeLiteral<Context<TransactionScoped>>() {}.getType() )
-                  .in( Singleton.class );
+    @Override
+    public void configure( Binder binder ) throws Exception {
+        binder.bind( TransactionManager.class )
+              .to( TransactionControl.class )
+              .to( new TypeLiteral<Context<TransactionScoped>>() {}.getType() )
+              .in( Singleton.class );
 
-            binder.bind( JdbcConnectionWrapper.class )
-                  .to( TransactionMember.Wrapper.class )
-                  .in( Singleton.class );
-        } );
+        binder.bind( JdbcConnectionWrapper.class )
+              .to( TransactionMember.Wrapper.class )
+              .in( Singleton.class );
     }
-
 }

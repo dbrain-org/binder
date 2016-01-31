@@ -16,8 +16,6 @@
 
 package org.dbrain.binder.app;
 
-import java.util.function.Consumer;
-
 /**
  * Defines methods to bind services into an application.
  */
@@ -34,22 +32,8 @@ public interface Binder {
     <T> ServiceConfigurator<T> bind( T implementation );
 
     /**
-     * Start binding a component (Collection of services).
-     */
-    <T extends Component> T bindComponent( Class<T> componentClass );
-
-    /**
      * Start binding a new module.
      */
     <T extends Module> T bindModule( Class<T> componentClass );
 
-    /**
-     * Context to register required bindings for a component.
-     * Injectable within Component's constructor.
-     */
-    interface BindingContext {
-
-        void onBind( Consumer<Binder> c );
-
-    }
 }

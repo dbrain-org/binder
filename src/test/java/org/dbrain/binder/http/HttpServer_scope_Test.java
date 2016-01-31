@@ -46,9 +46,9 @@ public class HttpServer_scope_Test {
             ServletContextBuilder servletContext = new ServletContextBuilder( "/" );
             servletContext.serve( ServletConf.of( "/*", webApp.build() ) );
 
-            binder.bindComponent( JettyServerComponent.class ) //
-                    .listen( 40001 )              //
-                    .serve( servletContext.build() );
+            binder.bindModule( JettyServerModule.class ) //
+                  .listen( 40001 )              //
+                  .serve( servletContext.build() );
 
             binder.bind( GuidService.class )
                   .to( GuidService.class )

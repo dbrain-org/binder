@@ -21,15 +21,18 @@ import org.dbrain.binder.directory.Qualifiers;
 import java.lang.annotation.Annotation;
 
 /**
- * Basic abstract module that defines a qualified module being configured.
+ * Basic abstract component interfaces that defines contract to qualify a module being configured.
  */
 public abstract class QualifiedModule<T extends QualifiedModule> implements Module {
 
     private Qualifiers.Builder qualifiers = Qualifiers.newBuilder();
 
-    abstract protected T self();
+    @SuppressWarnings( "unchecked" )
+    protected T self() {
+        return (T) this;
+    }
 
-    protected Qualifiers getQualifiers() {
+    protected Qualifiers buildQualifiers() {
         return qualifiers.build();
     }
 

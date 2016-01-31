@@ -20,7 +20,7 @@ import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.txs.exceptions.NoTransactionException;
 import org.dbrain.binder.txs.exceptions.TransactionAlreadyStartedException;
-import org.dbrain.binder.txs.features.TestMemberComponent;
+import org.dbrain.binder.txs.features.TestMemberModule;
 import org.dbrain.binder.txs.impl.TestMember;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -40,9 +40,9 @@ public class TransactionControl_Test {
         App app = App.create();
 
         app.configure( ( Binder binder ) -> {
-            binder.bindComponent( TestMemberComponent.class ) //
-                    .named( "Test" ) //
-                    .printWriter( new PrintWriter( System.out ) );
+            binder.bindModule( TestMemberModule.class ) //
+                  .named( "Test" ) //
+                  .printWriter( new PrintWriter( System.out ) );
         } );
 
 

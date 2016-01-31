@@ -19,7 +19,7 @@ package org.dbrain.binder.txs;
 import org.dbrain.binder.app.App;
 import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.txs.exceptions.CommitFailedException;
-import org.dbrain.binder.txs.features.TestMemberComponent;
+import org.dbrain.binder.txs.features.TestMemberModule;
 import org.dbrain.binder.txs.impl.TestMember;
 import org.glassfish.hk2.api.MultiException;
 import org.junit.Test;
@@ -41,10 +41,10 @@ public class Transaction_Test {
 
         PrintWriter pw = new PrintWriter( writer );
         app.configure( ( Binder binder ) -> {
-            binder.bindComponent( TestMemberComponent.class ).named( "MemberA" ).printWriter( pw );
-            binder.bindComponent( TestMemberComponent.class ).named( "MemberB" ).printWriter( pw );
-            binder.bindComponent( TestMemberComponent.class ).named( "MemberC" ).printWriter( pw ).failOnFlush();
-            binder.bindComponent( TestMemberComponent.class ).named( "MemberD" ).printWriter( pw ).failOnCommit();
+            binder.bindModule( TestMemberModule.class ).named( "MemberA" ).printWriter( pw );
+            binder.bindModule( TestMemberModule.class ).named( "MemberB" ).printWriter( pw );
+            binder.bindModule( TestMemberModule.class ).named( "MemberC" ).printWriter( pw ).failOnFlush();
+            binder.bindModule( TestMemberModule.class ).named( "MemberD" ).printWriter( pw ).failOnCommit();
         } );
 
         return app;

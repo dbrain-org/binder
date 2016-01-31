@@ -17,7 +17,6 @@
 package org.dbrain.binder.system.app;
 
 import org.dbrain.binder.app.App;
-import org.dbrain.binder.app.Binder;
 import org.dbrain.binder.app.ServiceConfigurator;
 import org.dbrain.binder.system.lifecycle.BaseClassAnalyzer;
 import org.dbrain.binder.system.util.AnnotationBuilder;
@@ -61,13 +60,13 @@ public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
 
     private boolean useProxy = false;
 
-    public BindingBuilderImpl( App app, Binder.BindingContext cc, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
+    public BindingBuilderImpl( App app, BindingStack cc, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
         Objects.requireNonNull( app );
         Objects.requireNonNull( cc );
         Objects.requireNonNull( dc );
         Objects.requireNonNull( serviceProviderClass );
 
-        cc.onBind( ( binder ) -> {
+        cc.pushModule( ( binder ) -> {
             try {
                 // Retrieve an instance of the service locator.
                 ServiceLocator sl = app.getInstance( ServiceLocator.class );

@@ -17,7 +17,7 @@
 package org.dbrain.binder.websocket;
 
 import org.dbrain.binder.app.App;
-import org.dbrain.binder.http.JettyServerComponent;
+import org.dbrain.binder.http.JettyServerModule;
 import org.dbrain.binder.http.WebSocketServerBuilder;
 import org.dbrain.binder.http.artifacts.resources.GuidService;
 import org.dbrain.binder.http.ServletContextBuilder;
@@ -48,9 +48,9 @@ public class WebSocketServer_Test {
             servletContext.serve( WebSocketServerBuilder.of( WsPingServer.class ) );
             servletContext.serve( WebSocketServerBuilder.from( WsPingServer.class, "/ws2" ).build() );
 
-            binder.bindComponent( JettyServerComponent.class ) //
-                    .listen( 40001 ) //
-                    .serve( servletContext.build() );
+            binder.bindModule( JettyServerModule.class ) //
+                  .listen( 40001 ) //
+                  .serve( servletContext.build() );
 
             binder.bind( GuidService.class )
                   .in( RequestScoped.class )

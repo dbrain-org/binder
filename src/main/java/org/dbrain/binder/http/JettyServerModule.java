@@ -34,26 +34,13 @@ import javax.inject.Singleton;
  * Provided services:
  * Server   : The jetty server.
  */
-public class JettyServerComponent extends AbstractHttpServerComponent<JettyServerComponent> {
+public class JettyServerModule extends AbstractHttpServerModule<JettyServerModule> {
 
     private final App app;
 
     @Inject
-    public JettyServerComponent( App app, Binder.BindingContext cc ) {
+    public JettyServerModule( App app ) {
         this.app = app;
-        cc.onBind( ( binder ) -> {
-            binder.bind( Server.class )
-                  .toInstance( build( getHttpServerConfig() ) )
-                  .disposedBy( ( server ) -> server.stop() )
-                  .qualifiedBy( buildQualifiers() )
-                  .to( Server.class )
-                  .in( Singleton.class );
-        } );
-    }
-
-    @Override
-    protected JettyServerComponent self() {
-        return this;
     }
 
     protected Server build( HttpServerConf def ) {
@@ -76,4 +63,13 @@ public class JettyServerComponent extends AbstractHttpServerComponent<JettyServe
         return server;
     }
 
+    @Override
+    public void configure( Binder binder ) throws Exception {
+        binder.bind( Server.class )
+              .toInstance( build( getHttpServerConfig() ) )
+              .disposedBy( ( server ) -> server.stop() )
+              .qualifiedBy( buildQualifiers() )
+              .to( Server.class )
+              .in( Singleton.class );
+    }
 }
