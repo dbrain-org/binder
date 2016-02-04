@@ -24,6 +24,7 @@ import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.DynamicConfigurationService;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 
 /**
@@ -43,13 +44,13 @@ public class SimpleBinder implements Binder {
     }
 
     @Override
-    public <T> ServiceConfigurator<T> bind( Class<T> implementationClass ) {
-        return new BindingBuilderImpl<>( app, bindingStack, dc, implementationClass );
+    public <T> ServiceConfigurator.Scoped<T> bind( Class<T> implementationClass ) {
+        return new ScopedServiceConfiguratorImpl<>( app, bindingStack, dc, implementationClass );
     }
 
     @Override
-    public <T> ServiceConfigurator<T> bind( T implementation ) {
-        return bind( (Class<T>) implementation.getClass() ).toInstance( implementation );
+    public <T> ServiceConfigurator.Instance<T> bind( T implementation ) {
+        return new InstanceServiceConfiguratorImpl<>( app, bindingStack, dc, ((Class<T>)implementation.getClass()) ).providedBy( () -> implementation ).in( Singleton.class );
     }
 
     @Override

@@ -46,11 +46,11 @@ import java.util.Set;
 /**
  * Service configuration description.
  */
-public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
+public class ServiceConfiguratorImpl<T, U extends ServiceConfiguratorImpl<T, U>> {
 
-    private ServiceProvider<T> provider;
+    private ServiceConfigurator.ServiceProvider<T> provider;
 
-    private ServiceDisposer<T> disposer;
+    private ServiceConfigurator.ServiceDisposer<T> disposer;
 
     private final Set<Type> services = new HashSet<>();
 
@@ -60,7 +60,7 @@ public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
 
     private boolean useProxy = false;
 
-    public BindingBuilderImpl( App app, BindingStack cc, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
+    public ServiceConfiguratorImpl( App app, BindingStack cc, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
         Objects.requireNonNull( app );
         Objects.requireNonNull( cc );
         Objects.requireNonNull( dc );
@@ -73,8 +73,8 @@ public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
 
                 Factory factory = null;
                 if ( provider != null || disposer != null ) {
-                    ServiceProvider<T> finalProvider = provider;
-                    ServiceDisposer<T> finalDisposer = disposer;
+                    ServiceConfigurator.ServiceProvider<T> finalProvider = provider;
+                    ServiceConfigurator.ServiceDisposer<T> finalDisposer = disposer;
                     if ( finalProvider == null ) {
                         finalProvider = new StandardProvider<>( app, serviceProviderClass );
                     }
@@ -137,66 +137,56 @@ public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
         } );
     }
 
-    @Override
-    public ServiceConfigurator<T> toInstance( final T instance ) {
-        return providedBy( () -> instance );
+    protected U self() {
+        return (U) this;
     }
 
-    @Override
-    public ServiceConfigurator<T> providedBy( ServiceProvider<T> provider ) {
+    public U providedBy( ServiceConfigurator.ServiceProvider<T> provider ) {
         this.provider = provider;
-        return this;
+        return self();
     }
 
-    @Override
-    public ServiceConfigurator<T> disposedBy( ServiceDisposer<T> disposer ) {
+    public U disposedBy( ServiceConfigurator.ServiceDisposer<T> disposer ) {
         this.disposer = disposer;
-        return this;
+        return self();
     }
 
-    @Override
-    public ServiceConfigurator<T> to( Type type ) {
+    public U to( Type type ) {
         services.add( type );
-        return this;
+        return self();
     }
 
-    @Override
-    public ServiceConfigurator<T> qualifiedBy( Annotation quality ) {
+    public U qualifiedBy( Annotation quality ) {
         qualifiers.add( quality );
-        return this;
+        return self();
     }
 
-    @Override
-    public ServiceConfigurator<T> qualifiedBy( Class<? extends Annotation> quality ) {
+    public U qualifiedBy( Class<? extends Annotation> quality ) {
         return qualifiedBy( AnnotationBuilder.of( quality ) );
     }
 
-    @Override
-    public ServiceConfigurator<T> qualifiedBy( Iterable<Annotation> qualities ) {
+    public U qualifiedBy( Iterable<Annotation> qualities ) {
         for ( Annotation quality : qualities ) {
             qualifiedBy( quality );
         }
-        return this;
+        return self();
     }
 
-    @Override
-    public ServiceConfigurator<T> named( String name ) {
+    public U named( String name ) {
         return qualifiedBy( AnnotationBuilder.from( Named.class ).value( name ).build() );
     }
 
-    @Override
-    public ServiceConfigurator<T> in( Class<? extends Annotation> scope ) {
+    public U in( Class<? extends Annotation> scope ) {
         this.scope = scope;
-        return this;
+        return self();
     }
 
-    @Override
-    public ServiceConfigurator<T> useProxy() {
+    public U useProxy() {
         this.useProxy = true;
-        return this;
+        return self();
     }
 
-    private static class StandardProvider<T> implements ServiceProvider<T> {
+    private static class StandardProvider<T> implements ServiceConfigurator.ServiceProvider<T> {
 
         private final ServiceLocator serviceLocator;
         private final Class<T>       implClass;
@@ -212,7 +202,7 @@ public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
         }
     }
 
-    private static class StandardDisposer<T> implements ServiceDisposer<T> {
+    private static class StandardDisposer<T> implements ServiceConfigurator.ServiceDisposer<T> {
 
         private final App      app;
         private final Class<T> implClass;
@@ -243,11 +233,11 @@ public class BindingBuilderImpl<T> implements ServiceConfigurator<T> {
 
     private static class StandardFactory<T> implements Factory<T> {
 
-        private ServiceProvider<T> provider;
+        private ServiceConfigurator.ServiceProvider<T> provider;
 
-        private ServiceDisposer<T> disposer;
+        private ServiceConfigurator.ServiceDisposer<T> disposer;
 
-        public StandardFactory( ServiceProvider<T> provider, ServiceDisposer<T> disposer ) {
+        public StandardFactory( ServiceConfigurator.ServiceProvider<T> provider, ServiceConfigurator.ServiceDisposer<T> disposer ) {
             this.provider = provider;
             this.disposer = disposer;
         }

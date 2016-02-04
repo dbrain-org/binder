@@ -134,7 +134,7 @@ public class Configuration_Test {
 
         @Override
         public void configure( Binder binder ) throws Exception {
-            binder.bind( String.class ).named( "String1" ).toInstance( "test" ).in( Singleton.class );
+            binder.bind( "test" ).named( "String1" );
         }
     }
 
@@ -146,7 +146,7 @@ public class Configuration_Test {
 
         @Override
         public void configure( Binder binder ) throws Exception {
-            binder.bind( String.class ).named( "String2" ).toInstance( name + "+test2" ).in( Singleton.class );
+            binder.bind( name + "+test2" ).named( "String2" );
         }
     }
 
