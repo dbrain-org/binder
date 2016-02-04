@@ -15,14 +15,13 @@
   ~     limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.dbrain</groupId>
 	<artifactId>dbrain-binder</artifactId>
 	<name>dbrain-binder</name>
-	<version>0.11-SNAPSHOT</version>
+	<version>0.11</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javax-annotation-version>1.2</javax-annotation-version>
@@ -469,7 +468,7 @@
 		<connection>scm:git:git@github.com:dbrain-org/binder.git</connection>
 		<developerConnection>scm:git:git@github.com:dbrain-org/binder.git</developerConnection>
 		<url>https://github.com/dbrain-org/binder</url>
-		<tag>dbrain-binder-0.6</tag>
+		<tag>dbrain-binder-0.11</tag>
 	</scm>
 
 
