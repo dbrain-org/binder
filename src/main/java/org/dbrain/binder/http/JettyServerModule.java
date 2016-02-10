@@ -65,11 +65,9 @@ public class JettyServerModule extends AbstractHttpServerModule<JettyServerModul
 
     @Override
     public void configure( Binder binder ) throws Exception {
-        binder.bind( Server.class )
-              .toInstance( build( getHttpServerConfig() ) )
+        binder.bind( build( getHttpServerConfig() ) )
               .disposedBy( ( server ) -> server.stop() )
               .qualifiedBy( buildQualifiers() )
-              .to( Server.class )
-              .in( Singleton.class );
+              .to( Server.class );
     }
 }

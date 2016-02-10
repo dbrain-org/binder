@@ -38,9 +38,8 @@ public class WebAppModule implements Module {
 
     @Override
     public void configure( Binder binder ) throws Exception {
-        binder.bind( ServletContextListener.class )
+        binder.bind( new WebAppConfigServletContextListener( serviceLocator ) )
               .to( ServletContextListener.class )
-              .toInstance( new WebAppConfigServletContextListener( serviceLocator ) )
               .qualifiedBy( SystemConfiguration.class );
     }
 }

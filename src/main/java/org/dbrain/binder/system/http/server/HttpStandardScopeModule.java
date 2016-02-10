@@ -32,9 +32,8 @@ public class HttpStandardScopeModule implements Module {
     public void configure( Binder binder ) throws Exception {
         ServletFilterConf scopeFilter = ServletFilterConf.of( "/*", StandardScopeFilter.class );
 
-        binder.bind( ServletFilterConf.class )
+        binder.bind( scopeFilter )
               .to( ServletFilterConf.class )
-              .toInstance( scopeFilter )
               .qualifiedBy( SystemConfiguration.class );
 
         binder.bind( StandardScopeSessionListener.class )

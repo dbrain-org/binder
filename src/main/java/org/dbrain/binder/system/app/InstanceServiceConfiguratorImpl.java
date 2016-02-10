@@ -1,5 +1,5 @@
 /*
- * Copyright [2015] [Eric Poitras]
+ * Copyright [2016] [Eric Poitras]
  *
  *     Licensed under the Apache License, Version 2.0 (the "License");
  *     you may not use this file except in compliance with the License.
@@ -14,26 +14,19 @@
  *     limitations under the License.
  */
 
-package org.dbrain.binder.app;
+package org.dbrain.binder.system.app;
+
+import org.dbrain.binder.app.App;
+import org.dbrain.binder.app.ServiceConfigurator;
+import org.glassfish.hk2.api.DynamicConfiguration;
 
 /**
- * Defines methods to bind services into an application.
+ * Service configuration description.
  */
-public interface Binder {
+public class InstanceServiceConfiguratorImpl<T> extends ServiceConfiguratorImpl<T, InstanceServiceConfiguratorImpl<T>> implements ServiceConfigurator.Instance<T> {
 
-    /**
-     * Start binging a service from the specific implementation class.
-     */
-    <T> ServiceConfigurator.Scoped<T> bind( Class<T> implementationClass );
-
-    /**
-     * Start binging a service from the specific implementation instance.
-     */
-    <T> ServiceConfigurator.Instance<T> bind( T implementation );
-
-    /**
-     * Start binding a new module.
-     */
-    <T extends Module> T bindModule( Class<T> componentClass );
+    public InstanceServiceConfiguratorImpl( App app, BindingStack cc, DynamicConfiguration dc, Class<T> serviceProviderClass ) {
+        super( app, cc, dc, serviceProviderClass );
+    }
 
 }

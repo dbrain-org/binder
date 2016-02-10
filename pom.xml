@@ -21,10 +21,18 @@
 	<groupId>org.dbrain</groupId>
 	<artifactId>dbrain-binder</artifactId>
 	<name>dbrain-binder</name>
-	<version>0.11-SNAPSHOT</version>
+	<version>0.14-SNAPSHOT</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<platform-version>1</platform-version>
+		<javax-annotation-version>1.2</javax-annotation-version>
+		<javax-websocket-version>1.1</javax-websocket-version>
+		<javax-ws-rs-version>2.0.1</javax-ws-rs-version>
+		<asm-version>5.0.4</asm-version>
+		<hk2-version>2.4.0-b16</hk2-version>
+		<jetty-version>9.3.0.M2</jetty-version>
+		<jersey-version>2.22.1</jersey-version>
+		<javassist-version>3.19.0-GA</javassist-version>
+		<junit-version>4.12</junit-version>
 	</properties>
 
 	<description>Guice-like facade to the unfriendly HK2 service locator.</description>
@@ -145,38 +153,313 @@
 
 	</profiles>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.dbrain</groupId>
-				<artifactId>dbrain-platform</artifactId>
-				<version>${platform-version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
+		<!-- ############################################################################## -->
+		<!-- System librairies -->
+		<!-- ############################################################################## -->
+
+		<!-- Java api extensions -->
 		<dependency>
-			<groupId>org.dbrain</groupId>
-			<artifactId>platform-system</artifactId>
-			<type>pom</type>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>${javax-annotation-version}</version>
+		</dependency>
+
+		<!-- Byte code and aspectJ librairies -->
+		<dependency>
+			<groupId>aopalliance</groupId>
+			<artifactId>aopalliance</artifactId>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.dbrain</groupId>
-			<artifactId>platform-jsr330</artifactId>
-			<type>pom</type>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>${asm-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.dbrain</groupId>
-			<artifactId>platform-http</artifactId>
-			<type>pom</type>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>${javassist-version}</version>
+		</dependency>
+
+		<!-- ############################################################################## -->
+		<!-- Dependency Injection -->
+		<!-- ############################################################################## -->
+		<dependency>
+			<groupId>org.glassfish.hk2</groupId>
+			<artifactId>hk2-api</artifactId>
+			<version>${hk2-version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>javassist</artifactId>
+					<groupId>org.javassist</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>aopalliance-repackaged</artifactId>
+					<groupId>org.glassfish.hk2</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javax.inject</artifactId>
+					<groupId>org.glassfish.hk2</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>aopalliance-repackaged</artifactId>
+					<groupId>org.glassfish.hk2.external</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javax.inject</artifactId>
+					<groupId>org.glassfish.hk2.external</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.dbrain</groupId>
-			<artifactId>platform-test</artifactId>
-			<type>pom</type>
+			<groupId>org.glassfish.hk2</groupId>
+			<artifactId>hk2-locator</artifactId>
+			<version>${hk2-version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>javax.inject</artifactId>
+					<groupId>javax.inject</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javassist</artifactId>
+					<groupId>org.javassist</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>aopalliance-repackaged</artifactId>
+					<groupId>org.glassfish.hk2</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javax.inject</artifactId>
+					<groupId>org.glassfish.hk2</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>aopalliance-repackaged</artifactId>
+					<groupId>org.glassfish.hk2.external</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javax.inject</artifactId>
+					<groupId>org.glassfish.hk2.external</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.hk2</groupId>
+			<artifactId>hk2-utils</artifactId>
+			<version>${hk2-version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>javax.inject</artifactId>
+					<groupId>javax.inject</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javassist</artifactId>
+					<groupId>org.javassist</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>aopalliance-repackaged</artifactId>
+					<groupId>org.glassfish.hk2</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javax.inject</artifactId>
+					<groupId>org.glassfish.hk2</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>aopalliance-repackaged</artifactId>
+					<groupId>org.glassfish.hk2.external</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javax.inject</artifactId>
+					<groupId>org.glassfish.hk2.external</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- ############################################################################## -->
+		<!-- HTTP Web server -->
+		<!-- ############################################################################## -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.websocket</groupId>
+			<artifactId>javax.websocket-api</artifactId>
+			<version>${javax-websocket-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>${javax-ws-rs-version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- HTTP Jetty Server -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jetty-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>javax.servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Jetty servlet support -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>${jetty-version}</version>
+		</dependency>
+
+		<!-- To write basic websockets against -->
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>websocket-api</artifactId>
+			<version>${jetty-version}</version>
+		</dependency>
+
+		<!-- To run websockets in embedded server -->
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>websocket-server</artifactId>
+			<version>${jetty-version}</version>
+		</dependency>
+
+		<!-- To run websockets client -->
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>websocket-client</artifactId>
+			<version>${jetty-version}</version>
+		</dependency>
+
+		<!-- To run javax.websocket in embedded server -->
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>javax-websocket-server-impl</artifactId>
+			<version>${jetty-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm-commons</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.annotation</groupId>
+					<artifactId>javax.annotation-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- To run javax.websocket client -->
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>javax-websocket-client-impl</artifactId>
+			<version>${jetty-version}</version>
+		</dependency>
+
+		<!-- JERSEY JAX-RS -->
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>${jersey-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.glassfish.hk2</groupId>
+					<artifactId>hk2-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2</groupId>
+					<artifactId>hk2-locator</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2</groupId>
+					<artifactId>hk2-utils</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2</groupId>
+					<artifactId>osgi-resource-locator</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2.external</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2.external</groupId>
+					<artifactId>asm-all-repackaged</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2.external</groupId>
+					<artifactId>cglib</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>${jersey-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.glassfish.hk2</groupId>
+					<artifactId>hk2-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2</groupId>
+					<artifactId>hk2-locator</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2</groupId>
+					<artifactId>hk2-utils</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2</groupId>
+					<artifactId>osgi-resource-locator</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2.external</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2.external</groupId>
+					<artifactId>asm-all-repackaged</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2.external</groupId>
+					<artifactId>cglib</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet-core</artifactId>
+			<version>${jersey-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.glassfish.hk2.external</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- ############################################################################## -->
+		<!-- Testing -->
+		<!-- ############################################################################## -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.185</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -185,7 +468,7 @@
 		<connection>scm:git:git@github.com:dbrain-org/binder.git</connection>
 		<developerConnection>scm:git:git@github.com:dbrain-org/binder.git</developerConnection>
 		<url>https://github.com/dbrain-org/binder</url>
-		<tag>dbrain-binder-0.6</tag>
+		<tag>dbrain-binder-0.11</tag>
 	</scm>
 
 

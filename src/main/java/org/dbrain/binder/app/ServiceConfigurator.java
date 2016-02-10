@@ -1,5 +1,5 @@
 /*
- * Copyright [2015] [Eric Poitras]
+ * Copyright [2016] [Eric Poitras]
  *
  *     Licensed under the Apache License, Version 2.0 (the "License");
  *     you may not use this file except in compliance with the License.
@@ -22,27 +22,38 @@ import java.lang.reflect.Type;
 /**
  * Configure a single service description.
  */
-public interface ServiceConfigurator<T> {
+public interface ServiceConfigurator<T, U extends ServiceConfigurator<T, U>> {
 
-    ServiceConfigurator<T> toInstance( T instance );
+    U disposedBy( ServiceDisposer<T> disposer );
 
-    ServiceConfigurator<T> providedBy( ServiceProvider<T> provider );
+    U to( Type type );
 
-    ServiceConfigurator<T> disposedBy( ServiceDisposer<T> disposer );
+    U qualifiedBy( Annotation quality );
 
-    ServiceConfigurator<T> to( Type type );
+    U qualifiedBy( Class<? extends Annotation> quality );
 
-    ServiceConfigurator<T> qualifiedBy( Annotation quality );
+    U qualifiedBy( Iterable<Annotation> quality );
 
-    ServiceConfigurator<T> qualifiedBy( Class<? extends Annotation> quality );
+    U named( String name );
 
-    ServiceConfigurator<T> qualifiedBy( Iterable<Annotation> quality );
+    U useProxy();
 
-    ServiceConfigurator<T> named( String name );
+    /**
+     * Configure an instance-based service.
+     */
+    interface Instance<T> extends ServiceConfigurator<T, Instance<T>> {
+    }
 
-    ServiceConfigurator<T> in( Class<? extends Annotation> scope );
+    /**
+     * Configure a provider-based service description.
+     */
+    interface Scoped<T> extends ServiceConfigurator<T, Scoped<T>> {
 
-    ServiceConfigurator<T> useProxy();
+        Scoped<T> providedBy( ServiceProvider<T> provider );
+
+        Scoped<T> in( Class<? extends Annotation> scope );
+
+    }
 
     /**
      * A disposer that can fail miserably by throwing an exception.
