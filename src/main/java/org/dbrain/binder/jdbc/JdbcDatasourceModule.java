@@ -27,7 +27,7 @@ import java.sql.Connection;
 
 
 /**
- * This component will bind the following services:
+ * This module will bind the following services:
  * Datasource: singleton
  * Connection: transaction scoped
  */
