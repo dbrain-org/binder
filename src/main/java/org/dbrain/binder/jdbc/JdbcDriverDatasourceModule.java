@@ -17,16 +17,17 @@
 package org.dbrain.binder.jdbc;
 
 import org.dbrain.binder.app.Binder;
+import org.dbrain.binder.app.QualifiedModule;
 import org.dbrain.binder.directory.Qualifiers;
 import org.dbrain.binder.lifecycle.TransactionScoped;
-import org.dbrain.binder.app.QualifiedModule;
 
 import javax.inject.Provider;
 import java.sql.Connection;
 
 
 /**
- * Created by epoitras on 3/5/15.
+ * This module will bind the Connection returned by the connection provider to the Transaction
+ * scope.
  */
 public class JdbcDriverDatasourceModule extends QualifiedModule<JdbcDriverDatasourceModule> {
 
